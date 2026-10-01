@@ -1,19 +1,33 @@
 id = "design.spam"
 title = "App duplicates the developer's other apps or a saturated category"
 severity = "warning"
-evidence = ["human"]
+evidence = ["metadata", "human"]
 enforced_by = "app-review"
 guidelines = ["4.3"]
 summary = """
-Guideline 4.3 rejects multiple bundle IDs for the same app, apps indistinguishable from what is widely available, and template-based apps. Since June 2026, existing apps that are not updated, improved, or attracting customers may also be removed.
+Guideline 4.3 rejects multiple bundle IDs for the same app, apps indistinguishable from what is widely available, and template-based apps. Dating, flashlight, sound effects, wallpaper, simple timer, and fortune-telling apps are accepted only with a meaningfully different or improved experience, and drinking game, Kama Sutra, fart, and burp apps are treated as low-effort; repeated submissions can end the developer account. Since June 2026, existing apps that are not updated, improved, or attracting customers may also be removed.
 """
 fix = """
-Merge variants into one app with in-app choices. In the review notes, state what is distinctive about the app compared with the category.
+Merge variants into one app with in-app choices or in-app purchase. In the review notes, state what is distinctive about the app compared with the category.
 """
+references = [
+  "https://developer.apple.com/news/?id=a233fmpw",
+]
+
+[check]
+id = "metadata-terms"
+confidence = "low"
+fields = ["name", "subtitle", "keywords"]
+terms = [
+  "dating app", "online dating", "meet singles", "flashlight", "sound effects", "soundboard", "wallpaper",
+  "simple timer", "fortune telling", "fortune teller", "drinking game", "kama sutra", "fart app",
+  "fart sounds", "burp",
+]
 
 [review]
 questions = [
   "Does the developer account have another app with the same core function?",
   "What does this app do that the top apps in its category do not?",
   "Is it built from a commercial template or app generator?",
+  "Does the app ship separate binaries per city, team, school, or client that one app could serve?",
 ]

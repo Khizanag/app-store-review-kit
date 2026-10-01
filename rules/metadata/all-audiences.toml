@@ -1,0 +1,18 @@
+id = "metadata.all-audiences"
+title = "Icons, screenshots, or previews not suitable for a 4+ audience"
+severity = "warning"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["2.3.8"]
+summary = """
+Metadata is shown to everyone, so app and in-app purchase icons, screenshots, and previews must meet a 4+ rating even when the app is rated higher. Gruesome deaths or a gun pointed at a character are typical problems. The app name and every icon, including small, large, Apple Watch, and alternate icons, must look alike so people are not confused.
+"""
+fix = """
+Swap mature imagery for scenes that suit all ages, and keep alternate icons recognizably the same app as the primary icon.
+"""
+
+[review]
+questions = [
+  "Would every icon, screenshot, and preview frame be acceptable in a 4+ app?",
+  "Do the alternate icons, Apple Watch icon, and in-app purchase icons clearly belong to the same app?",
+]

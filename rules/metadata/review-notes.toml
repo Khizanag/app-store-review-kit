@@ -5,19 +5,30 @@ evidence = ["metadata", "human"]
 enforced_by = "app-review"
 guidelines = ["2.3.1", "2.1"]
 summary = """
-Guideline 2.3.1 forbids hidden, dormant, or undocumented features, and asks for every new feature and in-app purchase to be described with specificity in the Notes for Review. Remote feature flags, region-locked features, hardware dependencies, and special configuration all need explaining.
+Guideline 2.3.1 forbids hidden, dormant, or undocumented features, and asks for every new feature and in-app purchase to be described with specificity in the Notes for Review; generic descriptions are rejected. Under 2.1(b), any configured in-app purchase the reviewer cannot find must be explained there. Remote feature flags, region-locked features, hardware dependencies, and special configuration all need explaining. The Notes field holds 4,000 bytes and can be in any language.
 """
 fix = """
-List each feature that is not obvious from the first launch, how to reach it, and any account, location, or hardware it needs. Mention remote configuration and what it can change.
+Write the notes in six parts: a link to a screen recording of the core flow on a physical device, what the app is for and who it serves, access steps with test credentials, the external services the app depends on, any differences by region, and documentation for regulated features. Mention remote configuration and what it can change.
 """
+references = [
+  "https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information",
+]
 
 [check]
 id = "review-notes"
 confidence = "low"
 flag_signals = ["RemoteConfig", "FirebaseRemoteConfig", "LaunchDarkly", "Statsig", "Optimizely", "ConfigCat"]
+max_bytes = 4000
+sections = ["screen recording", "purpose", "credentials", "external services", "regional differences", "regulated documentation"]
 
 [review]
 questions = [
   "Is every feature that needs an account, a location, a device, or a flag described in the notes?",
   "Can remote configuration turn on anything the reviewer did not see?",
+  "Do the notes link a screen recording of the core flow captured on a physical device?",
+  "Do the notes say what the app does and who it is for, in a sentence or two?",
+  "Do the notes list each external service, such as a backend, payment processor, or AI provider, and what it is used for?",
+  "Do the notes say whether features or content differ by region, and how to see each variant?",
+  "For regulated features, do the notes include the license or clearance documents?",
+  "Is every configured in-app purchase reachable in the build, or explained if not?",
 ]

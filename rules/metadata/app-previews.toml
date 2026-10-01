@@ -1,0 +1,28 @@
+id = "metadata.app-previews"
+title = "App preview shows more than screen captures of the app"
+severity = "warning"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["2.3.4"]
+summary = """
+App previews may only use video screen captures of the app itself; sticker and iMessage apps may show the experience in Messages. Narration and video or text overlays are allowed. Footage of people holding devices, rendered device frames, live-action scenes, or features the build lacks are not. Each localization can carry up to three previews per device size, 15 to 30 seconds long.
+"""
+fix = """
+Record the preview on device or in Simulator from the submitted build, keep it between 15 and 30 seconds, and explain anything unclear with captions or narration rather than staged footage.
+"""
+references = [
+  "https://developer.apple.com/help/app-store-connect/reference/app-information/app-preview-specifications",
+]
+
+[check]
+id = "preview-sets"
+confidence = "medium"
+max_per_set = 3
+min_seconds = 15
+max_seconds = 30
+
+[review]
+questions = [
+  "Is every frame a screen capture of this app, with no device bezels, hands, or live-action footage?",
+  "Does every feature shown in the preview exist in the submitted build?",
+]

@@ -1,0 +1,17 @@
+id = "design.apple-site-scraping"
+title = "Data scraped from Apple sites or turned into rankings"
+severity = "error"
+evidence = ["human"]
+enforced_by = "app-review"
+guidelines = ["4.5.1", "4.5"]
+summary = """
+Apps may use approved Apple RSS feeds, but may not scrape information from Apple sites, including apple.com, the App Store, the iTunes Store, App Store Connect, and the developer portal, or build rankings from that information.
+"""
+fix = """
+Use Apple's approved feeds and APIs as documented, and drop HTML scraping of Apple pages and any charts derived from it.
+"""
+
+[review]
+questions = [
+  "Does the app parse HTML from an Apple site, or compute rankings from Apple data?",
+]

@@ -1,0 +1,36 @@
+id = "metadata.keywords"
+title = "Keywords name other apps or waste the 100-byte budget"
+severity = "warning"
+evidence = ["metadata"]
+enforced_by = "app-review"
+guidelines = ["2.3.7"]
+summary = """
+Keywords must describe the app. Names of other apps or companies are not allowed, and trademarked terms, celebrity names, and irrelevant terms are a common rejection; Apple may also edit keywords it finds inappropriate. The field holds 100 bytes, each keyword must be longer than two characters, and the app name and company name are already searchable, so repeating them, spaces after commas, plurals of included words, category names, and the word "app" only burn bytes.
+"""
+fix = """
+Separate keywords with commas and no spaces, drop competitor and brand names, drop words already in the app name or developer name, and spend the freed bytes on terms people use to describe what the app does.
+"""
+references = [
+  "https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information",
+  "https://developer.apple.com/app-store/product-page/",
+]
+
+[check]
+id = "keywords"
+confidence = "medium"
+max_bytes = 100
+min_term_length = 3
+flag_space_after_comma = true
+flag_duplicates = true
+flag_name_repeats = ["name", "developer_name"]
+flag_terms = ["app", "apps", "free", "iphone", "ipad", "best", "#1"]
+competitor_terms = [
+  "chatgpt", "openai", "gemini", "claude", "copilot", "midjourney", "instagram", "tiktok", "facebook",
+  "whatsapp", "snapchat", "youtube", "netflix", "spotify", "telegram", "duolingo", "uber", "google",
+  "android", "samsung", "huawei",
+]
+
+[review]
+questions = [
+  "Does every keyword describe something the app does?",
+]

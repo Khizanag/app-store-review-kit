@@ -1,0 +1,23 @@
+id = "legal.third-party-content"
+title = "Third-party content or services used without rights"
+severity = "error"
+evidence = ["metadata", "source", "human"]
+enforced_by = "app-review"
+guidelines = ["5.2", "5.2.1", "5.2.2"]
+summary = """
+Apps may include only content the developer created or licensed. Third-party trademarks, copyrighted works, and patented ideas need permission, and the app, its bundle, and the developer name may not carry misleading or copycat names. Apps that use, display, or monetize a third-party service must be permitted by that service's terms, and Apple may ask for proof. The app should be submitted by the person or entity that owns or licensed the intellectual property, and the Content Rights answer in App Store Connect must match.
+"""
+fix = """
+Collect licenses or written permission for every third-party brand, dataset, API, and media asset, attach them in the review notes, and answer the Content Rights question accurately.
+"""
+references = [
+  "https://developer.apple.com/help/app-store-connect/reference/app-information/app-information",
+]
+
+[review]
+questions = [
+  "Does the app show another company's brand, characters, or content, and is there written permission?",
+  "Does the app use, display, or charge for access to a third-party service, and do that service's terms allow it?",
+  "Is the account holder the owner or licensee of the app's main brand and content?",
+  "Does the Content Rights answer in App Store Connect reflect the third-party content in the app?",
+]

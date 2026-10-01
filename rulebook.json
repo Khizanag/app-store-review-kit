@@ -19,11 +19,12 @@
       "applies_when": [
         "accounts"
       ],
-      "summary": "Apps that support account creation must let people start deleting the account from inside the app, not only by email or a website hidden behind support. Apps using Sign in with Apple must also revoke the user's tokens when the account is deleted.",
-      "fix": "Add a clearly labeled delete-account action in account settings. Confirm, then delete the account and its data, or explain the timeline if regulations require retention. For Sign in with Apple, call the REST API to revoke tokens.",
+      "summary": "Apps that support account creation must let people start deleting the account from inside the app. Deletion must remove the account record and its personal data; only deactivating, disabling, or signing out is insufficient. Outside highly regulated industries, the app may not require a phone call, email, or support flow. A web step is allowed only when the in-app link goes straight to the page that completes deletion. Apps using Sign in with Apple must revoke the user's tokens with the Sign in with Apple REST API.",
+      "fix": "Add a clearly labeled delete-account action in account settings. Confirm, then delete the account and its data on the server, revoke Sign in with Apple tokens through `/auth/revoke`, and return the app to a signed-out state. If deletion takes time, say how long and confirm when it is done. If the person has auto-renewable subscriptions, tell them billing continues through Apple and ask them to cancel first.",
       "since": "2022-06-30",
       "references": [
-        "https://developer.apple.com/support/offering-account-deletion-in-your-app/"
+        "https://developer.apple.com/support/offering-account-deletion-in-your-app/",
+        "https://developer.apple.com/documentation/technotes/tn3194-handling-account-deletions-and-revoking-tokens-for-sign-in-with-apple"
       ],
       "check": {
         "id": "account-deletion",
@@ -31,7 +32,8 @@
         "creation_signals": [
           "createUser",
           "signUp",
-          "register(",
+          "createAccount",
+          "registerUser",
           "ASAuthorizationAppleIDProvider",
           "Auth.auth().createUser"
         ],
@@ -40,14 +42,29 @@
           "delete account",
           "deleteUser",
           "user.delete",
+          "closeAccount",
+          "close account",
+          "removeAccount",
+          "erase account"
+        ],
+        "not_deletion_signals": [
+          "deactivate",
+          "disableAccount",
+          "signOut",
+          "logout"
+        ],
+        "siwa_revoke_signals": [
+          "/auth/revoke",
           "revokeToken",
-          "/auth/revoke"
+          "revoke"
         ]
       },
       "review": [
         "Can a signed-in person reach account deletion from the app's settings in a few taps?",
-        "Does deletion remove the account and its data, not just sign out or deactivate?",
-        "Are Sign in with Apple tokens revoked on deletion?"
+        "Does deletion remove the account and its data on the server, not just sign out, clear local storage, or deactivate?",
+        "Does the flow avoid requiring a call, an email, or a support ticket, and does any web step open the exact deletion page?",
+        "Are Sign in with Apple tokens revoked through the REST API on deletion?",
+        "Does a person with an active subscription learn that billing continues through Apple until they cancel?"
       ]
     },
     {
@@ -67,7 +84,7 @@
         "accounts"
       ],
       "summary": "Guideline 2.1 asks for demo account details when the app has a login, with the backend running during review. A missing or broken demo account is one of the most common 2.1 rejections.",
-      "fix": "Fill in Sign-in Information under App Review Information in App Store Connect with a working account that exposes every feature, including paid ones. If login needs a code or hardware, explain how to get past it in the review notes or provide a demo mode.",
+      "fix": "Fill in Sign-in Information under App Review Information in App Store Connect with a working account that exposes every feature, including paid ones. If login needs a code or hardware, explain how to get past it in the review notes. A built-in demo mode instead of a demo account needs Apple's prior approval and must show every feature.",
       "check": {
         "id": "demo-account",
         "confidence": "medium",
@@ -81,7 +98,10 @@
       },
       "review": [
         "Does the demo account work right now, and will it still work in two weeks?",
-        "Does it unlock every feature the reviewer needs to see, including subscriptions?"
+        "Does it unlock every feature the reviewer needs to see, including subscriptions?",
+        "Does login need a one-time code, second factor, or invite that only the team receives?",
+        "Can a reviewer outside your country, VPN, or IP allowlist reach the backend?",
+        "Does the demo account hold enough sample data to show every screen?"
       ]
     },
     {
@@ -123,8 +143,8 @@
       "applies_when": [
         "accounts"
       ],
-      "summary": "Apps that use a third-party or social login service, such as Google or Facebook, to set up the primary account must also offer an equivalent login that limits collection to name and email, lets people keep their email private, and does not track without consent. Sign in with Apple meets all three.",
-      "fix": "Add Sign in with Apple, or another service with the same privacy properties, alongside the existing social logins, with equal prominence.",
+      "summary": "Apps that use a third-party or social login service, such as Google, Facebook, X, LinkedIn, Amazon, or WeChat, to set up or sign in to the primary account must also offer an equivalent login that limits collection to name and email, lets people keep their email private, and does not collect interactions for advertising without consent. Sign in with Apple meets all three, but 4.8 does not require it specifically. No alternative is needed when the app uses only the company's own accounts, is an education, enterprise, or business app using existing org accounts, uses a government or industry-backed electronic ID, is a client for a specific third-party service, or is an alternative marketplace using its own login.",
+      "fix": "Add Sign in with Apple, or another service with the same privacy properties, next to the existing social logins. Apple's design guidance asks for a Sign in with Apple button no smaller than the other sign-in buttons and visible without scrolling.",
       "references": [
         "https://developer.apple.com/app-store/review/guidelines/#4.8",
         "https://developer.apple.com/design/human-interface-guidelines/sign-in-with-apple"
@@ -134,11 +154,17 @@
         "confidence": "medium",
         "third_party": [
           "GoogleSignIn",
+          "GIDSignIn",
           "FBSDKLoginKit",
           "LineSDK",
           "TwitterKit",
           "MSAL",
-          "KakaoSDKAuth"
+          "KakaoSDKAuth",
+          "LoginWithAmazon",
+          "WechatOpenSDK",
+          "WXApi",
+          "VKSdk",
+          "NaverThirdPartyLogin"
         ],
         "privacy_preserving": [
           "ASAuthorizationAppleIDProvider",
@@ -146,8 +172,48 @@
         ]
       },
       "review": [
-        "Does the equivalent login appear with the same prominence as the social logins?",
-        "Is the app exempt, for example a client for the developer's own account system or an enterprise or education app?"
+        "Is the equivalent login offered wherever the social logins appear, at the same size and without scrolling?",
+        "Is the app exempt: own accounts only, an education or enterprise account, an electronic ID, a client for one third-party service, or an alternative marketplace?",
+        "If the equivalent is not Sign in with Apple, does it limit data to name and email, allow a private email, and avoid ad tracking without consent?"
+      ]
+    },
+    {
+      "id": "account.siwa-private-email",
+      "title": "Sign in with Apple undermined by re-asking for email or rejecting relay addresses",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "4.8"
+      ],
+      "applies_when": [
+        "accounts"
+      ],
+      "summary": "Guideline 4.8 values a login that lets people keep their email private. Asking for a personal email or name again after Sign in with Apple, or refusing a private relay address, defeats that choice, and Apple's design guidance says not to override it. Apple announced in August 2026 that new relay addresses will be issued on `private.icloud.com` later in 2026; validation or allowlists that accept only `privaterelay.appleid.com` will reject those users.",
+      "fix": "Use the name and email from the Sign in with Apple credential, ask for nothing else the app does not need, and accept relay addresses on both `private.icloud.com` and `privaterelay.appleid.com`. Register your outbound email domains for the private relay service.",
+      "references": [
+        "https://developer.apple.com/news/?id=1ptvdtcm",
+        "https://developer.apple.com/design/human-interface-guidelines/sign-in-with-apple",
+        "https://developer.apple.com/documentation/signinwithapple/communicating-using-the-private-email-relay-service"
+      ],
+      "check": {
+        "id": "siwa-relay-domain",
+        "confidence": "medium",
+        "legacy_domain": "privaterelay.appleid.com",
+        "required_domain": "private.icloud.com",
+        "siwa_signals": [
+          "ASAuthorizationAppleIDProvider",
+          "SignInWithAppleButton"
+        ]
+      },
+      "review": [
+        "After Sign in with Apple, does the app ask for an email address or name it already received?",
+        "Does sign-up and email validation accept a relay address on `private.icloud.com`?"
       ]
     },
     {
@@ -962,6 +1028,127 @@
       ]
     },
     {
+      "id": "design.apple-emoji",
+      "title": "Apple emoji images embedded in the app",
+      "severity": "error",
+      "evidence": [
+        "binary",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "4.5.6",
+        "5.2.5"
+      ],
+      "applies_when": [],
+      "summary": "Apps and their metadata may use Unicode characters that render as Apple emoji, but Apple emoji artwork may not be embedded in the app binary or used on other platforms. Keyboards and sticker packs may not include Apple emoji.",
+      "fix": "Render emoji as Unicode text with the system font, or ship your own original emoji artwork.",
+      "check": {
+        "id": "bundle-files",
+        "confidence": "low",
+        "patterns": [
+          "AppleColorEmoji",
+          "Apple Color Emoji",
+          "apple-emoji",
+          "emoji-apple"
+        ]
+      },
+      "review": [
+        "Does the bundle, a sticker pack, or a keyboard include images of Apple emoji?"
+      ]
+    },
+    {
+      "id": "design.apple-music",
+      "title": "MusicKit integration monetizes or misuses Apple Music",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "plist",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "4.5.2",
+        "5.2.5"
+      ],
+      "applies_when": [],
+      "summary": "With MusicKit, people must start Apple Music playback themselves and control it with standard play, pause, and skip controls. Apps may not charge for or indirectly monetize Apple Music access, and may not download, upload, or share music files from MusicKit beyond what its documentation allows. Cover art and metadata are for playback and playlists only, deeper uses such as syncing a song to video need rights-holder licenses, and Apple Music user data must be disclosed in the purpose string and never used for ads or identification. iTunes and Apple Music previews may not be used for entertainment value, such as background music, and must link to the music.",
+      "fix": "Gate playback on a user action, keep standard controls, remove paywalls around Apple Music features, and state Apple Music data access in `NSAppleMusicUsageDescription`.",
+      "references": [
+        "https://developer.apple.com/musickit/"
+      ],
+      "check": {
+        "id": "code-signals",
+        "confidence": "low",
+        "signals": [
+          "import MusicKit",
+          "MusicAuthorization",
+          "ApplicationMusicPlayer",
+          "SystemMusicPlayer",
+          "MPMusicPlayerController"
+        ]
+      },
+      "review": [
+        "Does any Apple Music playback start without the person asking for it?",
+        "Is any Apple Music feature behind a purchase, subscription, ad, or data request?",
+        "Are Apple Music previews used as background music or game soundtracks?"
+      ]
+    },
+    {
+      "id": "design.apple-site-scraping",
+      "title": "Data scraped from Apple sites or turned into rankings",
+      "severity": "error",
+      "evidence": [
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "4.5.1",
+        "4.5"
+      ],
+      "applies_when": [],
+      "summary": "Apps may use approved Apple RSS feeds, but may not scrape information from Apple sites, including apple.com, the App Store, the iTunes Store, App Store Connect, and the developer portal, or build rankings from that information.",
+      "fix": "Use Apple's approved feeds and APIs as documented, and drop HTML scraping of Apple pages and any charts derived from it.",
+      "review": [
+        "Does the app parse HTML from an Apple site, or compute rankings from Apple data?"
+      ]
+    },
+    {
+      "id": "design.ar-experience",
+      "title": "ARKit app offers only a dropped-in model or replayed animation",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "4.2.1"
+      ],
+      "applies_when": [],
+      "summary": "Apps using ARKit must provide rich, integrated augmented reality experiences. Placing a single model in an AR view or replaying an animation is not enough.",
+      "fix": "Make the AR scene interactive and tied to the real world: plane or object anchoring with meaningful placement, interaction, occlusion, or content that responds to the environment.",
+      "check": {
+        "id": "code-signals",
+        "confidence": "low",
+        "signals": [
+          "import ARKit",
+          "ARSCNView",
+          "ARView",
+          "ARWorldTrackingConfiguration",
+          "ARSession"
+        ]
+      },
+      "review": [
+        "Beyond placing a model, what can a person do in the AR view that depends on their surroundings?"
+      ]
+    },
+    {
       "id": "design.copycat",
       "title": "Name, icon, or UI copies another app or an Apple product",
       "severity": "warning",
@@ -976,11 +1163,49 @@
         "5.2.5"
       ],
       "applies_when": [],
-      "summary": "Apps may not copy another developer's name, icon, brand, or UI, and may not look confusingly similar to Apple products, interfaces, or apps.",
-      "fix": "Use an original name and icon, and check them against the App Store and a trademark search before submitting.",
+      "summary": "Apps may not copy another developer's name, icon, brand, or UI, and may not look confusingly similar to Apple products, interfaces, or apps. Since November 2025, 4.1(c) forbids another developer's icon, brand, or product name in the app's icon or name without that developer's approval, and impersonating another app or service is a Code of Conduct violation that can end the developer account.",
+      "fix": "Use an original name and icon, and check them against the App Store and a trademark search before submitting. If the app integrates with another company's product, get written approval before using its name or logo, and attach it in the review notes.",
+      "references": [
+        "https://developer.apple.com/news/?id=ey6d8onl"
+      ],
       "review": [
         "Does a search for the app name show another app with the same or a confusable name or icon?",
-        "Does any screen imitate an Apple app or system UI closely enough to be mistaken for it?"
+        "Does the name or icon contain another company's brand or product name, such as an AI model or social network, and is there written approval?",
+        "Does any screen imitate an Apple app or system UI closely enough to be mistaken for it?",
+        "Could a person mistake the app for an official app of a service it connects to?"
+      ]
+    },
+    {
+      "id": "design.game-center-ids",
+      "title": "Game Center player IDs displayed, shared, or mined",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "4.5.5",
+        "4.5.3"
+      ],
+      "applies_when": [
+        "games"
+      ],
+      "summary": "Game Center player IDs may be used only as the Game Center terms allow, and must not be shown in the app or passed to any third party. Reverse lookup, tracing, associating, or harvesting player IDs, aliases, or other Game Center data leads to removal from the Apple Developer Program, and Game Center may not be used to spam players.",
+      "fix": "Use player IDs only as opaque keys on your own server, show display names instead, keep them out of analytics and ad SDK calls, and never link them to other identities.",
+      "check": {
+        "id": "code-signals",
+        "confidence": "low",
+        "signals": [
+          "gamePlayerID",
+          "teamPlayerID",
+          "GKLocalPlayer"
+        ]
+      },
+      "review": [
+        "Is any Game Center player ID shown on screen or sent to an analytics, attribution, or ad SDK?",
+        "Is Game Center data joined with other identifiers such as email or device IDs?"
       ]
     },
     {
@@ -1008,24 +1233,282 @@
       ]
     },
     {
-      "id": "design.spam",
-      "title": "App duplicates the developer's other apps or a saturated category",
-      "severity": "warning",
+      "id": "design.live-activity-ads",
+      "title": "Live Activities or Apple services used for promotions or spam",
+      "severity": "error",
       "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "4.5.3",
+        "4.5"
+      ],
+      "applies_when": [],
+      "summary": "Apple services, including Game Center, push notifications, and Live Activities, may not be used to spam, phish, or send unsolicited messages; the June 2026 revision names Live Activities explicitly. The Human Interface Guidelines also say not to use a Live Activity for ads or promotions: it should show only information about the ongoing event or task.",
+      "fix": "Start a Live Activity only for a task or event the person is following, update it only with that task's state, and end it when the task ends. Send offers through opted-in marketing notifications instead.",
+      "references": [
+        "https://developer.apple.com/news/?id=a233fmpw",
+        "https://developer.apple.com/design/human-interface-guidelines/live-activities"
+      ],
+      "check": {
+        "id": "code-signals",
+        "confidence": "low",
+        "signals": [
+          "import ActivityKit",
+          "Activity.request",
+          "ActivityAttributes",
+          "pushToStartToken"
+        ]
+      },
+      "review": [
+        "Does every Live Activity track a task or event the person started or chose to follow?",
+        "Can any Live Activity update, or a push-to-start activity, carry an offer, discount, or promotion?"
+      ]
+    },
+    {
+      "id": "design.monetized-capabilities",
+      "title": "Charging for built-in device or Apple capabilities",
+      "severity": "error",
+      "evidence": [
+        "runtime",
         "human"
       ],
       "enforced_by": "app-review",
       "automation": "manual",
       "guidelines": [
+        "4.10"
+      ],
+      "applies_when": [],
+      "summary": "Apps may not monetize capabilities the hardware or operating system provides, such as push notifications, the camera, or the gyroscope, or Apple services such as Apple Music access, iCloud storage, or Screen Time APIs. Selling the feature built on top is fine; selling access to the capability itself is not.",
+      "fix": "Charge for the value your app adds, such as editing tools or content, and keep basic access to system capabilities free.",
+      "review": [
+        "Does any purchase unlock a system capability itself, such as notifications, the camera, the flashlight, iCloud sync, or Screen Time controls?"
+      ]
+    },
+    {
+      "id": "design.push-marketing",
+      "title": "Marketing push without in-app opt-in and opt-out, or push required",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "4.5.4"
+      ],
+      "applies_when": [],
+      "summary": "Push notifications must not be required for the app to work and must not carry sensitive personal or confidential information. Promotional or direct-marketing pushes need explicit opt-in through consent language shown in the app's UI, plus an in-app way to opt out. The system notification permission alone is not marketing consent.",
+      "fix": "Add a separate, unchecked marketing-notifications consent with clear wording, a toggle in settings to turn it off, and keep the app fully usable when notifications are denied.",
+      "check": {
+        "id": "push-marketing",
+        "confidence": "low",
+        "sdk_signals": [
+          "OneSignal",
+          "BrazeKit",
+          "import Braze",
+          "CleverTapSDK",
+          "IterableSDK",
+          "AirshipCore",
+          "MoEngageSDK"
+        ],
+        "registration_signals": [
+          "registerForRemoteNotifications",
+          "UNUserNotificationCenter"
+        ],
+        "opt_out_signals": [
+          "marketingConsent",
+          "notificationPreferences",
+          "notificationSettings",
+          "pushEnabled",
+          "promotionalNotifications"
+        ]
+      },
+      "review": [
+        "Does the app send promotional pushes, and did the person opt in through consent text in the app?",
+        "Can the person turn marketing pushes off inside the app?",
+        "Does every feature still work when notification permission is denied?",
+        "Can a push payload contain health, financial, or other sensitive details?"
+      ]
+    },
+    {
+      "id": "design.remote-desktop",
+      "title": "Remote desktop client mirrors specific software or cloud apps",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "4.2.7"
+      ],
+      "applies_when": [],
+      "summary": "A remote desktop app that mirrors specific software or services, rather than the whole host device, must connect only to a user-owned personal computer or game console on the same local network, run and render everything on the host, start account creation and management on the host, and show no store-like UI or browsing of software the user does not own. Thin clients for cloud-based apps are not allowed.",
+      "fix": "Limit connections to user-owned hosts on the LAN, move sign-up and account management to the host, and remove any catalog or purchase UI for unowned software. A generic mirror of the whole host device is outside these extra conditions.",
+      "check": {
+        "id": "code-signals",
+        "confidence": "low",
+        "signals": [
+          "libvncclient",
+          "LibVNC",
+          "VNCClient",
+          "RDPSession",
+          "RDPKit",
+          "RemoteDesktopClient",
+          "FreeRDP",
+          "JumpDesktop"
+        ]
+      },
+      "review": [
+        "Does the client mirror the whole host, or specific apps or services on it?",
+        "Can it connect to anything other than a user-owned computer or console on the same local network?",
+        "Does the client show a catalog or let people buy or pick software they do not already own?"
+      ]
+    },
+    {
+      "id": "design.review-prompt",
+      "title": "Custom review prompt instead of the system API",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.6.1"
+      ],
+      "applies_when": [],
+      "summary": "Apps must ask for ratings through the provided API, which lets people rate and review without leaving the app; custom review prompts are not allowed. A homemade \"Rate us\" alert, a star picker that forwards to the App Store, or a direct write-review link shown as a prompt all count as custom prompts.",
+      "fix": "Call SwiftUI's `requestReview` environment action, or `AppStore.requestReview(in:)` in UIKit, at a natural pause; the system shows it at most three times in 365 days. Keep a link with `action=write-review` only for a control the person chooses to tap, such as a settings row, not as a prompt.",
+      "references": [
+        "https://developer.apple.com/documentation/storekit/requesting-app-store-reviews"
+      ],
+      "check": {
+        "id": "review-prompt",
+        "confidence": "medium",
+        "custom_signals": [
+          "action=write-review"
+        ],
+        "system_signals": [
+          "requestReview",
+          "SKStoreReviewController",
+          "AppStore.requestReview"
+        ],
+        "sentiment_gate_phrases": [
+          "enjoying the app",
+          "enjoying this app",
+          "loving the app",
+          "do you like this app",
+          "are you enjoying"
+        ]
+      },
+      "review": [
+        "Does any alert, sheet, or banner ask for a rating without using the system review API?",
+        "Does a pre-prompt send only happy users to the rating request and unhappy users elsewhere?"
+      ]
+    },
+    {
+      "id": "design.spam",
+      "title": "App duplicates the developer's other apps or a saturated category",
+      "severity": "warning",
+      "evidence": [
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
         "4.3"
       ],
       "applies_when": [],
-      "summary": "Guideline 4.3 rejects multiple bundle IDs for the same app, apps indistinguishable from what is widely available, and template-based apps. Since June 2026, existing apps that are not updated, improved, or attracting customers may also be removed.",
-      "fix": "Merge variants into one app with in-app choices. In the review notes, state what is distinctive about the app compared with the category.",
+      "summary": "Guideline 4.3 rejects multiple bundle IDs for the same app, apps indistinguishable from what is widely available, and template-based apps. Dating, flashlight, sound effects, wallpaper, simple timer, and fortune-telling apps are accepted only with a meaningfully different or improved experience, and drinking game, Kama Sutra, fart, and burp apps are treated as low-effort; repeated submissions can end the developer account. Since June 2026, existing apps that are not updated, improved, or attracting customers may also be removed.",
+      "fix": "Merge variants into one app with in-app choices or in-app purchase. In the review notes, state what is distinctive about the app compared with the category.",
+      "references": [
+        "https://developer.apple.com/news/?id=a233fmpw"
+      ],
+      "check": {
+        "id": "metadata-terms",
+        "confidence": "low",
+        "fields": [
+          "name",
+          "subtitle",
+          "keywords"
+        ],
+        "terms": [
+          "dating app",
+          "online dating",
+          "meet singles",
+          "flashlight",
+          "sound effects",
+          "soundboard",
+          "wallpaper",
+          "simple timer",
+          "fortune telling",
+          "fortune teller",
+          "drinking game",
+          "kama sutra",
+          "fart app",
+          "fart sounds",
+          "burp"
+        ]
+      },
       "review": [
         "Does the developer account have another app with the same core function?",
         "What does this app do that the top apps in its category do not?",
-        "Is it built from a commercial template or app generator?"
+        "Is it built from a commercial template or app generator?",
+        "Does the app ship separate binaries per city, team, school, or client that one app could serve?"
+      ]
+    },
+    {
+      "id": "design.standalone",
+      "title": "App needs another app, or downloads resources without asking",
+      "severity": "warning",
+      "evidence": [
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "4.2.3"
+      ],
+      "applies_when": [],
+      "summary": "An app must work on its own without requiring another app to be installed. If it must download additional resources before it can function on first launch, it must disclose the download size and ask people before starting.",
+      "fix": "Make the core features work without a companion app. Show the download size and a confirmation before fetching first-launch assets, or bundle them, or use Background Assets.",
+      "review": [
+        "Does any core feature stop working when a companion app is not installed?",
+        "Does the app download content before first use, and does it show the size and ask first?"
+      ]
+    },
+    {
+      "id": "design.template-generated",
+      "title": "App built from a commercial template or generator submitted for a client",
+      "severity": "error",
+      "evidence": [
+        "project",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "4.2.6",
+        "4.3"
+      ],
+      "applies_when": [],
+      "summary": "Apps created from a commercialized template or app generation service are rejected unless the provider of the app's content submits them. Template services should not submit apps on behalf of clients; they may instead offer one aggregated \"picker\" app that hosts every client's content.",
+      "fix": "Have the business that owns the content submit the app from its own developer account with customized features, or fold the client into a single aggregated app.",
+      "review": [
+        "Was the app produced by a template or app-builder service, and is the account holder the content owner?",
+        "Do other apps from the same template share this app's code, screens, and assets?"
       ]
     },
     {
@@ -1058,7 +1541,9 @@
         ]
       },
       "review": [
-        "Is there meaningful native functionality beyond the web content?"
+        "Is there meaningful native functionality beyond the web content?",
+        "Is the app mainly marketing material, ads, web clippings, a content aggregator, or a collection of links?",
+        "Is the app only a song, a movie, a book, or a game guide that belongs in the iTunes Store or Apple Books?"
       ]
     },
     {
@@ -1097,18 +1582,163 @@
         "2.3.6"
       ],
       "applies_when": [],
-      "summary": "App Store ratings now include 13+, 16+, and 18+, with new required questions on in-app controls, capabilities, medical or wellness topics, and violent themes. Updates cannot be submitted until the new questionnaire is answered, and inaccurate answers draw 2.3.6 rejections.",
-      "fix": "Answer the updated age rating questionnaire in App Store Connect honestly, covering user-generated content, web access, and AI chat features.",
+      "summary": "App Store ratings now include 13+, 16+, and 18+, with new required questions on in-app controls, capabilities, medical or wellness topics, and violent themes. Updates cannot be submitted until the new questionnaire is answered, and inaccurate answers draw 2.3.6 rejections. Since September 2026, new apps and updates must also answer the social media questions; a social media capability is the ability to redistribute, amplify, or interact with user-generated content through a social feed or similar discovery method, and it adds a Social Media descriptor and places the app in the Social Media Time Allowance category.",
+      "fix": "Answer the updated age rating questionnaire in App Store Connect honestly, covering user-generated content, web access, AI chat features, and social media capabilities. If social features are off for people under 13, say so in the answers.",
       "since": "2026-01-31",
       "references": [
-        "https://developer.apple.com/news/?id=ks775ehf"
+        "https://developer.apple.com/news/?id=ks775ehf",
+        "https://developer.apple.com/news/?id=tlur8uvi",
+        "https://developer.apple.com/help/app-store-connect/reference/app-information/age-ratings-values-and-definitions"
       ],
       "check": {
         "id": "asc-age-rating",
         "confidence": "high"
       },
       "review": [
-        "Do the answers account for user-generated content, unrestricted web access, and AI-generated content?"
+        "Do the answers account for user-generated content, unrestricted web access, and AI-generated content?",
+        "Does the app have a feed or discovery surface for user content, and do the social media answers say so?"
+      ]
+    },
+    {
+      "id": "legal.app-quality",
+      "title": "Complaints and refund requests signal low quality",
+      "severity": "note",
+      "evidence": [
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "5.6.4"
+      ],
+      "applies_when": [],
+      "summary": "Excessive customer reports, negative reviews, and refund requests indicate an app is not meeting the App Store's quality bar, and Apple may weigh that when judging whether a developer follows the Code of Conduct. Apps that no longer work as intended or are not supported are removed.",
+      "fix": "Track ratings, review themes, and refund reasons for each release, fix the top causes first, and answer reviews respectfully.",
+      "references": [
+        "https://developer.apple.com/support/app-store-improvements/"
+      ],
+      "review": [
+        "Do recent reviews or refund requests repeat the same complaint, and does this release fix it?"
+      ]
+    },
+    {
+      "id": "legal.china-generative-ai",
+      "title": "Generative AI offered on the China mainland storefront without approval",
+      "severity": "warning",
+      "evidence": [
+        "metadata",
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "5"
+      ],
+      "applies_when": [
+        "ai"
+      ],
+      "summary": "Apps must comply with the law in every storefront where they are available. China mainland requires government approval for generative AI services offered to the public, and some apps also need an MIIT ICP Filing Number to be listed there. An app available in China mainland that offers an unapproved model, or names one such as ChatGPT, OpenAI, Gemini, Claude, or Midjourney in its metadata, risks rejection or removal from that storefront.",
+      "fix": "Either remove China mainland from the app's availability, or confirm with counsel which approvals the AI features need there and provide the ICP Filing Number in App Store Connect. Check every localization, not only Simplified Chinese, since all of them can appear on that storefront.",
+      "references": [
+        "https://developer.apple.com/help/app-store-connect/reference/app-information/app-information"
+      ],
+      "review": [
+        "Is China mainland in the app's availability while the app offers generative AI features?",
+        "Does any localization name ChatGPT, GPT, OpenAI, Gemini, Claude, Anthropic, Midjourney, DALL-E, Copilot, or Stable Diffusion?",
+        "Does the app hold the approvals and ICP Filing Number China mainland requires for these features?"
+      ]
+    },
+    {
+      "id": "legal.code-of-conduct",
+      "title": "Manipulative practices or disrespectful conduct",
+      "severity": "error",
+      "evidence": [
+        "runtime",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "5.6",
+        "5.6.1"
+      ],
+      "applies_when": [],
+      "summary": "Apps must never prey on users: no tricking people into unwanted purchases, forcing them to share unnecessary data, raising prices in a tricky way, or charging for features or content that are not delivered. Developers must treat customers and Apple with respect, and responses to App Store reviews must address the reviewer's comments without personal information, spam, or marketing. Violations lead to termination of the developer account.",
+      "fix": "Remove dark patterns from purchase, cancellation, and data collection flows, deliver everything that is charged for, and keep review responses on topic and free of marketing.",
+      "review": [
+        "Does any flow push people into a purchase, a price increase, or data sharing they did not clearly choose?",
+        "Is every paid feature or item delivered as described?",
+        "Do responses to App Store reviews stay on the reviewer's point, without personal data, spam, or promotions?"
+      ]
+    },
+    {
+      "id": "legal.developer-identity",
+      "title": "Developer identity inconsistent or unverifiable",
+      "severity": "warning",
+      "evidence": [
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "5.6.2",
+        "1.5"
+      ],
+      "applies_when": [],
+      "summary": "How the developer represents themselves, their business, and their offerings must be accurate, truthful, and current, so Apple and customers know who they deal with and how to reach them. A seller name, support site, and app brand that point to different, unrelated entities, or contact details that do not work, undermine that.",
+      "fix": "Keep the seller name, support URL, marketing domain, privacy policy owner, and in-app contact details pointing to the same entity, and update them in App Store Connect and the developer account when anything changes.",
+      "review": [
+        "Do the seller name, support site, privacy policy, and app brand identify the same person or company?",
+        "Do the App Review contact details, support email, and phone number reach someone today?"
+      ]
+    },
+    {
+      "id": "legal.discovery-fraud",
+      "title": "Ratings, reviews, rankings, or referrals manipulated",
+      "severity": "error",
+      "evidence": [
+        "metadata",
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.6.3",
+        "5.6"
+      ],
+      "applies_when": [],
+      "summary": "Manipulating any part of the App Store experience, such as charts, search, reviews, or referrals, is not permitted, and repeated manipulative behavior leads to removal from the Apple Developer Program. Rewarding people for ratings or reviews, buying installs or reviews, and fake referral schemes all fall under it.",
+      "fix": "Remove rewards tied to ratings or reviews, ask for ratings only through the system prompt, and stop any paid install, review, or ranking service.",
+      "check": {
+        "id": "metadata-terms",
+        "confidence": "medium",
+        "fields": [
+          "description",
+          "promotional_text",
+          "release_notes",
+          "app_strings"
+        ],
+        "terms": [
+          "rate us 5 stars",
+          "rate 5 stars",
+          "give us 5 stars",
+          "5-star review",
+          "five-star review",
+          "review for coins",
+          "review to unlock",
+          "rate to unlock",
+          "rate for a reward",
+          "leave a review and get"
+        ]
+      },
+      "review": [
+        "Does the app or its marketing offer anything in return for a rating, review, or install?",
+        "Is anyone paid to install, rate, or review the app, or to move it in charts or search?"
       ]
     },
     {
@@ -1156,6 +1786,187 @@
       }
     },
     {
+      "id": "legal.media-downloading",
+      "title": "Downloads or converts media from third-party services",
+      "severity": "error",
+      "evidence": [
+        "metadata",
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.2.3"
+      ],
+      "applies_when": [],
+      "summary": "Apps may not facilitate illegal file sharing, or save, convert, or download media from third-party sources such as Apple Music, YouTube, SoundCloud, or Vimeo without explicit authorization from those sources. Streaming from those services can also breach their terms of use. Apple may ask for the authorization at any time.",
+      "fix": "Remove the download and conversion features, or get written authorization from the source and attach it in the review notes. Play third-party media only through the service's official embed or SDK.",
+      "check": {
+        "id": "metadata-terms",
+        "confidence": "medium",
+        "fields": [
+          "name",
+          "subtitle",
+          "description",
+          "keywords",
+          "promotional_text"
+        ],
+        "terms": [
+          "video downloader",
+          "youtube downloader",
+          "download youtube",
+          "youtube to mp3",
+          "youtube mp3",
+          "mp3 converter",
+          "music downloader",
+          "save videos from",
+          "download videos from",
+          "instagram downloader",
+          "tiktok downloader",
+          "reels downloader",
+          "soundcloud downloader",
+          "vimeo downloader",
+          "torrent"
+        ]
+      },
+      "review": [
+        "Can the app save or convert audio or video from a service it does not own, and is there written authorization?"
+      ]
+    },
+    {
+      "id": "legal.third-party-content",
+      "title": "Third-party content or services used without rights",
+      "severity": "error",
+      "evidence": [
+        "metadata",
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "5.2",
+        "5.2.1",
+        "5.2.2"
+      ],
+      "applies_when": [],
+      "summary": "Apps may include only content the developer created or licensed. Third-party trademarks, copyrighted works, and patented ideas need permission, and the app, its bundle, and the developer name may not carry misleading or copycat names. Apps that use, display, or monetize a third-party service must be permitted by that service's terms, and Apple may ask for proof. The app should be submitted by the person or entity that owns or licensed the intellectual property, and the Content Rights answer in App Store Connect must match.",
+      "fix": "Collect licenses or written permission for every third-party brand, dataset, API, and media asset, attach them in the review notes, and answer the Content Rights question accurately.",
+      "references": [
+        "https://developer.apple.com/help/app-store-connect/reference/app-information/app-information"
+      ],
+      "review": [
+        "Does the app show another company's brand, characters, or content, and is there written permission?",
+        "Does the app use, display, or charge for access to a third-party service, and do that service's terms allow it?",
+        "Is the account holder the owner or licensee of the app's main brand and content?",
+        "Does the Content Rights answer in App Store Connect reflect the third-party content in the app?"
+      ]
+    },
+    {
+      "id": "metadata.all-audiences",
+      "title": "Icons, screenshots, or previews not suitable for a 4+ audience",
+      "severity": "warning",
+      "evidence": [
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "2.3.8"
+      ],
+      "applies_when": [],
+      "summary": "Metadata is shown to everyone, so app and in-app purchase icons, screenshots, and previews must meet a 4+ rating even when the app is rated higher. Gruesome deaths or a gun pointed at a character are typical problems. The app name and every icon, including small, large, Apple Watch, and alternate icons, must look alike so people are not confused.",
+      "fix": "Swap mature imagery for scenes that suit all ages, and keep alternate icons recognizably the same app as the primary icon.",
+      "review": [
+        "Would every icon, screenshot, and preview frame be acceptable in a 4+ app?",
+        "Do the alternate icons, Apple Watch icon, and in-app purchase icons clearly belong to the same app?"
+      ]
+    },
+    {
+      "id": "metadata.app-previews",
+      "title": "App preview shows more than screen captures of the app",
+      "severity": "warning",
+      "evidence": [
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.3.4"
+      ],
+      "applies_when": [],
+      "summary": "App previews may only use video screen captures of the app itself; sticker and iMessage apps may show the experience in Messages. Narration and video or text overlays are allowed. Footage of people holding devices, rendered device frames, live-action scenes, or features the build lacks are not. Each localization can carry up to three previews per device size, 15 to 30 seconds long.",
+      "fix": "Record the preview on device or in Simulator from the submitted build, keep it between 15 and 30 seconds, and explain anything unclear with captions or narration rather than staged footage.",
+      "references": [
+        "https://developer.apple.com/help/app-store-connect/reference/app-information/app-preview-specifications"
+      ],
+      "check": {
+        "id": "preview-sets",
+        "confidence": "medium",
+        "max_per_set": 3,
+        "min_seconds": 15,
+        "max_seconds": 30
+      },
+      "review": [
+        "Is every frame a screen capture of this app, with no device bezels, hands, or live-action footage?",
+        "Does every feature shown in the preview exist in the submitted build?"
+      ]
+    },
+    {
+      "id": "metadata.apple-endorsement",
+      "title": "Store text implies Apple endorses or supplies the app",
+      "severity": "warning",
+      "evidence": [
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.2.4"
+      ],
+      "applies_when": [],
+      "summary": "Apps may not suggest that Apple is a source or supplier of the app, or that Apple endorses claims about its quality or functionality. The Editor's Choice badge is applied by Apple automatically, so a self-applied badge or claim is not allowed.",
+      "fix": "Remove endorsement wording and self-made Apple badges from the name, subtitle, description, screenshots, and previews. Refer to Apple products only to state compatibility, such as \"for iPhone\".",
+      "references": [
+        "https://developer.apple.com/app-store/marketing/guidelines/",
+        "https://www.apple.com/legal/intellectual-property/guidelinesfor3rdparties.html"
+      ],
+      "check": {
+        "id": "metadata-terms",
+        "confidence": "medium",
+        "fields": [
+          "name",
+          "subtitle",
+          "description",
+          "promotional_text",
+          "release_notes"
+        ],
+        "terms": [
+          "approved by apple",
+          "apple approved",
+          "apple-approved",
+          "endorsed by apple",
+          "apple endorsed",
+          "certified by apple",
+          "apple certified",
+          "recommended by apple",
+          "apple recommended",
+          "official apple",
+          "made by apple",
+          "editor's choice",
+          "editors' choice",
+          "editors choice"
+        ]
+      },
+      "review": [
+        "Does any screenshot or preview show an Apple award, badge, or logo the developer added?"
+      ]
+    },
+    {
       "id": "metadata.apple-trademarks",
       "title": "Apple trademarks used in the app name or icon",
       "severity": "warning",
@@ -1170,9 +1981,10 @@
         "2.3.7"
       ],
       "applies_when": [],
-      "summary": "Apps may not look confusingly similar to Apple products or imply Apple endorsement. Using Apple trademarks such as iPhone, iPad, Apple Watch, Siri, or App Store as part of the app name, or Apple product images in the icon, is a common rejection.",
-      "fix": "Use Apple trademarks only referentially in the description, for example \"for iPhone\". Keep them out of the name and icon.",
+      "summary": "Apps may not look confusingly similar to Apple products or imply Apple endorsement. Apple's marketing guidelines allow Apple product names only in a referential phrase such as \"App Name for iPhone\", never as \"iPhone App Name\", and \"Apple Vision Pro\" may not appear in the app name at all. Apple product images in the icon are a common rejection.",
+      "fix": "Use Apple trademarks only referentially, for example \"for iPhone\" or \"works with Apple Watch\", and keep them out of the name's lead and the icon. Use Apple product images only as is, without modification.",
       "references": [
+        "https://developer.apple.com/app-store/marketing/guidelines/",
         "https://www.apple.com/legal/intellectual-property/guidelinesfor3rdparties.html"
       ],
       "check": {
@@ -1188,16 +2000,152 @@
           "iOS",
           "Apple",
           "Mac",
+          "MacBook",
           "Siri",
           "App Store",
           "Apple Watch",
+          "Apple TV",
+          "Vision Pro",
           "AirPods",
+          "AirDrop",
+          "AirTag",
           "FaceTime",
-          "iCloud"
+          "iMessage",
+          "iCloud",
+          "Apple Pay",
+          "Apple Music",
+          "CarPlay",
+          "HomeKit"
         ]
       },
       "review": [
-        "Does the icon use an Apple product image or an Apple glyph?"
+        "Does the icon use an Apple product image or an Apple glyph?",
+        "Does an Apple product name appear before the app's own name, as in \"iPhone App Name\"?"
+      ]
+    },
+    {
+      "id": "metadata.asset-rights",
+      "title": "Store assets use material without rights or real people's data",
+      "severity": "warning",
+      "evidence": [
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "2.3.9"
+      ],
+      "applies_when": [],
+      "summary": "The developer must hold the rights to everything in the icon, screenshots, and previews, including photos, music, characters, and fonts. Screenshots and previews must show fictional account information, not a real person's data.",
+      "fix": "Replace licensed or scraped imagery and music with owned or properly licensed assets, and capture screenshots from a demo account filled with fictional names, photos, and numbers.",
+      "review": [
+        "Is every image, track, character, and font in the icon, screenshots, and previews owned or licensed?",
+        "Do the screenshots and previews show only fictional names, contacts, messages, and account details?"
+      ]
+    },
+    {
+      "id": "metadata.beta-wording",
+      "title": "App presented as a beta, demo, or test build",
+      "severity": "warning",
+      "evidence": [
+        "metadata",
+        "plist",
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.2"
+      ],
+      "applies_when": [],
+      "summary": "Demos, betas, and trial versions do not belong on the App Store; TestFlight is for those. A store name, display name, version string, or in-app label that calls the build a beta, alpha, preview, or test build tells App Review it is not final. TestFlight builds must not be distributed to testers in exchange for compensation, including crowdfunding rewards.",
+      "fix": "Remove beta, alpha, preview, and test labels from the store text, `CFBundleDisplayName`, the version string, and the shipped UI, and distribute pre-release builds through TestFlight.",
+      "references": [
+        "https://developer.apple.com/testflight/"
+      ],
+      "check": {
+        "id": "metadata-terms",
+        "confidence": "medium",
+        "fields": [
+          "name",
+          "subtitle",
+          "description",
+          "promotional_text",
+          "release_notes",
+          "display_name",
+          "version"
+        ],
+        "terms": [
+          "beta",
+          "alpha version",
+          "alpha build",
+          "test build",
+          "test version",
+          "testing version",
+          "preview build",
+          "developer preview",
+          "demo version",
+          "early access",
+          "pre-release",
+          "prerelease",
+          "not for release",
+          "internal build",
+          "work in progress"
+        ]
+      },
+      "review": [
+        "Does any shipped screen label the app or a feature as beta, preview, or test?",
+        "Are TestFlight testers ever offered rewards, refunds, or perks for testing?"
+      ]
+    },
+    {
+      "id": "metadata.category-fit",
+      "title": "Primary category does not match the app's main function",
+      "severity": "note",
+      "evidence": [
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "2.3.5"
+      ],
+      "applies_when": [],
+      "summary": "The primary category must describe the app's main function or subject. App Review may change a category that is way off base, and choosing an inappropriate category is against the guidelines.",
+      "fix": "Choose the category where people look for apps like yours, using Apple's category definitions. For a game, also pick up to two fitting Games subcategories. On macOS, match the category set in Xcode.",
+      "references": [
+        "https://developer.apple.com/app-store/categories/"
+      ],
+      "review": [
+        "Does the primary category describe what people mostly do in the app?",
+        "Would people looking for this app browse the chosen category?"
+      ]
+    },
+    {
+      "id": "metadata.claims-match-build",
+      "title": "Store text or screenshots promise what the build lacks",
+      "severity": "warning",
+      "evidence": [
+        "metadata",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "2.3",
+        "2.3.1"
+      ],
+      "applies_when": [],
+      "summary": "Metadata, including privacy information, the description, screenshots, and previews, must reflect the app's core experience and stay current with each version. Promoting content or services the app does not offer is misleading marketing under 2.3.1 and grounds for removal. Localizations that claim different features from the primary language count too.",
+      "fix": "Cross-read every claim in the description, subtitle, promotional text, and screenshot captions against the submitted build, in every localization, and cut or reword anything the build does not do today.",
+      "review": [
+        "Does every feature named in the description, subtitle, and screenshot captions work in this build?",
+        "Do claims such as offline use, sync, AI, or supported devices hold for this build?",
+        "Do the localized descriptions claim the same features as the primary language?"
       ]
     },
     {
@@ -1211,8 +2159,8 @@
       "automation": "automated",
       "guidelines": [],
       "applies_when": [],
-      "summary": "App Store Connect caps the subtitle at 30 characters, keywords at 100 bytes, promotional text at 170 characters, and the description and What's New text at 4,000 characters each, per localization.",
-      "fix": "Trim the field. Keywords count bytes, so non-Latin scripts fit fewer characters; separate them with commas and no spaces.",
+      "summary": "App Store Connect caps the subtitle at 30 characters, keywords at 100 bytes with each keyword longer than two characters, promotional text at 170 characters, and the description and What's New text at 4,000 characters each, per localization. The App Review notes hold 4,000 bytes. The description is plain text; HTML is not supported.",
+      "fix": "Trim the field. Keywords and review notes count bytes, so non-Latin scripts fit fewer characters; separate keywords with commas and no spaces.",
       "references": [
         "https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information"
       ],
@@ -1226,9 +2174,334 @@
           "release_notes": 4000
         },
         "byte_limits": {
-          "keywords": 100
-        }
+          "keywords": 100,
+          "review_notes": 4000
+        },
+        "min_keyword_length": 3,
+        "reject_html": [
+          "description"
+        ]
       }
+    },
+    {
+      "id": "metadata.future-features",
+      "title": "Store text advertises features that are not in the build",
+      "severity": "warning",
+      "evidence": [
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.3",
+        "2.1"
+      ],
+      "applies_when": [],
+      "summary": "Metadata must reflect the app's core experience as submitted, and submissions must be final. \"Coming soon\" sections, roadmaps, and promises that the app \"will support\" something describe features the reviewer cannot test, and read as misleading or incomplete.",
+      "fix": "Describe only what this build does. Announce upcoming features after they ship, in What's New and the description of that version.",
+      "check": {
+        "id": "metadata-terms",
+        "confidence": "medium",
+        "fields": [
+          "subtitle",
+          "description",
+          "promotional_text",
+          "release_notes"
+        ],
+        "terms": [
+          "coming soon",
+          "will support",
+          "will be available",
+          "will be added",
+          "in a future update",
+          "in an upcoming update",
+          "in the next update",
+          "on our roadmap",
+          "roadmap",
+          "stay tuned",
+          "not yet available"
+        ]
+      },
+      "review": [
+        "Does the description mention any feature, platform, or content that this build does not include?"
+      ]
+    },
+    {
+      "id": "metadata.iap-metadata",
+      "title": "Store page hides which items need a purchase",
+      "severity": "warning",
+      "evidence": [
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.3.2"
+      ],
+      "applies_when": [
+        "in-app-purchase"
+      ],
+      "summary": "When an app sells in-app purchases, the description, screenshots, and previews must make clear which featured items, levels, or subscriptions cost extra. Promoted in-app purchases need a display name, description, and image suitable for a public audience, and the app must complete a purchase started from the App Store when it launches.",
+      "fix": "Mark paid content as paid in the description and screenshot captions. For promoted purchases, keep the display name to 30 characters and the description to 45, use a 1024 x 1024 image that is not a screenshot or the app icon, and handle purchase intents at launch, with `PurchaseIntent.intents` in StoreKit 2 or `paymentQueue(_:shouldAddStorePayment:for:)` in the original API.",
+      "references": [
+        "https://developer.apple.com/app-store/promoting-in-app-purchases/"
+      ],
+      "check": {
+        "id": "metadata-length",
+        "confidence": "medium",
+        "limits": {
+          "iap_display_name": 30,
+          "iap_description": 45
+        }
+      },
+      "review": [
+        "Does every screenshot or description line that shows paid content say it requires a purchase?",
+        "Does buying a promoted in-app purchase from the product page complete in the app on first launch?"
+      ]
+    },
+    {
+      "id": "metadata.in-app-events",
+      "title": "In-app event metadata, timing, or deep link is wrong",
+      "severity": "warning",
+      "evidence": [
+        "metadata",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "2.3.13"
+      ],
+      "applies_when": [],
+      "summary": "An in-app event must fit an event type offered in App Store Connect, its metadata must describe the event rather than the app, it must run at the dates and times selected in every storefront, and its deep link must open the right place in the app. Monetized events follow Section 3.",
+      "fix": "Describe only the event, schedule it to match when it actually runs, and test the event deep link on a fresh install and with the app already running.",
+      "references": [
+        "https://developer.apple.com/app-store/in-app-events/"
+      ],
+      "review": [
+        "Does the event card describe the event itself, not the app in general?",
+        "Does the event deep link open the event screen, including on a fresh install?",
+        "Does the event run at the scheduled times in every storefront where it appears?"
+      ]
+    },
+    {
+      "id": "metadata.keywords",
+      "title": "Keywords name other apps or waste the 100-byte budget",
+      "severity": "warning",
+      "evidence": [
+        "metadata"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.3.7"
+      ],
+      "applies_when": [],
+      "summary": "Keywords must describe the app. Names of other apps or companies are not allowed, and trademarked terms, celebrity names, and irrelevant terms are a common rejection; Apple may also edit keywords it finds inappropriate. The field holds 100 bytes, each keyword must be longer than two characters, and the app name and company name are already searchable, so repeating them, spaces after commas, plurals of included words, category names, and the word \"app\" only burn bytes.",
+      "fix": "Separate keywords with commas and no spaces, drop competitor and brand names, drop words already in the app name or developer name, and spend the freed bytes on terms people use to describe what the app does.",
+      "references": [
+        "https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information",
+        "https://developer.apple.com/app-store/product-page/"
+      ],
+      "check": {
+        "id": "keywords",
+        "confidence": "medium",
+        "max_bytes": 100,
+        "min_term_length": 3,
+        "flag_space_after_comma": true,
+        "flag_duplicates": true,
+        "flag_name_repeats": [
+          "name",
+          "developer_name"
+        ],
+        "flag_terms": [
+          "app",
+          "apps",
+          "free",
+          "iphone",
+          "ipad",
+          "best",
+          "#1"
+        ],
+        "competitor_terms": [
+          "chatgpt",
+          "openai",
+          "gemini",
+          "claude",
+          "copilot",
+          "midjourney",
+          "instagram",
+          "tiktok",
+          "facebook",
+          "whatsapp",
+          "snapchat",
+          "youtube",
+          "netflix",
+          "spotify",
+          "telegram",
+          "duolingo",
+          "uber",
+          "google",
+          "android",
+          "samsung",
+          "huawei"
+        ]
+      },
+      "review": [
+        "Does every keyword describe something the app does?"
+      ]
+    },
+    {
+      "id": "metadata.kids-wording",
+      "title": "\"For Kids\" wording outside the Kids Category",
+      "severity": "warning",
+      "evidence": [
+        "metadata"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "2.3.8"
+      ],
+      "applies_when": [],
+      "summary": "Terms like \"For Kids\" and \"For Children\" in app metadata are reserved for the Kids Category. Kids Category apps are for children 11 and under and must meet its rules on ads, analytics, links, and purchases.",
+      "fix": "Either join the Kids Category and meet its requirements, or remove the wording and describe the audience in other terms, such as \"family\" or \"learners\".",
+      "references": [
+        "https://developer.apple.com/app-store/kids-apps/"
+      ],
+      "check": {
+        "id": "metadata-terms",
+        "confidence": "medium",
+        "skip_when": [
+          "kids"
+        ],
+        "fields": [
+          "name",
+          "subtitle",
+          "description",
+          "keywords",
+          "promotional_text"
+        ],
+        "terms": [
+          "for kids",
+          "for children",
+          "for your kid",
+          "for your child",
+          "kids app",
+          "for toddlers",
+          "for preschoolers",
+          "für kinder",
+          "para niños",
+          "pour enfants",
+          "per bambini",
+          "voor kinderen",
+          "para crianças"
+        ]
+      }
+    },
+    {
+      "id": "metadata.localization-incomplete",
+      "title": "Store localization missing required fields or left untranslated",
+      "severity": "error",
+      "evidence": [
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-store-connect",
+      "automation": "assisted",
+      "guidelines": [
+        "2.3"
+      ],
+      "applies_when": [],
+      "summary": "A new store localization copies the primary language's screenshots and properties, except the description and keywords, which start empty. Both are required fields, so a localization added and left half filled blocks submission. A localization that keeps primary-language text, or claims different features, prices, or trial terms than the primary language, misrepresents the app to that market.",
+      "fix": "Write a description and keywords for every localization, and add What's New text to each one for updates. Translate the name, subtitle, and screenshot captions too, or remove localizations you do not support.",
+      "references": [
+        "https://developer.apple.com/help/app-store-connect/manage-app-information/localize-app-information",
+        "https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information"
+      ],
+      "check": {
+        "id": "localization-parity",
+        "confidence": "high",
+        "required": [
+          "description",
+          "keywords",
+          "support_url"
+        ],
+        "required_for_updates": [
+          "release_notes"
+        ],
+        "untranslated_fields": [
+          "name",
+          "subtitle",
+          "description",
+          "keywords"
+        ]
+      },
+      "review": [
+        "Does every localization describe the same features, prices, trial terms, and URLs as the primary language?"
+      ]
+    },
+    {
+      "id": "metadata.misleading-claims",
+      "title": "Store text promises capabilities an iOS app cannot have",
+      "severity": "error",
+      "evidence": [
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.3.1"
+      ],
+      "applies_when": [],
+      "summary": "Guideline 2.3.1(a) names iOS virus and malware scanners as misleading marketing: the sandbox keeps an app from scanning, cleaning, or speeding up the rest of the system, so antivirus, RAM cleaner, speed booster, and phone cooler claims promote services the app does not offer. Misleading marketing is grounds for removal and termination of the developer account, and promoting a false price is treated the same way.",
+      "fix": "Describe what the app actually does inside its own sandbox, such as finding duplicate photos or reviewing storage use, and drop claims about scanning, cleaning, boosting, or protecting the device.",
+      "check": {
+        "id": "metadata-terms",
+        "confidence": "medium",
+        "fields": [
+          "name",
+          "subtitle",
+          "description",
+          "keywords",
+          "promotional_text",
+          "release_notes"
+        ],
+        "terms": [
+          "virus scan",
+          "virus scanner",
+          "antivirus",
+          "anti-virus",
+          "malware scan",
+          "malware removal",
+          "malware cleaner",
+          "spyware removal",
+          "clean your iphone",
+          "clean your device",
+          "phone cleaner virus",
+          "speed booster",
+          "boost speed",
+          "boost ram",
+          "ram cleaner",
+          "ram booster",
+          "memory booster",
+          "memory cleaner",
+          "phone cooler",
+          "cpu cooler",
+          "battery doubler",
+          "free money",
+          "guaranteed win",
+          "guaranteed prize"
+        ]
+      },
+      "review": [
+        "Does any claim describe protecting, cleaning, or speeding up the device or other apps rather than the app's own data?",
+        "Does every price shown in screenshots, previews, or promotional text match the price on the store?"
+      ]
     },
     {
       "id": "metadata.name-claims",
@@ -1254,16 +2527,32 @@
         ],
         "terms": [
           "free",
+          "gratis",
           "$",
           "€",
+          "£",
+          "¥",
           "% off",
           "sale",
+          "on sale",
+          "discount",
+          "no cost",
+          "free trial",
           "best",
           "#1",
           "number one",
           "top rated",
           "no. 1",
-          "discount"
+          "world's best",
+          "limited time"
+        ],
+        "ignore": [
+          "ad-free",
+          "ads-free",
+          "hands-free",
+          "free from ads",
+          "sugar-free",
+          "gluten-free"
         ]
       }
     },
@@ -1290,6 +2579,53 @@
       }
     },
     {
+      "id": "metadata.negative-apple-references",
+      "title": "Store text blames Apple or iOS, or disparages Apple",
+      "severity": "warning",
+      "evidence": [
+        "metadata"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "2.3.10"
+      ],
+      "applies_when": [],
+      "summary": "Metadata must focus on the app and its experience and leave out irrelevant information. Release notes that blame an iOS bug or Apple for a problem, or copy that mocks Apple products, are irrelevant to the app, and Apple's trademark guidelines forbid using Apple marks in a disparaging manner.",
+      "fix": "Describe what the app does and what changed in it. Move known-issue notes about system behavior to the support site, written neutrally.",
+      "references": [
+        "https://www.apple.com/legal/intellectual-property/guidelinesfor3rdparties.html"
+      ],
+      "check": {
+        "id": "metadata-terms",
+        "confidence": "low",
+        "fields": [
+          "description",
+          "promotional_text",
+          "release_notes",
+          "subtitle"
+        ],
+        "terms": [
+          "ios bug",
+          "apple bug",
+          "bug in ios",
+          "ios issue",
+          "apple's fault",
+          "due to apple",
+          "blame apple",
+          "apple broke",
+          "ios broke",
+          "apple rejected",
+          "rejected by apple",
+          "apple forced us",
+          "apple made us",
+          "apple won't let",
+          "apple doesn't allow",
+          "apple does not allow"
+        ]
+      }
+    },
+    {
       "id": "metadata.other-platforms",
       "title": "Store text mentions other platforms",
       "severity": "warning",
@@ -1302,7 +2638,7 @@
         "2.3.10"
       ],
       "applies_when": [],
-      "summary": "Metadata must focus on the Apple platforms the app supports and not mention other mobile platforms or their stores.",
+      "summary": "Metadata must focus on the Apple platforms the app supports and not include names, icons, or imagery of other mobile platforms or alternative app marketplaces, unless there is specific, approved interactive functionality.",
       "fix": "Remove references to other platforms and stores, unless the app's core function is interoperating with them.",
       "check": {
         "id": "metadata-terms",
@@ -1322,7 +2658,15 @@
           "Windows Phone",
           "BlackBerry",
           "Huawei AppGallery",
-          "Galaxy Store"
+          "AppGallery",
+          "Galaxy Store",
+          "Samsung Galaxy",
+          "Amazon Appstore",
+          "Microsoft Store",
+          "Windows Store",
+          "F-Droid",
+          "APK",
+          "sideload"
         ]
       }
     },
@@ -1354,9 +2698,44 @@
           "placeholder",
           "sample text",
           "test test",
-          "coming soon"
+          "coming soon",
+          "insert text here",
+          "insert copy here",
+          "[your ",
+          "YOUR_",
+          "changeme",
+          "default description",
+          "dummy text"
+        ],
+        "ignore": [
+          "placeholder:",
+          ".redacted(reason: .placeholder)",
+          "placeholder(in:",
+          "placeholderText"
         ]
       }
+    },
+    {
+      "id": "metadata.pre-order",
+      "title": "Pre-order build differs from what was advertised",
+      "severity": "warning",
+      "evidence": [
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "2.3.11",
+        "2.1"
+      ],
+      "applies_when": [],
+      "summary": "Apps submitted for pre-order must be complete and deliverable as submitted, and the released app must not be materially different from what the pre-order advertised. A material change, such as a new business model, means restarting pre-order sales.",
+      "fix": "Submit a final build for pre-order. If the business model or core features change before release, end the pre-order and start a new one.",
+      "review": [
+        "Is the pre-order build complete, with every advertised feature working?",
+        "Has the price, business model, or core feature set changed since pre-order began?"
+      ]
     },
     {
       "id": "metadata.review-notes",
@@ -1373,8 +2752,11 @@
         "2.1"
       ],
       "applies_when": [],
-      "summary": "Guideline 2.3.1 forbids hidden, dormant, or undocumented features, and asks for every new feature and in-app purchase to be described with specificity in the Notes for Review. Remote feature flags, region-locked features, hardware dependencies, and special configuration all need explaining.",
-      "fix": "List each feature that is not obvious from the first launch, how to reach it, and any account, location, or hardware it needs. Mention remote configuration and what it can change.",
+      "summary": "Guideline 2.3.1 forbids hidden, dormant, or undocumented features, and asks for every new feature and in-app purchase to be described with specificity in the Notes for Review; generic descriptions are rejected. Under 2.1(b), any configured in-app purchase the reviewer cannot find must be explained there. Remote feature flags, region-locked features, hardware dependencies, and special configuration all need explaining. The Notes field holds 4,000 bytes and can be in any language.",
+      "fix": "Write the notes in six parts: a link to a screen recording of the core flow on a physical device, what the app is for and who it serves, access steps with test credentials, the external services the app depends on, any differences by region, and documentation for regulated features. Mention remote configuration and what it can change.",
+      "references": [
+        "https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information"
+      ],
       "check": {
         "id": "review-notes",
         "confidence": "low",
@@ -1385,11 +2767,26 @@
           "Statsig",
           "Optimizely",
           "ConfigCat"
+        ],
+        "max_bytes": 4000,
+        "sections": [
+          "screen recording",
+          "purpose",
+          "credentials",
+          "external services",
+          "regional differences",
+          "regulated documentation"
         ]
       },
       "review": [
         "Is every feature that needs an account, a location, a device, or a flag described in the notes?",
-        "Can remote configuration turn on anything the reviewer did not see?"
+        "Can remote configuration turn on anything the reviewer did not see?",
+        "Do the notes link a screen recording of the core flow captured on a physical device?",
+        "Do the notes say what the app does and who it is for, in a sentence or two?",
+        "Do the notes list each external service, such as a backend, payment processor, or AI provider, and what it is used for?",
+        "Do the notes say whether features or content differ by region, and how to see each variant?",
+        "For regulated features, do the notes include the license or clearance documents?",
+        "Is every configured in-app purchase reachable in the build, or explained if not?"
       ]
     },
     {
@@ -1406,18 +2803,21 @@
         "2.3.3"
       ],
       "applies_when": [],
-      "summary": "App Store Connect needs at least one screenshot in an accepted size for each supported device family. Screenshots must show the app in use, not just title art, a login page, or a splash screen, and must not show features the build lacks.",
-      "fix": "Capture real screens from the submitted build for every supported device family, such as iPhone and iPad, and keep marketing text to a caption.",
+      "summary": "App Store Connect needs one to ten screenshots per set, as PNG or JPEG without alpha, in an accepted size: a 6.9-inch or 6.5-inch set for iPhone apps and a 13-inch set for iPad apps, with smaller displays scaled from those. Screenshots must show the app in use, not just title art, a login page, or a splash screen, and must not show features the build lacks. Text and image overlays that explain input, such as an animated touch point or Apple Pencil, are allowed. The creative assets introduced for iOS 27 may show content beyond the app in use, but must still relate to its functionality; they do not relax the screenshot rule.",
+      "fix": "Capture real screens from the submitted build at an accepted size for every supported device family, flatten them to remove transparency, and keep marketing text to captions.",
       "references": [
-        "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications"
+        "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications",
+        "https://developer.apple.com/app-store/asset-best-practices/"
       ],
       "check": {
         "id": "screenshot-sets",
-        "confidence": "medium"
+        "confidence": "high",
+        "catalog": "metadata-screenshot-sizes"
       },
       "review": [
         "Does every screenshot show a screen that exists in this build?",
-        "Is any screenshot only a splash, login, or title-art frame?"
+        "Is any screenshot only a splash, login, or title-art frame?",
+        "Does any screenshot show placeholder data, debug UI, an empty state, or clipped text?"
       ]
     },
     {
@@ -1434,8 +2834,8 @@
         "1.5"
       ],
       "applies_when": [],
-      "summary": "The Support URL must load and give people an easy way to reach the developer. Broken pages and pages with no contact path draw 1.5 and 2.1 rejections.",
-      "fix": "Point the Support URL at a live page with an email address or contact form, and keep it reachable without signing in.",
+      "summary": "The app and its Support URL must give people an easy way to reach the developer, which matters most for apps used in classrooms. Broken pages and pages with no contact path draw 1.5 and 2.1 rejections, and inaccurate contact details can break the law in some regions. Wallet passes must carry valid contact information from the issuer and be signed with a certificate dedicated to the brand or trademark owner.",
+      "fix": "Point the Support URL at a live page with an email address or contact form, keep it reachable without signing in, and add a contact path inside the app. Sign Wallet passes with a pass type certificate owned by the brand.",
       "check": {
         "id": "url-reachable",
         "confidence": "medium",
@@ -1443,10 +2843,17 @@
           "support_url",
           "marketing_url",
           "privacy_policy_url"
+        ],
+        "placeholder_hosts": [
+          "example.com",
+          "localhost",
+          "127.0.0.1"
         ]
       },
       "review": [
-        "Does the support page show an email address or a contact form?"
+        "Does the support page show an email address or a contact form?",
+        "Can a person find a way to contact the developer from inside the app?",
+        "Do Wallet passes show the issuer's contact details and use the brand owner's pass certificate?"
       ]
     },
     {
@@ -4401,6 +5808,153 @@
       }
     },
     {
+      "id": "safety.creator-content",
+      "title": "Creator content without age identification and restriction",
+      "severity": "error",
+      "evidence": [
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "1.2.1"
+      ],
+      "applies_when": [
+        "user-content"
+      ],
+      "summary": "Apps built around content from a community of creators treat that content as user-generated: it must follow 1.2 moderation and 3.1.1 payments, and must not change the app's core features. Since November 2025, 1.2.1(a) also requires a way for people to identify content that exceeds the app's age rating, and an age restriction mechanism based on verified or declared age that limits underage access.",
+      "fix": "Label creator content that exceeds the app's age rating, gate it on verified or declared age, for example with the Declared Age Range API, and tell people which creator content needs an extra purchase.",
+      "references": [
+        "https://developer.apple.com/news/?id=ey6d8onl"
+      ],
+      "review": [
+        "Can a person tell which creator content exceeds the app's age rating before opening it?",
+        "Does access to that content depend on a verified or declared age, not just a self-dismissed warning?",
+        "Does creator content add to the app's structured experience rather than change its core features?",
+        "Does the app say which creator content requires an additional purchase, and is it sold through in-app purchase?"
+      ]
+    },
+    {
+      "id": "safety.criminal-reporting",
+      "title": "Crime-reporting app without local law enforcement involvement",
+      "severity": "error",
+      "evidence": [
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "1.7"
+      ],
+      "applies_when": [],
+      "summary": "Apps for reporting alleged criminal activity must involve local law enforcement, and may only be offered in countries or regions where that involvement is active.",
+      "fix": "Partner with the relevant law enforcement agency, document the partnership in the review notes, and limit availability to the regions it covers.",
+      "review": [
+        "Does the app let people report alleged crimes, and does a local law enforcement agency receive and act on those reports?",
+        "Is the app's availability limited to the countries or regions where that involvement is active?"
+      ]
+    },
+    {
+      "id": "safety.false-features",
+      "title": "Trick, prank, or fake functionality",
+      "severity": "error",
+      "evidence": [
+        "metadata",
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "1.1.6"
+      ],
+      "applies_when": [],
+      "summary": "Guideline 1.1.6 rejects false information and features, such as inaccurate device data or trick and joke functionality like fake location trackers. Labeling the app \"for entertainment purposes\" does not overcome it. Apps that enable anonymous or prank phone calls, SMS, or MMS are rejected outright.",
+      "fix": "Remove the fake feature, or make it real and accurate. Drop anonymous or spoofed calling and messaging entirely; a disclaimer does not make it acceptable.",
+      "check": {
+        "id": "metadata-terms",
+        "confidence": "medium",
+        "fields": [
+          "name",
+          "subtitle",
+          "description",
+          "keywords",
+          "promotional_text"
+        ],
+        "terms": [
+          "prank call",
+          "fake call",
+          "fake caller",
+          "spoof call",
+          "caller id spoof",
+          "anonymous sms",
+          "anonymous text",
+          "prank text",
+          "fake gps",
+          "fake location",
+          "location spoofer",
+          "lie detector",
+          "x-ray scanner",
+          "fingerprint scanner prank",
+          "for entertainment purposes only",
+          "for entertainment purposes"
+        ]
+      },
+      "review": [
+        "Does any feature claim to measure, detect, or track something the device cannot actually measure?",
+        "Can a person place calls or send messages that hide or fake the sender?"
+      ]
+    },
+    {
+      "id": "safety.generative-ai-moderation",
+      "title": "Generated content without filtering or reporting",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "1.1",
+        "1.2"
+      ],
+      "applies_when": [
+        "ai"
+      ],
+      "summary": "Content an app generates is still content the app shows, so Guideline 1.1 applies to text, images, and audio a model produces on request. When people can post or share generated content with others, it becomes user-generated content and needs the 1.2 safeguards: filtering, reporting with timely responses, blocking, and published contact details. The age rating answers must also reflect what the model can produce.",
+      "fix": "Filter prompts and outputs with the provider's moderation endpoint or your own classifier, refuse disallowed categories, let people report a bad output from where they see it, and answer the age rating questions for the worst output the model can return.",
+      "check": {
+        "id": "ai-moderation",
+        "confidence": "low",
+        "generation_signals": [
+          "api.openai.com",
+          "api.anthropic.com",
+          "generativelanguage.googleapis.com",
+          "LanguageModelSession",
+          "ImagePlayground",
+          "images/generations",
+          "chat/completions"
+        ],
+        "moderation_signals": [
+          "moderations",
+          "moderation",
+          "safetySettings",
+          "contentFilter",
+          "content_filter",
+          "guardrail"
+        ]
+      },
+      "review": [
+        "Can a prompt make the app produce sexual, violent, hateful, or self-harm content, and what stops it?",
+        "Can a person report or flag a generated result from the screen that shows it?",
+        "If generated content can be shared with other people, does the app meet every 1.2 requirement for it?",
+        "Do the age rating answers cover the most mature content the model can return?"
+      ]
+    },
+    {
       "id": "safety.kids-category",
       "title": "Kids Category app includes third-party analytics or advertising",
       "severity": "error",
@@ -4438,6 +5992,118 @@
       },
       "review": [
         "Is there a parental gate before every external link, purchase, and permission request?"
+      ]
+    },
+    {
+      "id": "safety.medical-claims",
+      "title": "Health measurement claimed from device sensors alone",
+      "severity": "error",
+      "evidence": [
+        "metadata",
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "1.4.1"
+      ],
+      "applies_when": [],
+      "summary": "Medical apps get extra scrutiny under 1.4.1. Apps must disclose the data and methodology behind any accuracy claim for a health measurement, and apps that claim to take x-rays or measure blood pressure, body temperature, blood glucose, or blood oxygen using only the device's sensors are not permitted. Apps should also remind people to check with a doctor before making medical decisions.",
+      "fix": "Remove sensor-only measurement claims, or measure through a validated external device and document its accuracy. Add a reminder to consult a doctor, and link any regulatory clearance in the review notes.",
+      "check": {
+        "id": "metadata-terms",
+        "confidence": "medium",
+        "fields": [
+          "name",
+          "subtitle",
+          "description",
+          "keywords",
+          "promotional_text"
+        ],
+        "terms": [
+          "measure blood pressure",
+          "blood pressure monitor",
+          "blood pressure checker",
+          "check blood pressure",
+          "measure blood oxygen",
+          "spo2",
+          "oxygen saturation",
+          "blood glucose",
+          "blood sugar checker",
+          "body temperature",
+          "fever checker",
+          "x-ray scanner",
+          "xray scanner"
+        ]
+      },
+      "review": [
+        "Does the app measure any of these values with an external validated device, or only with the camera, flash, microphone, or touch sensors?",
+        "Does the app disclose the data and methodology behind each accuracy claim?",
+        "Does the app remind people to check with a doctor before making medical decisions?"
+      ]
+    },
+    {
+      "id": "safety.objectionable-content",
+      "title": "Content that is offensive, violent, sexual, or exploits current events",
+      "severity": "error",
+      "evidence": [
+        "runtime",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "1.1",
+        "1.1.1",
+        "1.1.2",
+        "1.1.3",
+        "1.1.4",
+        "1.1.5",
+        "1.1.7"
+      ],
+      "applies_when": [],
+      "summary": "Guideline 1.1 rejects content that is offensive, upsetting, or in exceptionally poor taste: defamatory or discriminatory content aimed at targeted groups, realistic violence or game enemies that solely target a real race, culture, government, or company, content that encourages reckless weapon use or facilitates buying firearms or ammunition, pornography and hookup apps, inflammatory religious commentary or misquoted religious texts, and concepts that profit from recent conflicts, terrorist attacks, or epidemics.",
+      "fix": "Remove or rework the content. Point game enemies at fictional groups, keep sexual content out, drop firearm and ammunition sales, and keep features about current events informational rather than monetized. Professional political satire is generally exempt; say so in the review notes when it applies.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#1.1"
+      ],
+      "review": [
+        "Does any content demean or target a religion, race, sexual orientation, gender, or national or ethnic group?",
+        "Does the app show realistic killing, maiming, torture, or abuse, or do game enemies solely target a real race, culture, government, or company?",
+        "Does the app encourage reckless use of weapons, or help people buy firearms or ammunition?",
+        "Does the app contain explicit sexual material, or could it facilitate hookups, prostitution, or trafficking?",
+        "Does the app quote religious texts inaccurately or carry inflammatory religious commentary?",
+        "Does the app build on, or charge for, a recent violent conflict, terrorist attack, or epidemic?"
+      ]
+    },
+    {
+      "id": "safety.physical-harm",
+      "title": "Features that risk physical harm",
+      "severity": "error",
+      "evidence": [
+        "metadata",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "1.4",
+        "1.4.2",
+        "1.4.3",
+        "1.4.4",
+        "1.4.5"
+      ],
+      "applies_when": [],
+      "summary": "Apps that risk physical harm are rejected. Drug dosage calculators must come from the manufacturer, a hospital, university, insurer, pharmacy, or other approved entity, or carry FDA or equivalent approval. Apps may not encourage tobacco, vaping, illegal drugs, or excessive alcohol, nor sell controlled substances or tobacco, except licensed pharmacies and licensed or legal cannabis dispensaries. DUI checkpoints may come only from law enforcement, and apps may not urge drunk driving, excessive speed, or bets and challenges that risk harm.",
+      "fix": "Submit dosage calculators from the approved entity's own account with proof of approval. Remove encouragement of substance use and dangerous challenges, and show only checkpoints that law enforcement publishes.",
+      "review": [
+        "Does the app calculate drug dosages, and is the account holder an approved entity or is the calculator approved by the FDA or a counterpart?",
+        "Does the app encourage tobacco, vaping, illegal drugs, or excessive alcohol, or sell controlled substances or tobacco without a license?",
+        "Does the app show DUI checkpoints from a source other than law enforcement, or reward speed or drunk driving?",
+        "Does the app urge people into bets, challenges, or device use that could hurt them or others?"
       ]
     },
     {
@@ -4480,8 +6146,11 @@
       "applies_when": [
         "user-content"
       ],
-      "summary": "Apps with user-generated content or social features must filter objectionable material, let people report offensive content with timely responses, let people block abusive users, and publish contact information. Random or anonymous chat apps fall under the same rule.",
-      "fix": "Ship report and block actions on every piece of user content and every profile, a filtering step, published contact details, and terms that forbid objectionable content.",
+      "summary": "Apps with user-generated content or social features must filter objectionable material, let people report offensive content with timely responses, let people block abusive users, and publish contact information. Apps used mainly for pornography, Chatroulette-style or random or anonymous chat, \"hot-or-not\" rating of real people, threats, or bullying do not belong on the App Store. Mature content from a web-based service must be hidden by default and turned on only through the website. Since June 2026, the developer is responsible for removing violating content and may have to present an improvement plan.",
+      "fix": "Ship report and block actions on every piece of user content and every profile, a filtering step, published contact details, and terms that forbid objectionable content. Staff a process that acts on reports and removes violating content.",
+      "references": [
+        "https://developer.apple.com/news/?id=a233fmpw"
+      ],
       "check": {
         "id": "ugc-signals",
         "confidence": "low",
@@ -4493,12 +6162,33 @@
           "message",
           "feed",
           "follow"
+        ],
+        "sdk_signals": [
+          "StreamChat",
+          "MessageKit",
+          "SendbirdChatSDK",
+          "PubNub",
+          "postComment",
+          "createPost",
+          "uploadVideo"
+        ],
+        "moderation_signals": [
+          "reportContent",
+          "reportUser",
+          "blockUser",
+          "muteUser",
+          "moderation",
+          "flagContent",
+          "contentFilter"
         ]
       },
       "review": [
         "Can a person report any post, comment, or message from where they see it?",
         "Can a person block another user, and does blocking hide that user's content?",
-        "Is there a filter for objectionable content, and contact details in the app?"
+        "Is there a filter for objectionable content, and contact details in the app?",
+        "Who acts on reports, how fast, and how is violating content removed?",
+        "Is incidental mature content hidden by default and enabled only on the website?",
+        "Does the app pair strangers at random or anonymously, or rate real people's looks?"
       ]
     },
     {
@@ -4864,6 +6554,256 @@
           "summary": "iOS and iPadOS apps uploaded to App Store Connect must target iOS 13 or later.",
           "source": "https://developer.apple.com/news/upcoming-requirements/?id=0992026a",
           "rule": "build.deployment-target"
+        }
+      ]
+    },
+    "metadata-screenshot-sizes": {
+      "source": "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications",
+      "verified": "2026-10-01",
+      "min_per_set": 1,
+      "max_per_set": 10,
+      "formats": [
+        "jpeg",
+        "jpg",
+        "png"
+      ],
+      "alpha_allowed": false,
+      "displays": [
+        {
+          "id": "iphone-6.9",
+          "family": "iphone",
+          "required": "An iPhone app needs this set or the 6.5-inch set",
+          "portrait": [
+            [
+              1260,
+              2736
+            ],
+            [
+              1290,
+              2796
+            ],
+            [
+              1320,
+              2868
+            ]
+          ]
+        },
+        {
+          "id": "iphone-6.5",
+          "family": "iphone",
+          "required": "Required if the app runs on iPhone and 6.9-inch screenshots are not provided",
+          "fallback": "iphone-6.9",
+          "portrait": [
+            [
+              1284,
+              2778
+            ],
+            [
+              1242,
+              2688
+            ]
+          ]
+        },
+        {
+          "id": "iphone-6.3",
+          "family": "iphone",
+          "fallback": "iphone-6.5",
+          "portrait": [
+            [
+              1179,
+              2556
+            ],
+            [
+              1206,
+              2622
+            ]
+          ]
+        },
+        {
+          "id": "iphone-6.1",
+          "family": "iphone",
+          "fallback": "iphone-6.5",
+          "portrait": [
+            [
+              1170,
+              2532
+            ],
+            [
+              1125,
+              2436
+            ],
+            [
+              1080,
+              2340
+            ]
+          ]
+        },
+        {
+          "id": "iphone-5.5",
+          "family": "iphone",
+          "fallback": "iphone-6.1",
+          "portrait": [
+            [
+              1242,
+              2208
+            ]
+          ]
+        },
+        {
+          "id": "iphone-4.7",
+          "family": "iphone",
+          "fallback": "iphone-5.5",
+          "portrait": [
+            [
+              750,
+              1334
+            ]
+          ]
+        },
+        {
+          "id": "iphone-4",
+          "family": "iphone",
+          "portrait": [
+            [
+              640,
+              1096
+            ],
+            [
+              640,
+              1136
+            ]
+          ],
+          "landscape": [
+            [
+              1136,
+              600
+            ],
+            [
+              1136,
+              640
+            ]
+          ]
+        },
+        {
+          "id": "iphone-3.5",
+          "family": "iphone",
+          "portrait": [
+            [
+              640,
+              920
+            ],
+            [
+              640,
+              960
+            ]
+          ],
+          "landscape": [
+            [
+              960,
+              600
+            ],
+            [
+              960,
+              640
+            ]
+          ]
+        },
+        {
+          "id": "ipad-13",
+          "family": "ipad",
+          "required": "Required if the app runs on iPad",
+          "portrait": [
+            [
+              2064,
+              2752
+            ],
+            [
+              2048,
+              2732
+            ]
+          ]
+        },
+        {
+          "id": "ipad-12.9",
+          "family": "ipad",
+          "portrait": [
+            [
+              2048,
+              2732
+            ]
+          ]
+        },
+        {
+          "id": "ipad-11",
+          "family": "ipad",
+          "portrait": [
+            [
+              1488,
+              2266
+            ],
+            [
+              1668,
+              2420
+            ],
+            [
+              1668,
+              2388
+            ],
+            [
+              1640,
+              2360
+            ]
+          ]
+        },
+        {
+          "id": "ipad-10.5",
+          "family": "ipad",
+          "portrait": [
+            [
+              1668,
+              2224
+            ]
+          ]
+        },
+        {
+          "id": "ipad-9.7",
+          "family": "ipad",
+          "portrait": [
+            [
+              1536,
+              2008
+            ],
+            [
+              1536,
+              2048
+            ],
+            [
+              768,
+              1004
+            ],
+            [
+              768,
+              1024
+            ]
+          ],
+          "landscape": [
+            [
+              2048,
+              1496
+            ],
+            [
+              2048,
+              1536
+            ],
+            [
+              1024,
+              748
+            ],
+            [
+              1024,
+              768
+            ]
+          ]
         }
       ]
     },

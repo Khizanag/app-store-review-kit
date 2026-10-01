@@ -1,0 +1,27 @@
+id = "design.apple-music"
+title = "MusicKit integration monetizes or misuses Apple Music"
+severity = "error"
+evidence = ["source", "plist", "human"]
+enforced_by = "app-review"
+guidelines = ["4.5.2", "5.2.5"]
+summary = """
+With MusicKit, people must start Apple Music playback themselves and control it with standard play, pause, and skip controls. Apps may not charge for or indirectly monetize Apple Music access, and may not download, upload, or share music files from MusicKit beyond what its documentation allows. Cover art and metadata are for playback and playlists only, deeper uses such as syncing a song to video need rights-holder licenses, and Apple Music user data must be disclosed in the purpose string and never used for ads or identification. iTunes and Apple Music previews may not be used for entertainment value, such as background music, and must link to the music.
+"""
+fix = """
+Gate playback on a user action, keep standard controls, remove paywalls around Apple Music features, and state Apple Music data access in `NSAppleMusicUsageDescription`.
+"""
+references = [
+  "https://developer.apple.com/musickit/",
+]
+
+[check]
+id = "code-signals"
+confidence = "low"
+signals = ["import MusicKit", "MusicAuthorization", "ApplicationMusicPlayer", "SystemMusicPlayer", "MPMusicPlayerController"]
+
+[review]
+questions = [
+  "Does any Apple Music playback start without the person asking for it?",
+  "Is any Apple Music feature behind a purchase, subscription, ad, or data request?",
+  "Are Apple Music previews used as background music or game soundtracks?",
+]

@@ -9,7 +9,7 @@ summary = """
 Guideline 2.1 asks for demo account details when the app has a login, with the backend running during review. A missing or broken demo account is one of the most common 2.1 rejections.
 """
 fix = """
-Fill in Sign-in Information under App Review Information in App Store Connect with a working account that exposes every feature, including paid ones. If login needs a code or hardware, explain how to get past it in the review notes or provide a demo mode.
+Fill in Sign-in Information under App Review Information in App Store Connect with a working account that exposes every feature, including paid ones. If login needs a code or hardware, explain how to get past it in the review notes. A built-in demo mode instead of a demo account needs Apple's prior approval and must show every feature.
 """
 
 [check]
@@ -21,4 +21,7 @@ login_signals = ["ASAuthorizationAppleIDProvider", "GoogleSignIn", "SecureField"
 questions = [
   "Does the demo account work right now, and will it still work in two weeks?",
   "Does it unlock every feature the reviewer needs to see, including subscriptions?",
+  "Does login need a one-time code, second factor, or invite that only the team receives?",
+  "Can a reviewer outside your country, VPN, or IP allowlist reach the backend?",
+  "Does the demo account hold enough sample data to show every screen?",
 ]

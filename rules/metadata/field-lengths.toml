@@ -4,10 +4,10 @@ severity = "error"
 evidence = ["metadata"]
 enforced_by = "app-store-connect"
 summary = """
-App Store Connect caps the subtitle at 30 characters, keywords at 100 bytes, promotional text at 170 characters, and the description and What's New text at 4,000 characters each, per localization.
+App Store Connect caps the subtitle at 30 characters, keywords at 100 bytes with each keyword longer than two characters, promotional text at 170 characters, and the description and What's New text at 4,000 characters each, per localization. The App Review notes hold 4,000 bytes. The description is plain text; HTML is not supported.
 """
 fix = """
-Trim the field. Keywords count bytes, so non-Latin scripts fit fewer characters; separate them with commas and no spaces.
+Trim the field. Keywords and review notes count bytes, so non-Latin scripts fit fewer characters; separate keywords with commas and no spaces.
 """
 references = [
   "https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information",
@@ -17,4 +17,6 @@ references = [
 id = "metadata-length"
 confidence = "high"
 limits = { subtitle = 30, promotional_text = 170, description = 4000, release_notes = 4000 }
-byte_limits = { keywords = 100 }
+byte_limits = { keywords = 100, review_notes = 4000 }
+min_keyword_length = 3
+reject_html = ["description"]

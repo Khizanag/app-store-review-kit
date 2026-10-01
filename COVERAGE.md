@@ -8,55 +8,55 @@ A section's level is the strongest automation among its rules: **automated** nee
 
 | Level | Sections | Rules |
 | --- | --- | --- |
-| automated | 14 | 36 |
-| assisted | 29 | 79 |
-| manual | 3 | 12 |
-| subsections | 7 | - |
-| uncovered | 66 | - |
+| automated | 15 | 38 |
+| assisted | 47 | 102 |
+| manual | 27 | 30 |
+| subsections | 4 | - |
+| uncovered | 26 | - |
 | n/a | 6 | - |
 
-127 rules in total, including ones enforced by upload validation or App Store Connect rather than a guideline section.
+170 rules in total, including ones enforced by upload validation or App Store Connect rather than a guideline section.
 
 ## Sections
 
 | Section | Level | Rules |
 | --- | --- | --- |
-| [1.1 Objectionable Content](guidelines/1.1.md) | uncovered | - |
-| [1.1.1](guidelines/1.1.1.md) | uncovered | - |
-| [1.1.2](guidelines/1.1.2.md) | uncovered | - |
-| [1.1.3](guidelines/1.1.3.md) | uncovered | - |
-| [1.1.4](guidelines/1.1.4.md) | uncovered | - |
-| [1.1.5](guidelines/1.1.5.md) | uncovered | - |
-| [1.1.6](guidelines/1.1.6.md) | uncovered | - |
-| [1.1.7](guidelines/1.1.7.md) | uncovered | - |
-| [1.2 User-Generated Content](guidelines/1.2.md) | assisted | `safety.ugc-moderation` |
-| [1.2.1 Creator Content](guidelines/1.2.1.md) | uncovered | - |
+| [1.1 Objectionable Content](guidelines/1.1.md) | assisted | `safety.generative-ai-moderation`, `safety.objectionable-content` |
+| [1.1.1](guidelines/1.1.1.md) | manual | `safety.objectionable-content` |
+| [1.1.2](guidelines/1.1.2.md) | manual | `safety.objectionable-content` |
+| [1.1.3](guidelines/1.1.3.md) | manual | `safety.objectionable-content` |
+| [1.1.4](guidelines/1.1.4.md) | manual | `safety.objectionable-content` |
+| [1.1.5](guidelines/1.1.5.md) | manual | `safety.objectionable-content` |
+| [1.1.6](guidelines/1.1.6.md) | assisted | `safety.false-features` |
+| [1.1.7](guidelines/1.1.7.md) | manual | `safety.objectionable-content` |
+| [1.2 User-Generated Content](guidelines/1.2.md) | assisted | `safety.generative-ai-moderation`, `safety.ugc-moderation` |
+| [1.2.1 Creator Content](guidelines/1.2.1.md) | manual | `safety.creator-content` |
 | [1.3 Kids Category](guidelines/1.3.md) | assisted | `privacy.kids-data-collection`, `safety.kids-category` |
-| [1.4 Physical Harm](guidelines/1.4.md) | subsections | - |
-| [1.4.1](guidelines/1.4.1.md) | manual | `safety.regulated-services` |
-| [1.4.2](guidelines/1.4.2.md) | uncovered | - |
-| [1.4.3](guidelines/1.4.3.md) | uncovered | - |
-| [1.4.4](guidelines/1.4.4.md) | uncovered | - |
-| [1.4.5](guidelines/1.4.5.md) | uncovered | - |
-| [1.5 Developer Information](guidelines/1.5.md) | assisted | `metadata.support-url` |
+| [1.4 Physical Harm](guidelines/1.4.md) | manual | `safety.physical-harm` |
+| [1.4.1](guidelines/1.4.1.md) | assisted | `safety.medical-claims`, `safety.regulated-services` |
+| [1.4.2](guidelines/1.4.2.md) | manual | `safety.physical-harm` |
+| [1.4.3](guidelines/1.4.3.md) | manual | `safety.physical-harm` |
+| [1.4.4](guidelines/1.4.4.md) | manual | `safety.physical-harm` |
+| [1.4.5](guidelines/1.4.5.md) | manual | `safety.physical-harm` |
+| [1.5 Developer Information](guidelines/1.5.md) | assisted | `legal.developer-identity`, `metadata.support-url` |
 | [1.6 Data Security](guidelines/1.6.md) | assisted | `network.ats-arbitrary-loads` |
-| [1.7 Reporting Criminal Activity](guidelines/1.7.md) | uncovered | - |
-| [2.1 App Completeness](guidelines/2.1.md) | automated | `account.demo-account`, `build.debug-endpoints`, `metadata.placeholder-text`, `metadata.review-notes`, `payments.iap-review-metadata`, `payments.legacy-receipt-validation`, `payments.paid-apps-agreement`, `payments.product-ids-mismatch`, `payments.transaction-listener`, `tracking.prompt-not-shown` |
-| [2.2 Beta Testing](guidelines/2.2.md) | uncovered | - |
-| [2.3 Accurate Metadata](guidelines/2.3.md) | subsections | - |
-| [2.3.1](guidelines/2.3.1.md) | automated | `metadata.placeholder-text`, `metadata.review-notes` |
-| [2.3.2](guidelines/2.3.2.md) | uncovered | - |
+| [1.7 Reporting Criminal Activity](guidelines/1.7.md) | manual | `safety.criminal-reporting` |
+| [2.1 App Completeness](guidelines/2.1.md) | automated | `account.demo-account`, `build.debug-endpoints`, `metadata.future-features`, `metadata.placeholder-text`, `metadata.pre-order`, `metadata.review-notes`, `payments.iap-review-metadata`, `payments.legacy-receipt-validation`, `payments.paid-apps-agreement`, `payments.product-ids-mismatch`, `payments.transaction-listener`, `tracking.prompt-not-shown` |
+| [2.2 Beta Testing](guidelines/2.2.md) | assisted | `metadata.beta-wording` |
+| [2.3 Accurate Metadata](guidelines/2.3.md) | assisted | `metadata.claims-match-build`, `metadata.future-features`, `metadata.localization-incomplete` |
+| [2.3.1](guidelines/2.3.1.md) | automated | `metadata.claims-match-build`, `metadata.misleading-claims`, `metadata.placeholder-text`, `metadata.review-notes` |
+| [2.3.2](guidelines/2.3.2.md) | assisted | `metadata.iap-metadata` |
 | [2.3.3](guidelines/2.3.3.md) | assisted | `metadata.screenshots` |
-| [2.3.4](guidelines/2.3.4.md) | uncovered | - |
-| [2.3.5](guidelines/2.3.5.md) | uncovered | - |
+| [2.3.4](guidelines/2.3.4.md) | assisted | `metadata.app-previews` |
+| [2.3.5](guidelines/2.3.5.md) | manual | `metadata.category-fit` |
 | [2.3.6](guidelines/2.3.6.md) | assisted | `legal.age-rating` |
-| [2.3.7](guidelines/2.3.7.md) | automated | `metadata.apple-trademarks`, `metadata.name-claims`, `metadata.name-length` |
-| [2.3.8](guidelines/2.3.8.md) | uncovered | - |
-| [2.3.9](guidelines/2.3.9.md) | uncovered | - |
-| [2.3.10](guidelines/2.3.10.md) | automated | `metadata.other-platforms` |
-| [2.3.11](guidelines/2.3.11.md) | uncovered | - |
+| [2.3.7](guidelines/2.3.7.md) | automated | `metadata.apple-trademarks`, `metadata.keywords`, `metadata.name-claims`, `metadata.name-length` |
+| [2.3.8](guidelines/2.3.8.md) | automated | `metadata.all-audiences`, `metadata.kids-wording` |
+| [2.3.9](guidelines/2.3.9.md) | manual | `metadata.asset-rights` |
+| [2.3.10](guidelines/2.3.10.md) | automated | `metadata.negative-apple-references`, `metadata.other-platforms` |
+| [2.3.11](guidelines/2.3.11.md) | manual | `metadata.pre-order` |
 | [2.3.12](guidelines/2.3.12.md) | assisted | `metadata.whats-new-generic` |
-| [2.3.13](guidelines/2.3.13.md) | uncovered | - |
+| [2.3.13](guidelines/2.3.13.md) | manual | `metadata.in-app-events` |
 | [2.4 Hardware Compatibility](guidelines/2.4.md) | subsections | - |
 | [2.4.1](guidelines/2.4.1.md) | assisted | `design.ipad-layout` |
 | [2.4.2](guidelines/2.4.2.md) | automated | `payments.crypto-mining` |
@@ -93,25 +93,25 @@ A section's level is the strongest automation among its rules: **automated** nee
 | [3.2.2 Unacceptable](guidelines/3.2.2.md) | assisted | `business.ad-manipulation`, `business.app-catalog`, `business.arbitrary-restrictions`, `business.charity-fundraising`, `business.financial-trading`, `business.forced-store-actions`, `business.personal-loans`, `business.social-manipulation` |
 | [4.1 Copycats](guidelines/4.1.md) | manual | `design.copycat` |
 | [4.2 Minimum Functionality](guidelines/4.2.md) | assisted | `design.web-wrapper` |
-| [4.2.1](guidelines/4.2.1.md) | uncovered | - |
+| [4.2.1](guidelines/4.2.1.md) | assisted | `design.ar-experience` |
 | [4.2.2](guidelines/4.2.2.md) | assisted | `design.web-wrapper` |
-| [4.2.3](guidelines/4.2.3.md) | uncovered | - |
+| [4.2.3](guidelines/4.2.3.md) | manual | `design.standalone` |
 | [4.2.4](guidelines/4.2.4.md) | n/a | - |
 | [4.2.5](guidelines/4.2.5.md) | n/a | - |
-| [4.2.6](guidelines/4.2.6.md) | uncovered | - |
-| [4.2.7 Remote Desktop Clients](guidelines/4.2.7.md) | uncovered | - |
-| [4.3 Spam](guidelines/4.3.md) | manual | `design.spam` |
+| [4.2.6](guidelines/4.2.6.md) | manual | `design.template-generated` |
+| [4.2.7 Remote Desktop Clients](guidelines/4.2.7.md) | assisted | `design.remote-desktop` |
+| [4.3 Spam](guidelines/4.3.md) | assisted | `design.spam`, `design.template-generated` |
 | [4.4 Extensions](guidelines/4.4.md) | uncovered | - |
 | [4.4.1](guidelines/4.4.1.md) | uncovered | - |
 | [4.4.2](guidelines/4.4.2.md) | uncovered | - |
 | [4.4.3](guidelines/4.4.3.md) | n/a | - |
-| [4.5 Apple Sites and Services](guidelines/4.5.md) | uncovered | - |
-| [4.5.1](guidelines/4.5.1.md) | uncovered | - |
-| [4.5.2](guidelines/4.5.2.md) | uncovered | - |
-| [4.5.3](guidelines/4.5.3.md) | uncovered | - |
-| [4.5.4](guidelines/4.5.4.md) | uncovered | - |
-| [4.5.5](guidelines/4.5.5.md) | uncovered | - |
-| [4.5.6](guidelines/4.5.6.md) | uncovered | - |
+| [4.5 Apple Sites and Services](guidelines/4.5.md) | assisted | `design.apple-site-scraping`, `design.live-activity-ads` |
+| [4.5.1](guidelines/4.5.1.md) | manual | `design.apple-site-scraping` |
+| [4.5.2](guidelines/4.5.2.md) | assisted | `design.apple-music` |
+| [4.5.3](guidelines/4.5.3.md) | assisted | `design.game-center-ids`, `design.live-activity-ads` |
+| [4.5.4](guidelines/4.5.4.md) | assisted | `design.push-marketing` |
+| [4.5.5](guidelines/4.5.5.md) | assisted | `design.game-center-ids` |
+| [4.5.6](guidelines/4.5.6.md) | assisted | `design.apple-emoji` |
 | [4.6](guidelines/4.6.md) | n/a | - |
 | [4.7 Mini apps, mini games, streaming games, chatbots, plug-ins, and game emulators](guidelines/4.7.md) | uncovered | - |
 | [4.7.1](guidelines/4.7.1.md) | uncovered | - |
@@ -119,21 +119,21 @@ A section's level is the strongest automation among its rules: **automated** nee
 | [4.7.3](guidelines/4.7.3.md) | uncovered | - |
 | [4.7.4](guidelines/4.7.4.md) | uncovered | - |
 | [4.7.5](guidelines/4.7.5.md) | uncovered | - |
-| [4.8 Login Services](guidelines/4.8.md) | assisted | `account.login-service-equivalent` |
+| [4.8 Login Services](guidelines/4.8.md) | assisted | `account.login-service-equivalent`, `account.siwa-private-email` |
 | [4.9 Apple Pay](guidelines/4.9.md) | assisted | `payments.apple-pay-branding`, `payments.apple-pay-recurring-disclosure` |
-| [4.10 Monetizing Built-In Capabilities](guidelines/4.10.md) | uncovered | - |
+| [4.10 Monetizing Built-In Capabilities](guidelines/4.10.md) | manual | `design.monetized-capabilities` |
 | [5.1 Privacy](guidelines/5.1.md) | subsections | - |
 | [5.1.1 Data Collection and Storage](guidelines/5.1.1.md) | automated | `account.deletion-missing`, `account.login-required`, `permissions.full-access-over-picker`, `permissions.location-always-pair`, `permissions.location-background`, `permissions.pre-permission-steering`, `permissions.request-before-value`, `permissions.usage-description-missing`, `permissions.usage-description-unused`, `permissions.usage-description-vague`, `privacy.collected-data-undeclared`, `privacy.consent-before-collection`, `privacy.contact-info-optional`, `privacy.data-compilation`, `privacy.manifest-invalid`, `privacy.manifest-missing`, `privacy.policy-link`, `privacy.required-reason-invalid`, `privacy.required-reason-undeclared`, `privacy.safari-view-hidden`, `privacy.social-network-credentials`, `privacy.surreptitious-discovery`, `safety.regulated-services` |
 | [5.1.2 Data Use and Sharing](guidelines/5.1.2.md) | automated | `permissions.pre-permission-steering`, `privacy.apple-pay-data-sharing`, `privacy.collected-data-undeclared`, `privacy.contacts-bulk-invite`, `privacy.contacts-harvesting`, `privacy.data-repurposed`, `privacy.health-data-sharing`, `privacy.installed-apps-probing`, `privacy.manifest-invalid`, `privacy.manifest-missing`, `privacy.raw-identifiers-to-analytics`, `privacy.sdk-manifest-missing`, `privacy.sensitive-api-data-ads`, `privacy.third-party-ai-disclosure`, `privacy.tracking-domains-missing`, `privacy.tracking-flag-mismatch`, `tracking.att-missing`, `tracking.before-authorization`, `tracking.fingerprinting`, `tracking.prompt-not-shown` |
 | [5.1.3 Health and Health Research](guidelines/5.1.3.md) | assisted | `privacy.health-data-sharing`, `privacy.health-icloud-storage`, `privacy.health-research-consent` |
 | [5.1.4 Kids](guidelines/5.1.4.md) | assisted | `privacy.kids-data-collection`, `safety.kids-category` |
 | [5.1.5 Location Services](guidelines/5.1.5.md) | assisted | `permissions.location-background`, `privacy.location-services` |
-| [5.2 Intellectual Property](guidelines/5.2.md) | subsections | - |
-| [5.2.1 Generally](guidelines/5.2.1.md) | uncovered | - |
-| [5.2.2 Third-Party Sites/Services](guidelines/5.2.2.md) | uncovered | - |
-| [5.2.3 Audio/Video Downloading](guidelines/5.2.3.md) | uncovered | - |
-| [5.2.4 Apple Endorsements](guidelines/5.2.4.md) | uncovered | - |
-| [5.2.5 Apple Products](guidelines/5.2.5.md) | assisted | `design.copycat`, `metadata.apple-trademarks` |
+| [5.2 Intellectual Property](guidelines/5.2.md) | manual | `legal.third-party-content` |
+| [5.2.1 Generally](guidelines/5.2.1.md) | manual | `legal.third-party-content` |
+| [5.2.2 Third-Party Sites/Services](guidelines/5.2.2.md) | manual | `legal.third-party-content` |
+| [5.2.3 Audio/Video Downloading](guidelines/5.2.3.md) | assisted | `legal.media-downloading` |
+| [5.2.4 Apple Endorsements](guidelines/5.2.4.md) | assisted | `metadata.apple-endorsement` |
+| [5.2.5 Apple Products](guidelines/5.2.5.md) | assisted | `design.apple-emoji`, `design.apple-music`, `design.copycat`, `metadata.apple-trademarks` |
 | [5.3 Gaming, Gambling, and Lotteries](guidelines/5.3.md) | assisted | `payments.real-money-gaming` |
 | [5.3.1](guidelines/5.3.1.md) | assisted | `payments.sweepstakes-rules` |
 | [5.3.2](guidelines/5.3.2.md) | assisted | `payments.sweepstakes-rules` |
@@ -141,8 +141,8 @@ A section's level is the strongest automation among its rules: **automated** nee
 | [5.3.4](guidelines/5.3.4.md) | assisted | `payments.real-money-gaming` |
 | [5.4 VPN Apps](guidelines/5.4.md) | uncovered | - |
 | [5.5 Mobile Device Management](guidelines/5.5.md) | uncovered | - |
-| [5.6 Developer Code of Conduct](guidelines/5.6.md) | assisted | `payments.cancellation-friction`, `payments.paywall-billed-amount`, `payments.paywall-dismiss`, `payments.paywall-false-urgency`, `payments.paywall-trial-toggle` |
-| [5.6.1 App Store Reviews](guidelines/5.6.1.md) | assisted | `business.custom-review-prompt`, `business.review-gating` |
-| [5.6.2 Developer Identity](guidelines/5.6.2.md) | uncovered | - |
-| [5.6.3 Discovery Fraud](guidelines/5.6.3.md) | assisted | `business.incentivized-reviews`, `business.review-gating` |
-| [5.6.4 App Quality](guidelines/5.6.4.md) | uncovered | - |
+| [5.6 Developer Code of Conduct](guidelines/5.6.md) | assisted | `legal.code-of-conduct`, `legal.discovery-fraud`, `payments.cancellation-friction`, `payments.paywall-billed-amount`, `payments.paywall-dismiss`, `payments.paywall-false-urgency`, `payments.paywall-trial-toggle` |
+| [5.6.1 App Store Reviews](guidelines/5.6.1.md) | assisted | `business.custom-review-prompt`, `business.review-gating`, `design.review-prompt`, `legal.code-of-conduct` |
+| [5.6.2 Developer Identity](guidelines/5.6.2.md) | manual | `legal.developer-identity` |
+| [5.6.3 Discovery Fraud](guidelines/5.6.3.md) | assisted | `business.incentivized-reviews`, `business.review-gating`, `legal.discovery-fraud` |
+| [5.6.4 App Quality](guidelines/5.6.4.md) | manual | `legal.app-quality` |

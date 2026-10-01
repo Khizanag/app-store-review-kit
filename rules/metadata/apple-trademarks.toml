@@ -5,12 +5,13 @@ evidence = ["metadata", "human"]
 enforced_by = "app-review"
 guidelines = ["5.2.5", "2.3.7"]
 summary = """
-Apps may not look confusingly similar to Apple products or imply Apple endorsement. Using Apple trademarks such as iPhone, iPad, Apple Watch, Siri, or App Store as part of the app name, or Apple product images in the icon, is a common rejection.
+Apps may not look confusingly similar to Apple products or imply Apple endorsement. Apple's marketing guidelines allow Apple product names only in a referential phrase such as "App Name for iPhone", never as "iPhone App Name", and "Apple Vision Pro" may not appear in the app name at all. Apple product images in the icon are a common rejection.
 """
 fix = """
-Use Apple trademarks only referentially in the description, for example "for iPhone". Keep them out of the name and icon.
+Use Apple trademarks only referentially, for example "for iPhone" or "works with Apple Watch", and keep them out of the name's lead and the icon. Use Apple product images only as is, without modification.
 """
 references = [
+  "https://developer.apple.com/app-store/marketing/guidelines/",
   "https://www.apple.com/legal/intellectual-property/guidelinesfor3rdparties.html",
 ]
 
@@ -18,9 +19,14 @@ references = [
 id = "metadata-terms"
 confidence = "medium"
 fields = ["name", "subtitle"]
-terms = ["iPhone", "iPad", "iOS", "Apple", "Mac", "Siri", "App Store", "Apple Watch", "AirPods", "FaceTime", "iCloud"]
+terms = [
+  "iPhone", "iPad", "iOS", "Apple", "Mac", "MacBook", "Siri", "App Store", "Apple Watch", "Apple TV",
+  "Vision Pro", "AirPods", "AirDrop", "AirTag", "FaceTime", "iMessage", "iCloud", "Apple Pay", "Apple Music",
+  "CarPlay", "HomeKit",
+]
 
 [review]
 questions = [
   "Does the icon use an Apple product image or an Apple glyph?",
+  "Does an Apple product name appear before the app's own name, as in \"iPhone App Name\"?",
 ]

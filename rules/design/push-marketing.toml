@@ -1,0 +1,27 @@
+id = "design.push-marketing"
+title = "Marketing push without in-app opt-in and opt-out, or push required"
+severity = "warning"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["4.5.4"]
+summary = """
+Push notifications must not be required for the app to work and must not carry sensitive personal or confidential information. Promotional or direct-marketing pushes need explicit opt-in through consent language shown in the app's UI, plus an in-app way to opt out. The system notification permission alone is not marketing consent.
+"""
+fix = """
+Add a separate, unchecked marketing-notifications consent with clear wording, a toggle in settings to turn it off, and keep the app fully usable when notifications are denied.
+"""
+
+[check]
+id = "push-marketing"
+confidence = "low"
+sdk_signals = ["OneSignal", "BrazeKit", "import Braze", "CleverTapSDK", "IterableSDK", "AirshipCore", "MoEngageSDK"]
+registration_signals = ["registerForRemoteNotifications", "UNUserNotificationCenter"]
+opt_out_signals = ["marketingConsent", "notificationPreferences", "notificationSettings", "pushEnabled", "promotionalNotifications"]
+
+[review]
+questions = [
+  "Does the app send promotional pushes, and did the person opt in through consent text in the app?",
+  "Can the person turn marketing pushes off inside the app?",
+  "Does every feature still work when notification permission is denied?",
+  "Can a push payload contain health, financial, or other sensitive details?",
+]

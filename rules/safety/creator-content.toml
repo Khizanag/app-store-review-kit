@@ -1,0 +1,24 @@
+id = "safety.creator-content"
+title = "Creator content without age identification and restriction"
+severity = "error"
+evidence = ["runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["1.2.1"]
+applies_when = ["user-content"]
+summary = """
+Apps built around content from a community of creators treat that content as user-generated: it must follow 1.2 moderation and 3.1.1 payments, and must not change the app's core features. Since November 2025, 1.2.1(a) also requires a way for people to identify content that exceeds the app's age rating, and an age restriction mechanism based on verified or declared age that limits underage access.
+"""
+fix = """
+Label creator content that exceeds the app's age rating, gate it on verified or declared age, for example with the Declared Age Range API, and tell people which creator content needs an extra purchase.
+"""
+references = [
+  "https://developer.apple.com/news/?id=ey6d8onl",
+]
+
+[review]
+questions = [
+  "Can a person tell which creator content exceeds the app's age rating before opening it?",
+  "Does access to that content depend on a verified or declared age, not just a self-dismissed warning?",
+  "Does creator content add to the app's structured experience rather than change its core features?",
+  "Does the app say which creator content requires an additional purchase, and is it sold through in-app purchase?",
+]

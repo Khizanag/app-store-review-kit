@@ -1,0 +1,27 @@
+id = "safety.generative-ai-moderation"
+title = "Generated content without filtering or reporting"
+severity = "warning"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["1.1", "1.2"]
+applies_when = ["ai"]
+summary = """
+Content an app generates is still content the app shows, so Guideline 1.1 applies to text, images, and audio a model produces on request. When people can post or share generated content with others, it becomes user-generated content and needs the 1.2 safeguards: filtering, reporting with timely responses, blocking, and published contact details. The age rating answers must also reflect what the model can produce.
+"""
+fix = """
+Filter prompts and outputs with the provider's moderation endpoint or your own classifier, refuse disallowed categories, let people report a bad output from where they see it, and answer the age rating questions for the worst output the model can return.
+"""
+
+[check]
+id = "ai-moderation"
+confidence = "low"
+generation_signals = ["api.openai.com", "api.anthropic.com", "generativelanguage.googleapis.com", "LanguageModelSession", "ImagePlayground", "images/generations", "chat/completions"]
+moderation_signals = ["moderations", "moderation", "safetySettings", "contentFilter", "content_filter", "guardrail"]
+
+[review]
+questions = [
+  "Can a prompt make the app produce sexual, violent, hateful, or self-harm content, and what stops it?",
+  "Can a person report or flag a generated result from the screen that shows it?",
+  "If generated content can be shared with other people, does the app meet every 1.2 requirement for it?",
+  "Do the age rating answers cover the most mature content the model can return?",
+]

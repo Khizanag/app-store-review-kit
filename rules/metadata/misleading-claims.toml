@@ -1,0 +1,29 @@
+id = "metadata.misleading-claims"
+title = "Store text promises capabilities an iOS app cannot have"
+severity = "error"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["2.3.1"]
+summary = """
+Guideline 2.3.1(a) names iOS virus and malware scanners as misleading marketing: the sandbox keeps an app from scanning, cleaning, or speeding up the rest of the system, so antivirus, RAM cleaner, speed booster, and phone cooler claims promote services the app does not offer. Misleading marketing is grounds for removal and termination of the developer account, and promoting a false price is treated the same way.
+"""
+fix = """
+Describe what the app actually does inside its own sandbox, such as finding duplicate photos or reviewing storage use, and drop claims about scanning, cleaning, boosting, or protecting the device.
+"""
+
+[check]
+id = "metadata-terms"
+confidence = "medium"
+fields = ["name", "subtitle", "description", "keywords", "promotional_text", "release_notes"]
+terms = [
+  "virus scan", "virus scanner", "antivirus", "anti-virus", "malware scan", "malware removal", "malware cleaner",
+  "spyware removal", "clean your iphone", "clean your device", "phone cleaner virus", "speed booster",
+  "boost speed", "boost ram", "ram cleaner", "ram booster", "memory booster", "memory cleaner",
+  "phone cooler", "cpu cooler", "battery doubler", "free money", "guaranteed win", "guaranteed prize",
+]
+
+[review]
+questions = [
+  "Does any claim describe protecting, cleaning, or speeding up the device or other apps rather than the app's own data?",
+  "Does every price shown in screenshots, previews, or promotional text match the price on the store?",
+]

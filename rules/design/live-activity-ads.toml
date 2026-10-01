@@ -1,0 +1,27 @@
+id = "design.live-activity-ads"
+title = "Live Activities or Apple services used for promotions or spam"
+severity = "error"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["4.5.3", "4.5"]
+summary = """
+Apple services, including Game Center, push notifications, and Live Activities, may not be used to spam, phish, or send unsolicited messages; the June 2026 revision names Live Activities explicitly. The Human Interface Guidelines also say not to use a Live Activity for ads or promotions: it should show only information about the ongoing event or task.
+"""
+fix = """
+Start a Live Activity only for a task or event the person is following, update it only with that task's state, and end it when the task ends. Send offers through opted-in marketing notifications instead.
+"""
+references = [
+  "https://developer.apple.com/news/?id=a233fmpw",
+  "https://developer.apple.com/design/human-interface-guidelines/live-activities",
+]
+
+[check]
+id = "code-signals"
+confidence = "low"
+signals = ["import ActivityKit", "Activity.request", "ActivityAttributes", "pushToStartToken"]
+
+[review]
+questions = [
+  "Does every Live Activity track a task or event the person started or chose to follow?",
+  "Can any Live Activity update, or a push-to-start activity, carry an offer, discount, or promotion?",
+]

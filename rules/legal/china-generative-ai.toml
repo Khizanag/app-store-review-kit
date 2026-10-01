@@ -1,0 +1,23 @@
+id = "legal.china-generative-ai"
+title = "Generative AI offered on the China mainland storefront without approval"
+severity = "warning"
+evidence = ["metadata", "source", "human"]
+enforced_by = "app-review"
+guidelines = ["5"]
+applies_when = ["ai"]
+summary = """
+Apps must comply with the law in every storefront where they are available. China mainland requires government approval for generative AI services offered to the public, and some apps also need an MIIT ICP Filing Number to be listed there. An app available in China mainland that offers an unapproved model, or names one such as ChatGPT, OpenAI, Gemini, Claude, or Midjourney in its metadata, risks rejection or removal from that storefront.
+"""
+fix = """
+Either remove China mainland from the app's availability, or confirm with counsel which approvals the AI features need there and provide the ICP Filing Number in App Store Connect. Check every localization, not only Simplified Chinese, since all of them can appear on that storefront.
+"""
+references = [
+  "https://developer.apple.com/help/app-store-connect/reference/app-information/app-information",
+]
+
+[review]
+questions = [
+  "Is China mainland in the app's availability while the app offers generative AI features?",
+  "Does any localization name ChatGPT, GPT, OpenAI, Gemini, Claude, Anthropic, Midjourney, DALL-E, Copilot, or Stable Diffusion?",
+  "Does the app hold the approvals and ICP Filing Number China mainland requires for these features?",
+]

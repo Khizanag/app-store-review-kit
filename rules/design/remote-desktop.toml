@@ -1,0 +1,24 @@
+id = "design.remote-desktop"
+title = "Remote desktop client mirrors specific software or cloud apps"
+severity = "error"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["4.2.7"]
+summary = """
+A remote desktop app that mirrors specific software or services, rather than the whole host device, must connect only to a user-owned personal computer or game console on the same local network, run and render everything on the host, start account creation and management on the host, and show no store-like UI or browsing of software the user does not own. Thin clients for cloud-based apps are not allowed.
+"""
+fix = """
+Limit connections to user-owned hosts on the LAN, move sign-up and account management to the host, and remove any catalog or purchase UI for unowned software. A generic mirror of the whole host device is outside these extra conditions.
+"""
+
+[check]
+id = "code-signals"
+confidence = "low"
+signals = ["libvncclient", "LibVNC", "VNCClient", "RDPSession", "RDPKit", "RemoteDesktopClient", "FreeRDP", "JumpDesktop"]
+
+[review]
+questions = [
+  "Does the client mirror the whole host, or specific apps or services on it?",
+  "Can it connect to anything other than a user-owned computer or console on the same local network?",
+  "Does the client show a catalog or let people buy or pick software they do not already own?",
+]

@@ -1,0 +1,30 @@
+id = "metadata.beta-wording"
+title = "App presented as a beta, demo, or test build"
+severity = "warning"
+evidence = ["metadata", "plist", "source", "human"]
+enforced_by = "app-review"
+guidelines = ["2.2"]
+summary = """
+Demos, betas, and trial versions do not belong on the App Store; TestFlight is for those. A store name, display name, version string, or in-app label that calls the build a beta, alpha, preview, or test build tells App Review it is not final. TestFlight builds must not be distributed to testers in exchange for compensation, including crowdfunding rewards.
+"""
+fix = """
+Remove beta, alpha, preview, and test labels from the store text, `CFBundleDisplayName`, the version string, and the shipped UI, and distribute pre-release builds through TestFlight.
+"""
+references = [
+  "https://developer.apple.com/testflight/",
+]
+
+[check]
+id = "metadata-terms"
+confidence = "medium"
+fields = ["name", "subtitle", "description", "promotional_text", "release_notes", "display_name", "version"]
+terms = [
+  "beta", "alpha version", "alpha build", "test build", "test version", "testing version", "preview build", "developer preview",
+  "demo version", "early access", "pre-release", "prerelease", "not for release", "internal build", "work in progress",
+]
+
+[review]
+questions = [
+  "Does any shipped screen label the app or a feature as beta, preview, or test?",
+  "Are TestFlight testers ever offered rewards, refunds, or perks for testing?",
+]

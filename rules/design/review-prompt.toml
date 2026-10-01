@@ -1,0 +1,28 @@
+id = "design.review-prompt"
+title = "Custom review prompt instead of the system API"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["5.6.1"]
+summary = """
+Apps must ask for ratings through the provided API, which lets people rate and review without leaving the app; custom review prompts are not allowed. A homemade "Rate us" alert, a star picker that forwards to the App Store, or a direct write-review link shown as a prompt all count as custom prompts.
+"""
+fix = """
+Call SwiftUI's `requestReview` environment action, or `AppStore.requestReview(in:)` in UIKit, at a natural pause; the system shows it at most three times in 365 days. Keep a link with `action=write-review` only for a control the person chooses to tap, such as a settings row, not as a prompt.
+"""
+references = [
+  "https://developer.apple.com/documentation/storekit/requesting-app-store-reviews",
+]
+
+[check]
+id = "review-prompt"
+confidence = "medium"
+custom_signals = ["action=write-review"]
+system_signals = ["requestReview", "SKStoreReviewController", "AppStore.requestReview"]
+sentiment_gate_phrases = ["enjoying the app", "enjoying this app", "loving the app", "do you like this app", "are you enjoying"]
+
+[review]
+questions = [
+  "Does any alert, sheet, or banner ask for a rating without using the system review API?",
+  "Does a pre-prompt send only happy users to the rating request and unhappy users elsewhere?",
+]

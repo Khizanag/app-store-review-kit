@@ -5,21 +5,24 @@ evidence = ["metadata", "human"]
 enforced_by = "app-review"
 guidelines = ["2.3.3"]
 summary = """
-App Store Connect needs at least one screenshot in an accepted size for each supported device family. Screenshots must show the app in use, not just title art, a login page, or a splash screen, and must not show features the build lacks.
+App Store Connect needs one to ten screenshots per set, as PNG or JPEG without alpha, in an accepted size: a 6.9-inch or 6.5-inch set for iPhone apps and a 13-inch set for iPad apps, with smaller displays scaled from those. Screenshots must show the app in use, not just title art, a login page, or a splash screen, and must not show features the build lacks. Text and image overlays that explain input, such as an animated touch point or Apple Pencil, are allowed. The creative assets introduced for iOS 27 may show content beyond the app in use, but must still relate to its functionality; they do not relax the screenshot rule.
 """
 fix = """
-Capture real screens from the submitted build for every supported device family, such as iPhone and iPad, and keep marketing text to a caption.
+Capture real screens from the submitted build at an accepted size for every supported device family, flatten them to remove transparency, and keep marketing text to captions.
 """
 references = [
   "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications",
+  "https://developer.apple.com/app-store/asset-best-practices/",
 ]
 
 [check]
 id = "screenshot-sets"
-confidence = "medium"
+confidence = "high"
+catalog = "metadata-screenshot-sizes"
 
 [review]
 questions = [
   "Does every screenshot show a screen that exists in this build?",
   "Is any screenshot only a splash, login, or title-art frame?",
+  "Does any screenshot show placeholder data, debug UI, an empty state, or clipped text?",
 ]

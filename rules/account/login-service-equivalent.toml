@@ -6,10 +6,10 @@ enforced_by = "app-review"
 guidelines = ["4.8"]
 applies_when = ["accounts"]
 summary = """
-Apps that use a third-party or social login service, such as Google or Facebook, to set up the primary account must also offer an equivalent login that limits collection to name and email, lets people keep their email private, and does not track without consent. Sign in with Apple meets all three.
+Apps that use a third-party or social login service, such as Google, Facebook, X, LinkedIn, Amazon, or WeChat, to set up or sign in to the primary account must also offer an equivalent login that limits collection to name and email, lets people keep their email private, and does not collect interactions for advertising without consent. Sign in with Apple meets all three, but 4.8 does not require it specifically. No alternative is needed when the app uses only the company's own accounts, is an education, enterprise, or business app using existing org accounts, uses a government or industry-backed electronic ID, is a client for a specific third-party service, or is an alternative marketplace using its own login.
 """
 fix = """
-Add Sign in with Apple, or another service with the same privacy properties, alongside the existing social logins, with equal prominence.
+Add Sign in with Apple, or another service with the same privacy properties, next to the existing social logins. Apple's design guidance asks for a Sign in with Apple button no smaller than the other sign-in buttons and visible without scrolling.
 """
 references = [
   "https://developer.apple.com/app-store/review/guidelines/#4.8",
@@ -19,11 +19,12 @@ references = [
 [check]
 id = "login-services"
 confidence = "medium"
-third_party = ["GoogleSignIn", "FBSDKLoginKit", "LineSDK", "TwitterKit", "MSAL", "KakaoSDKAuth"]
+third_party = ["GoogleSignIn", "GIDSignIn", "FBSDKLoginKit", "LineSDK", "TwitterKit", "MSAL", "KakaoSDKAuth", "LoginWithAmazon", "WechatOpenSDK", "WXApi", "VKSdk", "NaverThirdPartyLogin"]
 privacy_preserving = ["ASAuthorizationAppleIDProvider", "SignInWithAppleButton"]
 
 [review]
 questions = [
-  "Does the equivalent login appear with the same prominence as the social logins?",
-  "Is the app exempt, for example a client for the developer's own account system or an enterprise or education app?",
+  "Is the equivalent login offered wherever the social logins appear, at the same size and without scrolling?",
+  "Is the app exempt: own accounts only, an education or enterprise account, an electronic ID, a client for one third-party service, or an alternative marketplace?",
+  "If the equivalent is not Sign in with Apple, does it limit data to name and email, allow a private email, and avoid ad tracking without consent?",
 ]

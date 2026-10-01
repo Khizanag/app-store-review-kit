@@ -20,4 +20,6 @@ signals = ["WKWebView", "WebView(", "SFSafariViewController", "WebPage("]
 [review]
 questions = [
   "Is there meaningful native functionality beyond the web content?",
+  "Is the app mainly marketing material, ads, web clippings, a content aggregator, or a collection of links?",
+  "Is the app only a song, a movie, a book, or a game guide that belongs in the iTunes Store or Apple Books?",
 ]

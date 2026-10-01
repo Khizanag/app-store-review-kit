@@ -1,0 +1,28 @@
+id = "safety.false-features"
+title = "Trick, prank, or fake functionality"
+severity = "error"
+evidence = ["metadata", "source", "human"]
+enforced_by = "app-review"
+guidelines = ["1.1.6"]
+summary = """
+Guideline 1.1.6 rejects false information and features, such as inaccurate device data or trick and joke functionality like fake location trackers. Labeling the app "for entertainment purposes" does not overcome it. Apps that enable anonymous or prank phone calls, SMS, or MMS are rejected outright.
+"""
+fix = """
+Remove the fake feature, or make it real and accurate. Drop anonymous or spoofed calling and messaging entirely; a disclaimer does not make it acceptable.
+"""
+
+[check]
+id = "metadata-terms"
+confidence = "medium"
+fields = ["name", "subtitle", "description", "keywords", "promotional_text"]
+terms = [
+  "prank call", "fake call", "fake caller", "spoof call", "caller id spoof", "anonymous sms", "anonymous text",
+  "prank text", "fake gps", "fake location", "location spoofer", "lie detector", "x-ray scanner",
+  "fingerprint scanner prank", "for entertainment purposes only", "for entertainment purposes",
+]
+
+[review]
+questions = [
+  "Does any feature claim to measure, detect, or track something the device cannot actually measure?",
+  "Can a person place calls or send messages that hide or fake the sender?",
+]

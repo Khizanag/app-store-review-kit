@@ -1,0 +1,28 @@
+id = "metadata.localization-incomplete"
+title = "Store localization missing required fields or left untranslated"
+severity = "error"
+evidence = ["metadata", "human"]
+enforced_by = "app-store-connect"
+guidelines = ["2.3"]
+summary = """
+A new store localization copies the primary language's screenshots and properties, except the description and keywords, which start empty. Both are required fields, so a localization added and left half filled blocks submission. A localization that keeps primary-language text, or claims different features, prices, or trial terms than the primary language, misrepresents the app to that market.
+"""
+fix = """
+Write a description and keywords for every localization, and add What's New text to each one for updates. Translate the name, subtitle, and screenshot captions too, or remove localizations you do not support.
+"""
+references = [
+  "https://developer.apple.com/help/app-store-connect/manage-app-information/localize-app-information",
+  "https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information",
+]
+
+[check]
+id = "localization-parity"
+confidence = "high"
+required = ["description", "keywords", "support_url"]
+required_for_updates = ["release_notes"]
+untranslated_fields = ["name", "subtitle", "description", "keywords"]
+
+[review]
+questions = [
+  "Does every localization describe the same features, prices, trial terms, and URLs as the primary language?",
+]

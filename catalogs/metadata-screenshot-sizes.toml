@@ -1,0 +1,87 @@
+# Accepted App Store screenshot sizes for iPhone and iPad, in pixels (width x height).
+# `portrait` sizes are accepted as given; `landscape` is the swapped pair unless a display lists its own.
+# Formats: .jpeg, .jpg, .png; 1 to 10 screenshots per set; no alpha channel or transparency.
+# A display with `fallback` uses scaled screenshots from that display when its own set is missing.
+
+source = "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications"
+verified = 2026-10-01
+min_per_set = 1
+max_per_set = 10
+formats = ["jpeg", "jpg", "png"]
+alpha_allowed = false
+
+[[displays]]
+id = "iphone-6.9"
+family = "iphone"
+required = "An iPhone app needs this set or the 6.5-inch set"
+portrait = [[1260, 2736], [1290, 2796], [1320, 2868]]
+
+[[displays]]
+id = "iphone-6.5"
+family = "iphone"
+required = "Required if the app runs on iPhone and 6.9-inch screenshots are not provided"
+fallback = "iphone-6.9"
+portrait = [[1284, 2778], [1242, 2688]]
+
+[[displays]]
+id = "iphone-6.3"
+family = "iphone"
+fallback = "iphone-6.5"
+portrait = [[1179, 2556], [1206, 2622]]
+
+[[displays]]
+id = "iphone-6.1"
+family = "iphone"
+fallback = "iphone-6.5"
+portrait = [[1170, 2532], [1125, 2436], [1080, 2340]]
+
+[[displays]]
+id = "iphone-5.5"
+family = "iphone"
+fallback = "iphone-6.1"
+portrait = [[1242, 2208]]
+
+[[displays]]
+id = "iphone-4.7"
+family = "iphone"
+fallback = "iphone-5.5"
+portrait = [[750, 1334]]
+
+[[displays]]
+id = "iphone-4"
+family = "iphone"
+portrait = [[640, 1096], [640, 1136]]
+landscape = [[1136, 600], [1136, 640]]
+
+[[displays]]
+id = "iphone-3.5"
+family = "iphone"
+portrait = [[640, 920], [640, 960]]
+landscape = [[960, 600], [960, 640]]
+
+[[displays]]
+id = "ipad-13"
+family = "ipad"
+required = "Required if the app runs on iPad"
+portrait = [[2064, 2752], [2048, 2732]]
+
+[[displays]]
+id = "ipad-12.9"
+family = "ipad"
+portrait = [[2048, 2732]]
+
+[[displays]]
+id = "ipad-11"
+family = "ipad"
+portrait = [[1488, 2266], [1668, 2420], [1668, 2388], [1640, 2360]]
+
+[[displays]]
+id = "ipad-10.5"
+family = "ipad"
+portrait = [[1668, 2224]]
+
+[[displays]]
+id = "ipad-9.7"
+family = "ipad"
+portrait = [[1536, 2008], [1536, 2048], [768, 1004], [768, 1024]]
+landscape = [[2048, 1496], [2048, 1536], [1024, 748], [1024, 768]]

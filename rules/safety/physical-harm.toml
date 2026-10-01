@@ -1,0 +1,20 @@
+id = "safety.physical-harm"
+title = "Features that risk physical harm"
+severity = "error"
+evidence = ["metadata", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["1.4", "1.4.2", "1.4.3", "1.4.4", "1.4.5"]
+summary = """
+Apps that risk physical harm are rejected. Drug dosage calculators must come from the manufacturer, a hospital, university, insurer, pharmacy, or other approved entity, or carry FDA or equivalent approval. Apps may not encourage tobacco, vaping, illegal drugs, or excessive alcohol, nor sell controlled substances or tobacco, except licensed pharmacies and licensed or legal cannabis dispensaries. DUI checkpoints may come only from law enforcement, and apps may not urge drunk driving, excessive speed, or bets and challenges that risk harm.
+"""
+fix = """
+Submit dosage calculators from the approved entity's own account with proof of approval. Remove encouragement of substance use and dangerous challenges, and show only checkpoints that law enforcement publishes.
+"""
+
+[review]
+questions = [
+  "Does the app calculate drug dosages, and is the account holder an approved entity or is the calculator approved by the FDA or a counterpart?",
+  "Does the app encourage tobacco, vaping, illegal drugs, or excessive alcohol, or sell controlled substances or tobacco without a license?",
+  "Does the app show DUI checkpoints from a source other than law enforcement, or reward speed or drunk driving?",
+  "Does the app urge people into bets, challenges, or device use that could hurt them or others?",
+]

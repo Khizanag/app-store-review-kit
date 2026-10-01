@@ -1,0 +1,17 @@
+id = "design.monetized-capabilities"
+title = "Charging for built-in device or Apple capabilities"
+severity = "error"
+evidence = ["runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["4.10"]
+summary = """
+Apps may not monetize capabilities the hardware or operating system provides, such as push notifications, the camera, or the gyroscope, or Apple services such as Apple Music access, iCloud storage, or Screen Time APIs. Selling the feature built on top is fine; selling access to the capability itself is not.
+"""
+fix = """
+Charge for the value your app adds, such as editing tools or content, and keep basic access to system capabilities free.
+"""
+
+[review]
+questions = [
+  "Does any purchase unlock a system capability itself, such as notifications, the camera, the flashlight, iCloud sync, or Screen Time controls?",
+]

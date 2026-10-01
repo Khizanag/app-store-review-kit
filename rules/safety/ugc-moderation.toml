@@ -6,20 +6,28 @@ enforced_by = "app-review"
 guidelines = ["1.2"]
 applies_when = ["user-content"]
 summary = """
-Apps with user-generated content or social features must filter objectionable material, let people report offensive content with timely responses, let people block abusive users, and publish contact information. Random or anonymous chat apps fall under the same rule.
+Apps with user-generated content or social features must filter objectionable material, let people report offensive content with timely responses, let people block abusive users, and publish contact information. Apps used mainly for pornography, Chatroulette-style or random or anonymous chat, "hot-or-not" rating of real people, threats, or bullying do not belong on the App Store. Mature content from a web-based service must be hidden by default and turned on only through the website. Since June 2026, the developer is responsible for removing violating content and may have to present an improvement plan.
 """
 fix = """
-Ship report and block actions on every piece of user content and every profile, a filtering step, published contact details, and terms that forbid objectionable content.
+Ship report and block actions on every piece of user content and every profile, a filtering step, published contact details, and terms that forbid objectionable content. Staff a process that acts on reports and removes violating content.
 """
+references = [
+  "https://developer.apple.com/news/?id=a233fmpw",
+]
 
 [check]
 id = "ugc-signals"
 confidence = "low"
 signals = ["comment", "post", "upload", "chat", "message", "feed", "follow"]
+sdk_signals = ["StreamChat", "MessageKit", "SendbirdChatSDK", "PubNub", "postComment", "createPost", "uploadVideo"]
+moderation_signals = ["reportContent", "reportUser", "blockUser", "muteUser", "moderation", "flagContent", "contentFilter"]
 
 [review]
 questions = [
   "Can a person report any post, comment, or message from where they see it?",
   "Can a person block another user, and does blocking hide that user's content?",
   "Is there a filter for objectionable content, and contact details in the app?",
+  "Who acts on reports, how fast, and how is violating content removed?",
+  "Is incidental mature content hidden by default and enabled only on the website?",
+  "Does the app pair strangers at random or anonymously, or rate real people's looks?",
 ]

@@ -1,0 +1,19 @@
+id = "legal.code-of-conduct"
+title = "Manipulative practices or disrespectful conduct"
+severity = "error"
+evidence = ["runtime", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["5.6", "5.6.1"]
+summary = """
+Apps must never prey on users: no tricking people into unwanted purchases, forcing them to share unnecessary data, raising prices in a tricky way, or charging for features or content that are not delivered. Developers must treat customers and Apple with respect, and responses to App Store reviews must address the reviewer's comments without personal information, spam, or marketing. Violations lead to termination of the developer account.
+"""
+fix = """
+Remove dark patterns from purchase, cancellation, and data collection flows, deliver everything that is charged for, and keep review responses on topic and free of marketing.
+"""
+
+[review]
+questions = [
+  "Does any flow push people into a purchase, a price increase, or data sharing they did not clearly choose?",
+  "Is every paid feature or item delivered as described?",
+  "Do responses to App Store reviews stay on the reviewer's point, without personal data, spam, or promotions?",
+]

@@ -1,0 +1,21 @@
+id = "metadata.category-fit"
+title = "Primary category does not match the app's main function"
+severity = "note"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["2.3.5"]
+summary = """
+The primary category must describe the app's main function or subject. App Review may change a category that is way off base, and choosing an inappropriate category is against the guidelines.
+"""
+fix = """
+Choose the category where people look for apps like yours, using Apple's category definitions. For a game, also pick up to two fitting Games subcategories. On macOS, match the category set in Xcode.
+"""
+references = [
+  "https://developer.apple.com/app-store/categories/",
+]
+
+[review]
+questions = [
+  "Does the primary category describe what people mostly do in the app?",
+  "Would people looking for this app browse the chosen category?",
+]

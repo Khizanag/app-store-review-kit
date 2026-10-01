@@ -5,14 +5,19 @@ evidence = ["metadata", "human"]
 enforced_by = "app-review"
 guidelines = ["4.1", "5.2.5"]
 summary = """
-Apps may not copy another developer's name, icon, brand, or UI, and may not look confusingly similar to Apple products, interfaces, or apps.
+Apps may not copy another developer's name, icon, brand, or UI, and may not look confusingly similar to Apple products, interfaces, or apps. Since November 2025, 4.1(c) forbids another developer's icon, brand, or product name in the app's icon or name without that developer's approval, and impersonating another app or service is a Code of Conduct violation that can end the developer account.
 """
 fix = """
-Use an original name and icon, and check them against the App Store and a trademark search before submitting.
+Use an original name and icon, and check them against the App Store and a trademark search before submitting. If the app integrates with another company's product, get written approval before using its name or logo, and attach it in the review notes.
 """
+references = [
+  "https://developer.apple.com/news/?id=ey6d8onl",
+]
 
 [review]
 questions = [
   "Does a search for the app name show another app with the same or a confusable name or icon?",
+  "Does the name or icon contain another company's brand or product name, such as an AI model or social network, and is there written approval?",
   "Does any screen imitate an Apple app or system UI closely enough to be mistaken for it?",
+  "Could a person mistake the app for an official app of a service it connects to?",
 ]

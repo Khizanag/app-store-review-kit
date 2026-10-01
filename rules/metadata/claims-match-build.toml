@@ -1,0 +1,19 @@
+id = "metadata.claims-match-build"
+title = "Store text or screenshots promise what the build lacks"
+severity = "warning"
+evidence = ["metadata", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["2.3", "2.3.1"]
+summary = """
+Metadata, including privacy information, the description, screenshots, and previews, must reflect the app's core experience and stay current with each version. Promoting content or services the app does not offer is misleading marketing under 2.3.1 and grounds for removal. Localizations that claim different features from the primary language count too.
+"""
+fix = """
+Cross-read every claim in the description, subtitle, promotional text, and screenshot captions against the submitted build, in every localization, and cut or reword anything the build does not do today.
+"""
+
+[review]
+questions = [
+  "Does every feature named in the description, subtitle, and screenshot captions work in this build?",
+  "Do claims such as offline use, sync, AI, or supported devices hold for this build?",
+  "Do the localized descriptions claim the same features as the primary language?",
+]

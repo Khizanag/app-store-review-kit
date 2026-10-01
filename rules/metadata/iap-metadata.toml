@@ -1,0 +1,27 @@
+id = "metadata.iap-metadata"
+title = "Store page hides which items need a purchase"
+severity = "warning"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["2.3.2"]
+applies_when = ["in-app-purchase"]
+summary = """
+When an app sells in-app purchases, the description, screenshots, and previews must make clear which featured items, levels, or subscriptions cost extra. Promoted in-app purchases need a display name, description, and image suitable for a public audience, and the app must complete a purchase started from the App Store when it launches.
+"""
+fix = """
+Mark paid content as paid in the description and screenshot captions. For promoted purchases, keep the display name to 30 characters and the description to 45, use a 1024 x 1024 image that is not a screenshot or the app icon, and handle purchase intents at launch, with `PurchaseIntent.intents` in StoreKit 2 or `paymentQueue(_:shouldAddStorePayment:for:)` in the original API.
+"""
+references = [
+  "https://developer.apple.com/app-store/promoting-in-app-purchases/",
+]
+
+[check]
+id = "metadata-length"
+confidence = "medium"
+limits = { iap_display_name = 30, iap_description = 45 }
+
+[review]
+questions = [
+  "Does every screenshot or description line that shows paid content say it requires a purchase?",
+  "Does buying a promoted in-app purchase from the product page complete in the app on first launch?",
+]

@@ -14,4 +14,9 @@ Replace every placeholder with final copy in each shipped localization, and chec
 [check]
 id = "placeholder-strings"
 confidence = "medium"
-terms = ["lorem ipsum", "TODO", "FIXME", "TBD", "placeholder", "sample text", "test test", "coming soon"]
+terms = [
+  "lorem ipsum", "TODO", "FIXME", "TBD", "placeholder", "sample text", "test test", "coming soon",
+  "insert text here", "insert copy here", "[your ", "YOUR_", "changeme",
+  "default description", "dummy text",
+]
+ignore = ["placeholder:", ".redacted(reason: .placeholder)", "placeholder(in:", "placeholderText"]

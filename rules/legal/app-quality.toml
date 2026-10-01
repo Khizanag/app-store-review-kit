@@ -1,0 +1,20 @@
+id = "legal.app-quality"
+title = "Complaints and refund requests signal low quality"
+severity = "note"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["5.6.4"]
+summary = """
+Excessive customer reports, negative reviews, and refund requests indicate an app is not meeting the App Store's quality bar, and Apple may weigh that when judging whether a developer follows the Code of Conduct. Apps that no longer work as intended or are not supported are removed.
+"""
+fix = """
+Track ratings, review themes, and refund reasons for each release, fix the top causes first, and answer reviews respectfully.
+"""
+references = [
+  "https://developer.apple.com/support/app-store-improvements/",
+]
+
+[review]
+questions = [
+  "Do recent reviews or refund requests repeat the same complaint, and does this release fix it?",
+]

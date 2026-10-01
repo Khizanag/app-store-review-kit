@@ -7,24 +7,29 @@ guidelines = ["5.1.1"]
 applies_when = ["accounts"]
 since = "2022-06-30"
 summary = """
-Apps that support account creation must let people start deleting the account from inside the app, not only by email or a website hidden behind support. Apps using Sign in with Apple must also revoke the user's tokens when the account is deleted.
+Apps that support account creation must let people start deleting the account from inside the app. Deletion must remove the account record and its personal data; only deactivating, disabling, or signing out is insufficient. Outside highly regulated industries, the app may not require a phone call, email, or support flow. A web step is allowed only when the in-app link goes straight to the page that completes deletion. Apps using Sign in with Apple must revoke the user's tokens with the Sign in with Apple REST API.
 """
 fix = """
-Add a clearly labeled delete-account action in account settings. Confirm, then delete the account and its data, or explain the timeline if regulations require retention. For Sign in with Apple, call the REST API to revoke tokens.
+Add a clearly labeled delete-account action in account settings. Confirm, then delete the account and its data on the server, revoke Sign in with Apple tokens through `/auth/revoke`, and return the app to a signed-out state. If deletion takes time, say how long and confirm when it is done. If the person has auto-renewable subscriptions, tell them billing continues through Apple and ask them to cancel first.
 """
 references = [
   "https://developer.apple.com/support/offering-account-deletion-in-your-app/",
+  "https://developer.apple.com/documentation/technotes/tn3194-handling-account-deletions-and-revoking-tokens-for-sign-in-with-apple",
 ]
 
 [check]
 id = "account-deletion"
 confidence = "low"
-creation_signals = ["createUser", "signUp", "register(", "ASAuthorizationAppleIDProvider", "Auth.auth().createUser"]
-deletion_signals = ["deleteAccount", "delete account", "deleteUser", "user.delete", "revokeToken", "/auth/revoke"]
+creation_signals = ["createUser", "signUp", "createAccount", "registerUser", "ASAuthorizationAppleIDProvider", "Auth.auth().createUser"]
+deletion_signals = ["deleteAccount", "delete account", "deleteUser", "user.delete", "closeAccount", "close account", "removeAccount", "erase account"]
+not_deletion_signals = ["deactivate", "disableAccount", "signOut", "logout"]
+siwa_revoke_signals = ["/auth/revoke", "revokeToken", "revoke"]
 
 [review]
 questions = [
   "Can a signed-in person reach account deletion from the app's settings in a few taps?",
-  "Does deletion remove the account and its data, not just sign out or deactivate?",
-  "Are Sign in with Apple tokens revoked on deletion?",
+  "Does deletion remove the account and its data on the server, not just sign out, clear local storage, or deactivate?",
+  "Does the flow avoid requiring a call, an email, or a support ticket, and does any web step open the exact deletion page?",
+  "Are Sign in with Apple tokens revoked through the REST API on deletion?",
+  "Does a person with an active subscription learn that billing continues through Apple until they cancel?",
 ]

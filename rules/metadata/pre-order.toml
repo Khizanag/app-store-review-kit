@@ -1,0 +1,18 @@
+id = "metadata.pre-order"
+title = "Pre-order build differs from what was advertised"
+severity = "warning"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["2.3.11", "2.1"]
+summary = """
+Apps submitted for pre-order must be complete and deliverable as submitted, and the released app must not be materially different from what the pre-order advertised. A material change, such as a new business model, means restarting pre-order sales.
+"""
+fix = """
+Submit a final build for pre-order. If the business model or core features change before release, end the pre-order and start a new one.
+"""
+
+[review]
+questions = [
+  "Is the pre-order build complete, with every advertised feature working?",
+  "Has the price, business model, or core feature set changed since pre-order began?",
+]

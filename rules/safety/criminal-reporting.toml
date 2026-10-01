@@ -1,0 +1,18 @@
+id = "safety.criminal-reporting"
+title = "Crime-reporting app without local law enforcement involvement"
+severity = "error"
+evidence = ["human"]
+enforced_by = "app-review"
+guidelines = ["1.7"]
+summary = """
+Apps for reporting alleged criminal activity must involve local law enforcement, and may only be offered in countries or regions where that involvement is active.
+"""
+fix = """
+Partner with the relevant law enforcement agency, document the partnership in the review notes, and limit availability to the regions it covers.
+"""
+
+[review]
+questions = [
+  "Does the app let people report alleged crimes, and does a local law enforcement agency receive and act on those reports?",
+  "Is the app's availability limited to the countries or regions where that involvement is active?",
+]

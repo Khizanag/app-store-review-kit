@@ -1,0 +1,22 @@
+id = "design.ar-experience"
+title = "ARKit app offers only a dropped-in model or replayed animation"
+severity = "warning"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["4.2.1"]
+summary = """
+Apps using ARKit must provide rich, integrated augmented reality experiences. Placing a single model in an AR view or replaying an animation is not enough.
+"""
+fix = """
+Make the AR scene interactive and tied to the real world: plane or object anchoring with meaningful placement, interaction, occlusion, or content that responds to the environment.
+"""
+
+[check]
+id = "code-signals"
+confidence = "low"
+signals = ["import ARKit", "ARSCNView", "ARView", "ARWorldTrackingConfiguration", "ARSession"]
+
+[review]
+questions = [
+  "Beyond placing a model, what can a person do in the AR view that depends on their surroundings?",
+]

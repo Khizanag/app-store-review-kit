@@ -1,0 +1,26 @@
+id = "metadata.future-features"
+title = "Store text advertises features that are not in the build"
+severity = "warning"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["2.3", "2.1"]
+summary = """
+Metadata must reflect the app's core experience as submitted, and submissions must be final. "Coming soon" sections, roadmaps, and promises that the app "will support" something describe features the reviewer cannot test, and read as misleading or incomplete.
+"""
+fix = """
+Describe only what this build does. Announce upcoming features after they ship, in What's New and the description of that version.
+"""
+
+[check]
+id = "metadata-terms"
+confidence = "medium"
+fields = ["subtitle", "description", "promotional_text", "release_notes"]
+terms = [
+  "coming soon", "will support", "will be available", "will be added", "in a future update",
+  "in an upcoming update", "in the next update", "on our roadmap", "roadmap", "stay tuned", "not yet available",
+]
+
+[review]
+questions = [
+  "Does the description mention any feature, platform, or content that this build does not include?",
+]

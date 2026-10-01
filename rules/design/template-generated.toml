@@ -1,0 +1,18 @@
+id = "design.template-generated"
+title = "App built from a commercial template or generator submitted for a client"
+severity = "error"
+evidence = ["project", "human"]
+enforced_by = "app-review"
+guidelines = ["4.2.6", "4.3"]
+summary = """
+Apps created from a commercialized template or app generation service are rejected unless the provider of the app's content submits them. Template services should not submit apps on behalf of clients; they may instead offer one aggregated "picker" app that hosts every client's content.
+"""
+fix = """
+Have the business that owns the content submit the app from its own developer account with customized features, or fold the client into a single aggregated app.
+"""
+
+[review]
+questions = [
+  "Was the app produced by a template or app-builder service, and is the account holder the content owner?",
+  "Do other apps from the same template share this app's code, screens, and assets?",
+]

@@ -1,0 +1,18 @@
+id = "metadata.asset-rights"
+title = "Store assets use material without rights or real people's data"
+severity = "warning"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["2.3.9"]
+summary = """
+The developer must hold the rights to everything in the icon, screenshots, and previews, including photos, music, characters, and fonts. Screenshots and previews must show fictional account information, not a real person's data.
+"""
+fix = """
+Replace licensed or scraped imagery and music with owned or properly licensed assets, and capture screenshots from a demo account filled with fictional names, photos, and numbers.
+"""
+
+[review]
+questions = [
+  "Is every image, track, character, and font in the icon, screenshots, and previews owned or licensed?",
+  "Do the screenshots and previews show only fictional names, contacts, messages, and account details?",
+]

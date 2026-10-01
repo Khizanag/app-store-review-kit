@@ -5,18 +5,21 @@ evidence = ["metadata", "human"]
 enforced_by = "app-review"
 guidelines = ["1.5"]
 summary = """
-The Support URL must load and give people an easy way to reach the developer. Broken pages and pages with no contact path draw 1.5 and 2.1 rejections.
+The app and its Support URL must give people an easy way to reach the developer, which matters most for apps used in classrooms. Broken pages and pages with no contact path draw 1.5 and 2.1 rejections, and inaccurate contact details can break the law in some regions. Wallet passes must carry valid contact information from the issuer and be signed with a certificate dedicated to the brand or trademark owner.
 """
 fix = """
-Point the Support URL at a live page with an email address or contact form, and keep it reachable without signing in.
+Point the Support URL at a live page with an email address or contact form, keep it reachable without signing in, and add a contact path inside the app. Sign Wallet passes with a pass type certificate owned by the brand.
 """
 
 [check]
 id = "url-reachable"
 confidence = "medium"
 fields = ["support_url", "marketing_url", "privacy_policy_url"]
+placeholder_hosts = ["example.com", "localhost", "127.0.0.1"]
 
 [review]
 questions = [
   "Does the support page show an email address or a contact form?",
+  "Can a person find a way to contact the developer from inside the app?",
+  "Do Wallet passes show the issuer's contact details and use the brand owner's pass certificate?",
 ]

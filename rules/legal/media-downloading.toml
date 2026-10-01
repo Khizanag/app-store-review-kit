@@ -1,0 +1,27 @@
+id = "legal.media-downloading"
+title = "Downloads or converts media from third-party services"
+severity = "error"
+evidence = ["metadata", "source", "human"]
+enforced_by = "app-review"
+guidelines = ["5.2.3"]
+summary = """
+Apps may not facilitate illegal file sharing, or save, convert, or download media from third-party sources such as Apple Music, YouTube, SoundCloud, or Vimeo without explicit authorization from those sources. Streaming from those services can also breach their terms of use. Apple may ask for the authorization at any time.
+"""
+fix = """
+Remove the download and conversion features, or get written authorization from the source and attach it in the review notes. Play third-party media only through the service's official embed or SDK.
+"""
+
+[check]
+id = "metadata-terms"
+confidence = "medium"
+fields = ["name", "subtitle", "description", "keywords", "promotional_text"]
+terms = [
+  "video downloader", "youtube downloader", "download youtube", "youtube to mp3", "youtube mp3",
+  "mp3 converter", "music downloader", "save videos from", "download videos from", "instagram downloader",
+  "tiktok downloader", "reels downloader", "soundcloud downloader", "vimeo downloader", "torrent",
+]
+
+[review]
+questions = [
+  "Can the app save or convert audio or video from a service it does not own, and is there written authorization?",
+]

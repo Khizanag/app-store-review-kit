@@ -1,0 +1,25 @@
+id = "metadata.kids-wording"
+title = "\"For Kids\" wording outside the Kids Category"
+severity = "warning"
+evidence = ["metadata"]
+enforced_by = "app-review"
+guidelines = ["2.3.8"]
+summary = """
+Terms like "For Kids" and "For Children" in app metadata are reserved for the Kids Category. Kids Category apps are for children 11 and under and must meet its rules on ads, analytics, links, and purchases.
+"""
+fix = """
+Either join the Kids Category and meet its requirements, or remove the wording and describe the audience in other terms, such as "family" or "learners".
+"""
+references = [
+  "https://developer.apple.com/app-store/kids-apps/",
+]
+
+[check]
+id = "metadata-terms"
+confidence = "medium"
+skip_when = ["kids"]
+fields = ["name", "subtitle", "description", "keywords", "promotional_text"]
+terms = [
+  "for kids", "for children", "for your kid", "for your child", "kids app", "for toddlers", "for preschoolers",
+  "für kinder", "para niños", "pour enfants", "per bambini", "voor kinderen", "para crianças",
+]

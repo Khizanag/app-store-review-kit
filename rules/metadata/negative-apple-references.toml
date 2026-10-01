@@ -1,0 +1,25 @@
+id = "metadata.negative-apple-references"
+title = "Store text blames Apple or iOS, or disparages Apple"
+severity = "warning"
+evidence = ["metadata"]
+enforced_by = "app-review"
+guidelines = ["2.3.10"]
+summary = """
+Metadata must focus on the app and its experience and leave out irrelevant information. Release notes that blame an iOS bug or Apple for a problem, or copy that mocks Apple products, are irrelevant to the app, and Apple's trademark guidelines forbid using Apple marks in a disparaging manner.
+"""
+fix = """
+Describe what the app does and what changed in it. Move known-issue notes about system behavior to the support site, written neutrally.
+"""
+references = [
+  "https://www.apple.com/legal/intellectual-property/guidelinesfor3rdparties.html",
+]
+
+[check]
+id = "metadata-terms"
+confidence = "low"
+fields = ["description", "promotional_text", "release_notes", "subtitle"]
+terms = [
+  "ios bug", "apple bug", "bug in ios", "ios issue", "apple's fault", "due to apple", "blame apple",
+  "apple broke", "ios broke", "apple rejected", "rejected by apple", "apple forced us", "apple made us",
+  "apple won't let", "apple doesn't allow", "apple does not allow",
+]

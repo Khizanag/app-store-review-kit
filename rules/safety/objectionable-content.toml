@@ -1,0 +1,25 @@
+id = "safety.objectionable-content"
+title = "Content that is offensive, violent, sexual, or exploits current events"
+severity = "error"
+evidence = ["runtime", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["1.1", "1.1.1", "1.1.2", "1.1.3", "1.1.4", "1.1.5", "1.1.7"]
+summary = """
+Guideline 1.1 rejects content that is offensive, upsetting, or in exceptionally poor taste: defamatory or discriminatory content aimed at targeted groups, realistic violence or game enemies that solely target a real race, culture, government, or company, content that encourages reckless weapon use or facilitates buying firearms or ammunition, pornography and hookup apps, inflammatory religious commentary or misquoted religious texts, and concepts that profit from recent conflicts, terrorist attacks, or epidemics.
+"""
+fix = """
+Remove or rework the content. Point game enemies at fictional groups, keep sexual content out, drop firearm and ammunition sales, and keep features about current events informational rather than monetized. Professional political satire is generally exempt; say so in the review notes when it applies.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#1.1",
+]
+
+[review]
+questions = [
+  "Does any content demean or target a religion, race, sexual orientation, gender, or national or ethnic group?",
+  "Does the app show realistic killing, maiming, torture, or abuse, or do game enemies solely target a real race, culture, government, or company?",
+  "Does the app encourage reckless use of weapons, or help people buy firearms or ammunition?",
+  "Does the app contain explicit sexual material, or could it facilitate hookups, prostitution, or trafficking?",
+  "Does the app quote religious texts inaccurately or carry inflammatory religious commentary?",
+  "Does the app build on, or charge for, a recent violent conflict, terrorist attack, or epidemic?",
+]

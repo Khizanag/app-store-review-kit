@@ -1,0 +1,22 @@
+id = "design.apple-emoji"
+title = "Apple emoji images embedded in the app"
+severity = "error"
+evidence = ["binary", "human"]
+enforced_by = "app-review"
+guidelines = ["4.5.6", "5.2.5"]
+summary = """
+Apps and their metadata may use Unicode characters that render as Apple emoji, but Apple emoji artwork may not be embedded in the app binary or used on other platforms. Keyboards and sticker packs may not include Apple emoji.
+"""
+fix = """
+Render emoji as Unicode text with the system font, or ship your own original emoji artwork.
+"""
+
+[check]
+id = "bundle-files"
+confidence = "low"
+patterns = ["AppleColorEmoji", "Apple Color Emoji", "apple-emoji", "emoji-apple"]
+
+[review]
+questions = [
+  "Does the bundle, a sticker pack, or a keyboard include images of Apple emoji?",
+]

@@ -1,0 +1,22 @@
+id = "metadata.in-app-events"
+title = "In-app event metadata, timing, or deep link is wrong"
+severity = "warning"
+evidence = ["metadata", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["2.3.13"]
+summary = """
+An in-app event must fit an event type offered in App Store Connect, its metadata must describe the event rather than the app, it must run at the dates and times selected in every storefront, and its deep link must open the right place in the app. Monetized events follow Section 3.
+"""
+fix = """
+Describe only the event, schedule it to match when it actually runs, and test the event deep link on a fresh install and with the app already running.
+"""
+references = [
+  "https://developer.apple.com/app-store/in-app-events/",
+]
+
+[review]
+questions = [
+  "Does the event card describe the event itself, not the app in general?",
+  "Does the event deep link open the event screen, including on a fresh install?",
+  "Does the event run at the scheduled times in every storefront where it appears?",
+]

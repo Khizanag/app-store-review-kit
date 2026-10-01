@@ -1,0 +1,18 @@
+id = "design.standalone"
+title = "App needs another app, or downloads resources without asking"
+severity = "warning"
+evidence = ["runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["4.2.3"]
+summary = """
+An app must work on its own without requiring another app to be installed. If it must download additional resources before it can function on first launch, it must disclose the download size and ask people before starting.
+"""
+fix = """
+Make the core features work without a companion app. Show the download size and a confirmation before fetching first-launch assets, or bundle them, or use Background Assets.
+"""
+
+[review]
+questions = [
+  "Does any core feature stop working when a companion app is not installed?",
+  "Does the app download content before first use, and does it show the size and ask first?",
+]

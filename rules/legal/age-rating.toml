@@ -6,13 +6,15 @@ enforced_by = "app-store-connect"
 guidelines = ["2.3.6"]
 since = "2026-01-31"
 summary = """
-App Store ratings now include 13+, 16+, and 18+, with new required questions on in-app controls, capabilities, medical or wellness topics, and violent themes. Updates cannot be submitted until the new questionnaire is answered, and inaccurate answers draw 2.3.6 rejections.
+App Store ratings now include 13+, 16+, and 18+, with new required questions on in-app controls, capabilities, medical or wellness topics, and violent themes. Updates cannot be submitted until the new questionnaire is answered, and inaccurate answers draw 2.3.6 rejections. Since September 2026, new apps and updates must also answer the social media questions; a social media capability is the ability to redistribute, amplify, or interact with user-generated content through a social feed or similar discovery method, and it adds a Social Media descriptor and places the app in the Social Media Time Allowance category.
 """
 fix = """
-Answer the updated age rating questionnaire in App Store Connect honestly, covering user-generated content, web access, and AI chat features.
+Answer the updated age rating questionnaire in App Store Connect honestly, covering user-generated content, web access, AI chat features, and social media capabilities. If social features are off for people under 13, say so in the answers.
 """
 references = [
   "https://developer.apple.com/news/?id=ks775ehf",
+  "https://developer.apple.com/news/?id=tlur8uvi",
+  "https://developer.apple.com/help/app-store-connect/reference/app-information/age-ratings-values-and-definitions",
 ]
 
 [check]
@@ -22,4 +24,5 @@ confidence = "high"
 [review]
 questions = [
   "Do the answers account for user-generated content, unrestricted web access, and AI-generated content?",
+  "Does the app have a feed or discovery surface for user content, and do the social media answers say so?",
 ]

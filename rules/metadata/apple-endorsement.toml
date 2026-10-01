@@ -1,0 +1,31 @@
+id = "metadata.apple-endorsement"
+title = "Store text implies Apple endorses or supplies the app"
+severity = "warning"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["5.2.4"]
+summary = """
+Apps may not suggest that Apple is a source or supplier of the app, or that Apple endorses claims about its quality or functionality. The Editor's Choice badge is applied by Apple automatically, so a self-applied badge or claim is not allowed.
+"""
+fix = """
+Remove endorsement wording and self-made Apple badges from the name, subtitle, description, screenshots, and previews. Refer to Apple products only to state compatibility, such as "for iPhone".
+"""
+references = [
+  "https://developer.apple.com/app-store/marketing/guidelines/",
+  "https://www.apple.com/legal/intellectual-property/guidelinesfor3rdparties.html",
+]
+
+[check]
+id = "metadata-terms"
+confidence = "medium"
+fields = ["name", "subtitle", "description", "promotional_text", "release_notes"]
+terms = [
+  "approved by apple", "apple approved", "apple-approved", "endorsed by apple", "apple endorsed",
+  "certified by apple", "apple certified", "recommended by apple", "apple recommended",
+  "official apple", "made by apple", "editor's choice", "editors' choice", "editors choice",
+]
+
+[review]
+questions = [
+  "Does any screenshot or preview show an Apple award, badge, or logo the developer added?",
+]

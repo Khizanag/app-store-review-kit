@@ -1,0 +1,27 @@
+id = "legal.discovery-fraud"
+title = "Ratings, reviews, rankings, or referrals manipulated"
+severity = "error"
+evidence = ["metadata", "source", "human"]
+enforced_by = "app-review"
+guidelines = ["5.6.3", "5.6"]
+summary = """
+Manipulating any part of the App Store experience, such as charts, search, reviews, or referrals, is not permitted, and repeated manipulative behavior leads to removal from the Apple Developer Program. Rewarding people for ratings or reviews, buying installs or reviews, and fake referral schemes all fall under it.
+"""
+fix = """
+Remove rewards tied to ratings or reviews, ask for ratings only through the system prompt, and stop any paid install, review, or ranking service.
+"""
+
+[check]
+id = "metadata-terms"
+confidence = "medium"
+fields = ["description", "promotional_text", "release_notes", "app_strings"]
+terms = [
+  "rate us 5 stars", "rate 5 stars", "give us 5 stars", "5-star review", "five-star review",
+  "review for coins", "review to unlock", "rate to unlock", "rate for a reward", "leave a review and get",
+]
+
+[review]
+questions = [
+  "Does the app or its marketing offer anything in return for a rating, review, or install?",
+  "Is anyone paid to install, rate, or review the app, or to move it in charts or search?",
+]

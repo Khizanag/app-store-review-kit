@@ -1,0 +1,24 @@
+id = "design.game-center-ids"
+title = "Game Center player IDs displayed, shared, or mined"
+severity = "error"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["4.5.5", "4.5.3"]
+applies_when = ["games"]
+summary = """
+Game Center player IDs may be used only as the Game Center terms allow, and must not be shown in the app or passed to any third party. Reverse lookup, tracing, associating, or harvesting player IDs, aliases, or other Game Center data leads to removal from the Apple Developer Program, and Game Center may not be used to spam players.
+"""
+fix = """
+Use player IDs only as opaque keys on your own server, show display names instead, keep them out of analytics and ad SDK calls, and never link them to other identities.
+"""
+
+[check]
+id = "code-signals"
+confidence = "low"
+signals = ["gamePlayerID", "teamPlayerID", "GKLocalPlayer"]
+
+[review]
+questions = [
+  "Is any Game Center player ID shown on screen or sent to an analytics, attribution, or ad SDK?",
+  "Is Game Center data joined with other identifiers such as email or device IDs?",
+]

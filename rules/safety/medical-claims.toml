@@ -1,0 +1,29 @@
+id = "safety.medical-claims"
+title = "Health measurement claimed from device sensors alone"
+severity = "error"
+evidence = ["metadata", "source", "human"]
+enforced_by = "app-review"
+guidelines = ["1.4.1"]
+summary = """
+Medical apps get extra scrutiny under 1.4.1. Apps must disclose the data and methodology behind any accuracy claim for a health measurement, and apps that claim to take x-rays or measure blood pressure, body temperature, blood glucose, or blood oxygen using only the device's sensors are not permitted. Apps should also remind people to check with a doctor before making medical decisions.
+"""
+fix = """
+Remove sensor-only measurement claims, or measure through a validated external device and document its accuracy. Add a reminder to consult a doctor, and link any regulatory clearance in the review notes.
+"""
+
+[check]
+id = "metadata-terms"
+confidence = "medium"
+fields = ["name", "subtitle", "description", "keywords", "promotional_text"]
+terms = [
+  "measure blood pressure", "blood pressure monitor", "blood pressure checker", "check blood pressure",
+  "measure blood oxygen", "spo2", "oxygen saturation", "blood glucose", "blood sugar checker",
+  "body temperature", "fever checker", "x-ray scanner", "xray scanner",
+]
+
+[review]
+questions = [
+  "Does the app measure any of these values with an external validated device, or only with the camera, flash, microphone, or touch sensors?",
+  "Does the app disclose the data and methodology behind each accuracy claim?",
+  "Does the app remind people to check with a doctor before making medical decisions?",
+]

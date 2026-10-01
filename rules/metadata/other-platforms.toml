@@ -5,7 +5,7 @@ evidence = ["metadata"]
 enforced_by = "app-review"
 guidelines = ["2.3.10"]
 summary = """
-Metadata must focus on the Apple platforms the app supports and not mention other mobile platforms or their stores.
+Metadata must focus on the Apple platforms the app supports and not include names, icons, or imagery of other mobile platforms or alternative app marketplaces, unless there is specific, approved interactive functionality.
 """
 fix = """
 Remove references to other platforms and stores, unless the app's core function is interoperating with them.
@@ -15,4 +15,8 @@ Remove references to other platforms and stores, unless the app's core function 
 id = "metadata-terms"
 confidence = "medium"
 fields = ["name", "subtitle", "description", "keywords", "promotional_text", "release_notes"]
-terms = ["Android", "Google Play", "Play Store", "Windows Phone", "BlackBerry", "Huawei AppGallery", "Galaxy Store"]
+terms = [
+  "Android", "Google Play", "Play Store", "Windows Phone", "BlackBerry", "Huawei AppGallery", "AppGallery",
+  "Galaxy Store", "Samsung Galaxy", "Amazon Appstore", "Microsoft Store", "Windows Store", "F-Droid", "APK",
+  "sideload",
+]

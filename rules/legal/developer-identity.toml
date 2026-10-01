@@ -1,0 +1,18 @@
+id = "legal.developer-identity"
+title = "Developer identity inconsistent or unverifiable"
+severity = "warning"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["5.6.2", "1.5"]
+summary = """
+How the developer represents themselves, their business, and their offerings must be accurate, truthful, and current, so Apple and customers know who they deal with and how to reach them. A seller name, support site, and app brand that point to different, unrelated entities, or contact details that do not work, undermine that.
+"""
+fix = """
+Keep the seller name, support URL, marketing domain, privacy policy owner, and in-app contact details pointing to the same entity, and update them in App Store Connect and the developer account when anything changes.
+"""
+
+[review]
+questions = [
+  "Do the seller name, support site, privacy policy, and app brand identify the same person or company?",
+  "Do the App Review contact details, support email, and phone number reach someone today?",
+]
