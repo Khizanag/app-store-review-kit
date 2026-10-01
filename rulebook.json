@@ -208,6 +208,32 @@
       }
     },
     {
+      "id": "build.deployment-target",
+      "title": "Deployment target below iOS 13",
+      "severity": "error",
+      "evidence": [
+        "project",
+        "binary"
+      ],
+      "enforced_by": "upload",
+      "automation": "automated",
+      "guidelines": [],
+      "applies_when": [],
+      "summary": "Since September 9, 2026, iOS and iPadOS apps uploaded to App Store Connect must target iOS 13 or later.",
+      "fix": "Raise `IPHONEOS_DEPLOYMENT_TARGET` to 13.0 or later for the app and every embedded extension and framework.",
+      "since": "2026-09-09",
+      "references": [
+        "https://developer.apple.com/news/upcoming-requirements/?id=0992026a"
+      ],
+      "check": {
+        "id": "deployment-target",
+        "confidence": "high",
+        "minimum": {
+          "iphoneos": "13.0"
+        }
+      }
+    },
+    {
       "id": "build.executable-code",
       "title": "Code downloaded or loaded at runtime",
       "severity": "warning",
@@ -285,6 +311,31 @@
           "NSClassFromString(\"_",
           "Selector((\"_"
         ]
+      }
+    },
+    {
+      "id": "build.quarantine-attribute",
+      "title": "macOS bundle contains quarantined files",
+      "severity": "error",
+      "evidence": [
+        "binary"
+      ],
+      "enforced_by": "upload",
+      "automation": "automated",
+      "guidelines": [],
+      "applies_when": [
+        "macos"
+      ],
+      "summary": "Since February 18, 2025, macOS apps must not include files carrying the `com.apple.quarantine` extended attribute, which usually comes from resources downloaded and copied into the project.",
+      "fix": "Remove the attribute from the source files with `xattr -dr com.apple.quarantine <path>`, then archive again.",
+      "since": "2025-02-18",
+      "references": [
+        "https://developer.apple.com/news/upcoming-requirements/?id=02182025a"
+      ],
+      "check": {
+        "id": "extended-attributes",
+        "confidence": "high",
+        "attribute": "com.apple.quarantine"
       }
     },
     {
@@ -924,6 +975,39 @@
       ]
     },
     {
+      "id": "payments.legacy-receipt-validation",
+      "title": "On-device receipt validation that may reject current receipts",
+      "severity": "warning",
+      "evidence": [
+        "source"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "2.1"
+      ],
+      "applies_when": [
+        "in-app-purchase"
+      ],
+      "summary": "App Store receipts are signed with a SHA-256 intermediate certificate since January 24, 2025. Hand-rolled on-device receipt validation that pins the old certificate or algorithm treats valid purchases as invalid, so the reviewer cannot unlock paid content.",
+      "fix": "Verify purchases with StoreKit 2 `Transaction` and `AppTransaction`, which handle signing for you. If you must validate receipts yourself, support SHA-256.",
+      "since": "2025-01-24",
+      "references": [
+        "https://developer.apple.com/news/upcoming-requirements/?id=01242025a",
+        "https://developer.apple.com/documentation/storekit/apptransaction"
+      ],
+      "check": {
+        "id": "receipt-validation",
+        "confidence": "low",
+        "signals": [
+          "appStoreReceiptURL",
+          "PKCS7",
+          "AppleIncRootCertificate",
+          "SKReceiptRefreshRequest"
+        ]
+      }
+    },
+    {
       "id": "payments.restore-missing",
       "title": "Restorable purchases without a restore mechanism",
       "severity": "warning",
@@ -1482,6 +1566,82 @@
     }
   ],
   "catalogs": {
+    "deadlines": {
+      "deadlines": [
+        {
+          "id": "required-reason-apis",
+          "date": "2024-05-01",
+          "title": "Approved reasons for required reason APIs",
+          "summary": "Uploads that use required reason APIs without approved reasons in a privacy manifest are rejected.",
+          "source": "https://developer.apple.com/news/upcoming-requirements/?id=05012024a",
+          "rule": "privacy.required-reason-undeclared"
+        },
+        {
+          "id": "dsa-trader-updates",
+          "date": "2024-10-16",
+          "title": "EU trader status for app updates",
+          "summary": "Updates to apps distributed in the EU need a trader status declaration.",
+          "source": "https://developer.apple.com/news/upcoming-requirements/?id=10162024a",
+          "rule": "legal.eu-trader-status"
+        },
+        {
+          "id": "receipt-sha256",
+          "date": "2025-01-24",
+          "title": "SHA-256 receipt signing certificate",
+          "summary": "On-device receipt validation must support the SHA-256 intermediate certificate, or move to AppTransaction and Transaction.",
+          "source": "https://developer.apple.com/news/upcoming-requirements/?id=01242025a",
+          "rule": "payments.legacy-receipt-validation"
+        },
+        {
+          "id": "third-party-sdk-manifests",
+          "date": "2025-02-12",
+          "title": "Privacy manifests and signatures for listed SDKs",
+          "summary": "New apps and updates that add a listed third-party SDK need its privacy manifest and signature.",
+          "source": "https://developer.apple.com/support/third-party-SDK-requirements/",
+          "rule": "privacy.sdk-manifest-missing"
+        },
+        {
+          "id": "dsa-trader-removal",
+          "date": "2025-02-17",
+          "title": "EU trader status required to stay on EU storefronts",
+          "summary": "Apps without trader status are removed from the App Store in the EU until verified.",
+          "source": "https://developer.apple.com/news/upcoming-requirements/?id=02172025a",
+          "rule": "legal.eu-trader-status"
+        },
+        {
+          "id": "macos-quarantine",
+          "date": "2025-02-18",
+          "title": "No quarantine attribute in macOS apps",
+          "summary": "macOS apps must not contain files with the com.apple.quarantine extended attribute.",
+          "source": "https://developer.apple.com/news/upcoming-requirements/?id=02182025a",
+          "rule": "build.quarantine-attribute"
+        },
+        {
+          "id": "age-rating-questions",
+          "date": "2026-01-31",
+          "title": "Updated age rating questionnaire",
+          "summary": "Updates cannot be submitted until the new age rating questions are answered.",
+          "source": "https://developer.apple.com/news/upcoming-requirements/?id=07242025a",
+          "rule": "legal.age-rating"
+        },
+        {
+          "id": "sdk-26",
+          "date": "2026-04-28",
+          "title": "Xcode 26 and the 26 SDKs",
+          "summary": "New apps and updates must be built with Xcode 26 or later and an SDK for iOS 26, iPadOS 26, tvOS 26, visionOS 26, or watchOS 26.",
+          "source": "https://developer.apple.com/news/upcoming-requirements/?id=04282026a",
+          "rule": "build.sdk-minimum"
+        },
+        {
+          "id": "ios-13-minimum",
+          "date": "2026-09-09",
+          "title": "iOS 13 minimum deployment target",
+          "summary": "iOS and iPadOS apps uploaded to App Store Connect must target iOS 13 or later.",
+          "source": "https://developer.apple.com/news/upcoming-requirements/?id=0992026a",
+          "rule": "build.deployment-target"
+        }
+      ]
+    },
     "profiles": {
       "profiles": [
         {

@@ -1,0 +1,74 @@
+# Dated Apple requirements. Once a requirement takes effect, `rule` names the rule that enforces it.
+# Source: https://developer.apple.com/news/upcoming-requirements/
+
+[[deadlines]]
+id = "required-reason-apis"
+date = 2024-05-01
+title = "Approved reasons for required reason APIs"
+summary = "Uploads that use required reason APIs without approved reasons in a privacy manifest are rejected."
+source = "https://developer.apple.com/news/upcoming-requirements/?id=05012024a"
+rule = "privacy.required-reason-undeclared"
+
+[[deadlines]]
+id = "dsa-trader-updates"
+date = 2024-10-16
+title = "EU trader status for app updates"
+summary = "Updates to apps distributed in the EU need a trader status declaration."
+source = "https://developer.apple.com/news/upcoming-requirements/?id=10162024a"
+rule = "legal.eu-trader-status"
+
+[[deadlines]]
+id = "receipt-sha256"
+date = 2025-01-24
+title = "SHA-256 receipt signing certificate"
+summary = "On-device receipt validation must support the SHA-256 intermediate certificate, or move to AppTransaction and Transaction."
+source = "https://developer.apple.com/news/upcoming-requirements/?id=01242025a"
+rule = "payments.legacy-receipt-validation"
+
+[[deadlines]]
+id = "third-party-sdk-manifests"
+date = 2025-02-12
+title = "Privacy manifests and signatures for listed SDKs"
+summary = "New apps and updates that add a listed third-party SDK need its privacy manifest and signature."
+source = "https://developer.apple.com/support/third-party-SDK-requirements/"
+rule = "privacy.sdk-manifest-missing"
+
+[[deadlines]]
+id = "dsa-trader-removal"
+date = 2025-02-17
+title = "EU trader status required to stay on EU storefronts"
+summary = "Apps without trader status are removed from the App Store in the EU until verified."
+source = "https://developer.apple.com/news/upcoming-requirements/?id=02172025a"
+rule = "legal.eu-trader-status"
+
+[[deadlines]]
+id = "macos-quarantine"
+date = 2025-02-18
+title = "No quarantine attribute in macOS apps"
+summary = "macOS apps must not contain files with the com.apple.quarantine extended attribute."
+source = "https://developer.apple.com/news/upcoming-requirements/?id=02182025a"
+rule = "build.quarantine-attribute"
+
+[[deadlines]]
+id = "age-rating-questions"
+date = 2026-01-31
+title = "Updated age rating questionnaire"
+summary = "Updates cannot be submitted until the new age rating questions are answered."
+source = "https://developer.apple.com/news/upcoming-requirements/?id=07242025a"
+rule = "legal.age-rating"
+
+[[deadlines]]
+id = "sdk-26"
+date = 2026-04-28
+title = "Xcode 26 and the 26 SDKs"
+summary = "New apps and updates must be built with Xcode 26 or later and an SDK for iOS 26, iPadOS 26, tvOS 26, visionOS 26, or watchOS 26."
+source = "https://developer.apple.com/news/upcoming-requirements/?id=04282026a"
+rule = "build.sdk-minimum"
+
+[[deadlines]]
+id = "ios-13-minimum"
+date = 2026-09-09
+title = "iOS 13 minimum deployment target"
+summary = "iOS and iPadOS apps uploaded to App Store Connect must target iOS 13 or later."
+source = "https://developer.apple.com/news/upcoming-requirements/?id=0992026a"
+rule = "build.deployment-target"

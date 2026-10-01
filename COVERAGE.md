@@ -8,13 +8,13 @@ A section's level is the strongest automation among its rules: **automated** nee
 
 | Level | Sections | Rules |
 | --- | --- | --- |
-| automated | 9 | 23 |
+| automated | 9 | 26 |
 | assisted | 16 | 20 |
 | manual | 3 | 6 |
 | uncovered | 91 | - |
 | n/a | 6 | - |
 
-49 rules in total, including ones enforced by upload validation or App Store Connect rather than a guideline section.
+52 rules in total, including ones enforced by upload validation or App Store Connect rather than a guideline section.
 
 ## Sections
 
@@ -40,7 +40,7 @@ A section's level is the strongest automation among its rules: **automated** nee
 | [1.5 Developer Information](guidelines/1.5.md) | assisted | `metadata.support-url` |
 | [1.6 Data Security](guidelines/1.6.md) | assisted | `network.ats-arbitrary-loads` |
 | [1.7 Reporting Criminal Activity](guidelines/1.7.md) | uncovered | - |
-| [2.1 App Completeness](guidelines/2.1.md) | automated | `account.demo-account`, `build.debug-endpoints`, `metadata.placeholder-text`, `metadata.review-notes` |
+| [2.1 App Completeness](guidelines/2.1.md) | automated | `account.demo-account`, `build.debug-endpoints`, `metadata.placeholder-text`, `metadata.review-notes`, `payments.legacy-receipt-validation` |
 | [2.2 Beta Testing](guidelines/2.2.md) | uncovered | - |
 | [2.3 Accurate Metadata](guidelines/2.3.md) | uncovered | - |
 | [2.3.1](guidelines/2.3.1.md) | automated | `metadata.placeholder-text`, `metadata.review-notes` |

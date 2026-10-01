@@ -1,0 +1,20 @@
+id = "build.deployment-target"
+title = "Deployment target below iOS 13"
+severity = "error"
+evidence = ["project", "binary"]
+enforced_by = "upload"
+since = "2026-09-09"
+summary = """
+Since September 9, 2026, iOS and iPadOS apps uploaded to App Store Connect must target iOS 13 or later.
+"""
+fix = """
+Raise `IPHONEOS_DEPLOYMENT_TARGET` to 13.0 or later for the app and every embedded extension and framework.
+"""
+references = [
+  "https://developer.apple.com/news/upcoming-requirements/?id=0992026a",
+]
+
+[check]
+id = "deployment-target"
+confidence = "high"
+minimum = { iphoneos = "13.0" }

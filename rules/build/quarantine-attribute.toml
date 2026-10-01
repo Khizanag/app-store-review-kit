@@ -1,0 +1,21 @@
+id = "build.quarantine-attribute"
+title = "macOS bundle contains quarantined files"
+severity = "error"
+evidence = ["binary"]
+enforced_by = "upload"
+applies_when = ["macos"]
+since = "2025-02-18"
+summary = """
+Since February 18, 2025, macOS apps must not include files carrying the `com.apple.quarantine` extended attribute, which usually comes from resources downloaded and copied into the project.
+"""
+fix = """
+Remove the attribute from the source files with `xattr -dr com.apple.quarantine <path>`, then archive again.
+"""
+references = [
+  "https://developer.apple.com/news/upcoming-requirements/?id=02182025a",
+]
+
+[check]
+id = "extended-attributes"
+confidence = "high"
+attribute = "com.apple.quarantine"
