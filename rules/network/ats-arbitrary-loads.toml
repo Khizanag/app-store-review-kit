@@ -16,6 +16,7 @@ references = [
 
 [check]
 id = "ats-exceptions"
+confidence = "high"
 
 [review]
 questions = [

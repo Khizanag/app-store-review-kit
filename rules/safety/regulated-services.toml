@@ -4,6 +4,7 @@ severity = "warning"
 evidence = ["human"]
 enforced_by = "app-review"
 guidelines = ["5.1.1", "1.4.1"]
+applies_when = ["regulated"]
 summary = """
 Apps in highly regulated fields, such as banking, healthcare, gambling, cannabis, air travel, or crypto exchanges, or apps that need sensitive data, should be submitted by the legal entity that provides the service. Medical apps that could cause harm get extra scrutiny.
 """

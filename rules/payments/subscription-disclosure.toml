@@ -4,6 +4,7 @@ severity = "warning"
 evidence = ["metadata", "runtime", "human"]
 enforced_by = "app-review"
 guidelines = ["3.1.2"]
+applies_when = ["subscriptions"]
 summary = """
 Auto-renewable subscriptions must provide ongoing value, last at least seven days, and state clearly what the person gets, the price, and the billing period before purchase. The app and its metadata must link the Terms of Use (EULA) and the privacy policy.
 """
@@ -16,6 +17,7 @@ references = [
 
 [check]
 id = "subscription-links"
+confidence = "low"
 signals = ["SubscriptionStoreView", "subscription", "Product.SubscriptionInfo"]
 
 [review]

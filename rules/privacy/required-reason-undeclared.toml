@@ -18,4 +18,5 @@ references = [
 
 [check]
 id = "required-reason-apis"
+confidence = "medium"
 catalog = "required-reason-apis"

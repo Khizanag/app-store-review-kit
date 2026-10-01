@@ -15,4 +15,5 @@ references = [
 
 [check]
 id = "plist-key-present"
+confidence = "high"
 key = "ITSAppUsesNonExemptEncryption"

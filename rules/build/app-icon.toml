@@ -16,3 +16,4 @@ references = [
 
 [check]
 id = "app-icon"
+confidence = "high"

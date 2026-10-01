@@ -16,3 +16,4 @@ references = [
 
 [check]
 id = "asc-trader-status"
+confidence = "high"

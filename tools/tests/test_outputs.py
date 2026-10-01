@@ -17,7 +17,7 @@ def test_compiles_rules_and_catalogs(repo: Path, write_rule: WriteRule) -> None:
 
     assert payload["schema_version"] == 1
     assert payload["guidelines_revision"] == "2026-06-08"
-    assert payload["catalogs"] == {"codes": {"codes": ["CA92.1"]}}
+    assert set(payload["catalogs"]) == {"codes", "traits"}
     rule = payload["rules"][0]
     assert rule["automation"] == "automated"
     assert rule["since"] == "2024-05-01"

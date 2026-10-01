@@ -4,6 +4,7 @@ severity = "error"
 evidence = ["source", "runtime", "human"]
 enforced_by = "app-review"
 guidelines = ["1.2"]
+applies_when = ["user-content"]
 summary = """
 Apps with user-generated content or social features must filter objectionable material, let people report offensive content with timely responses, let people block abusive users, and publish contact information. Random or anonymous chat apps fall under the same rule.
 """
@@ -13,6 +14,7 @@ Ship report and block actions on every piece of user content and every profile, 
 
 [check]
 id = "ugc-signals"
+confidence = "low"
 signals = ["comment", "post", "upload", "chat", "message", "feed", "follow"]
 
 [review]

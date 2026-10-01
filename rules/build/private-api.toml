@@ -13,4 +13,5 @@ Replace the call with a public API. If a dependency does it, update or replace t
 
 [check]
 id = "private-symbols"
+confidence = "medium"
 patterns = ["/PrivateFrameworks/", "LSApplicationWorkspace", "_UIApplication", "UIStatusBarManager().performSelector", "NSClassFromString(\"_", "Selector((\"_"]

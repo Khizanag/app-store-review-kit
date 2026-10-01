@@ -16,4 +16,5 @@ references = [
 
 [check]
 id = "plist-key-pairs"
+confidence = "high"
 requires = { NSLocationAlwaysAndWhenInUseUsageDescription = "NSLocationWhenInUseUsageDescription" }

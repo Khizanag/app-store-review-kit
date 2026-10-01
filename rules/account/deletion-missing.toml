@@ -4,6 +4,7 @@ severity = "error"
 evidence = ["source", "runtime", "human"]
 enforced_by = "app-review"
 guidelines = ["5.1.1"]
+applies_when = ["accounts"]
 since = "2022-06-30"
 summary = """
 Apps that support account creation must let people start deleting the account from inside the app, not only by email or a website hidden behind support. Apps using Sign in with Apple must also revoke the user's tokens when the account is deleted.
@@ -17,6 +18,7 @@ references = [
 
 [check]
 id = "account-deletion"
+confidence = "low"
 creation_signals = ["createUser", "signUp", "register(", "ASAuthorizationAppleIDProvider", "Auth.auth().createUser"]
 deletion_signals = ["deleteAccount", "delete account", "deleteUser", "user.delete", "revokeToken", "/auth/revoke"]
 

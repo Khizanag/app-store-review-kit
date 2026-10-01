@@ -13,6 +13,7 @@ List each feature that is not obvious from the first launch, how to reach it, an
 
 [check]
 id = "review-notes"
+confidence = "low"
 flag_signals = ["RemoteConfig", "FirebaseRemoteConfig", "LaunchDarkly", "Statsig", "Optimizely", "ConfigCat"]
 
 [review]

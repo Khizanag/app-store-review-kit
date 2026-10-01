@@ -13,6 +13,7 @@ Set the Privacy Policy URL in App Store Connect, link the same page from the app
 
 [check]
 id = "privacy-policy-url"
+confidence = "medium"
 
 [review]
 questions = [

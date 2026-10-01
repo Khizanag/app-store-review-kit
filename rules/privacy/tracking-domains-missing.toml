@@ -16,3 +16,4 @@ references = [
 
 [check]
 id = "manifest-tracking-domains"
+confidence = "high"

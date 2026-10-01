@@ -13,6 +13,7 @@ Support iPad in the target, or at least test the iPhone app in compatibility mod
 
 [check]
 id = "device-family"
+confidence = "low"
 
 [review]
 questions = [

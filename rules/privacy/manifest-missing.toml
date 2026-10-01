@@ -17,3 +17,4 @@ references = [
 
 [check]
 id = "privacy-manifest-present"
+confidence = "high"

@@ -15,5 +15,6 @@ references = [
 
 [check]
 id = "metadata-length"
+confidence = "high"
 limits = { subtitle = 30, promotional_text = 170, description = 4000, release_notes = 4000 }
 byte_limits = { keywords = 100 }

@@ -4,6 +4,7 @@ severity = "error"
 evidence = ["source", "plist"]
 enforced_by = "app-review"
 guidelines = ["5.1.2"]
+applies_when = ["advertising"]
 summary = """
 The app or an SDK reads the advertising identifier (`ASIdentifierManager.advertisingIdentifier`) or links an ad or attribution SDK, but never requests tracking permission with `ATTrackingManager`, or has no `NSUserTrackingUsageDescription`.
 """
@@ -16,4 +17,5 @@ references = [
 
 [check]
 id = "att-usage"
+confidence = "medium"
 signals = ["ASIdentifierManager", "advertisingIdentifier", "AppsFlyerLib", "Adjust", "FBAudienceNetwork", "GoogleMobileAds"]

@@ -18,4 +18,5 @@ references = [
 
 [check]
 id = "sdk-privacy-manifests"
+confidence = "high"
 catalog = "third-party-sdks"

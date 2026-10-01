@@ -13,4 +13,5 @@ Replace every placeholder with final copy in each shipped localization, and chec
 
 [check]
 id = "placeholder-strings"
+confidence = "medium"
 terms = ["lorem ipsum", "TODO", "FIXME", "TBD", "placeholder", "sample text", "test test", "coming soon"]

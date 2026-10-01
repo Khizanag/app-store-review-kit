@@ -4,6 +4,7 @@ severity = "warning"
 evidence = ["runtime", "human"]
 enforced_by = "app-review"
 guidelines = ["5.1.1"]
+applies_when = ["accounts"]
 summary = """
 Guideline 5.1.1(v): if the app lacks significant account-based features, people must be able to use it without logging in. Requiring personal data that the core function does not need is also not allowed.
 """

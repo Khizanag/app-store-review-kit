@@ -13,6 +13,7 @@ List the user-visible changes in the release notes for each localization.
 
 [check]
 id = "release-notes-generic"
+confidence = "low"
 phrases = ["bug fixes and performance improvements", "bug fixes and improvements", "minor improvements", "various fixes"]
 
 [review]

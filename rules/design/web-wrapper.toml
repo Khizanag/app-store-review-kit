@@ -4,6 +4,7 @@ severity = "warning"
 evidence = ["source", "human"]
 enforced_by = "app-review"
 guidelines = ["4.2", "4.2.2"]
+applies_when = ["web-content"]
 summary = """
 Apps must offer features, content, and UI beyond a repackaged website. An app whose main screen is a `WKWebView` loading the developer's site, with little native functionality, is rejected for minimum functionality.
 """
@@ -13,6 +14,7 @@ Build the core flows natively and use platform capabilities the website cannot, 
 
 [check]
 id = "web-wrapper"
+confidence = "low"
 signals = ["WKWebView", "WebView(", "SFSafariViewController", "WebPage("]
 
 [review]

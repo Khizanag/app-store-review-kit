@@ -4,6 +4,7 @@ severity = "error"
 evidence = ["metadata", "binary", "human"]
 enforced_by = "app-review"
 guidelines = ["1.3", "5.1.4"]
+applies_when = ["kids"]
 summary = """
 Kids Category apps may not include third-party analytics or advertising, with narrow exceptions, may not send personal information or device data to third parties, and must put links out of the app and purchases behind a parental gate.
 """
@@ -13,6 +14,7 @@ Remove third-party analytics and ad SDKs, or move the app out of the Kids Catego
 
 [check]
 id = "kids-sdks"
+confidence = "medium"
 sdks = ["FirebaseAnalytics", "GoogleMobileAds", "FBSDKCoreKit", "AppsFlyerLib", "Adjust", "Amplitude", "Mixpanel", "Segment", "UnityAds", "AppLovinSDK"]
 
 [review]

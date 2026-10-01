@@ -19,7 +19,7 @@ See the [landscape](docs/landscape.md) review of every comparable tool and the [
 | --- | --- |
 | [`guidelines/`](guidelines/README.md) | Mirror of the App Review Guidelines, plus `index.json` with the section tree |
 | `rules/<area>/<name>.toml` | One rule per file; the id is `<area>.<name>` |
-| `catalogs/` | Reference data rules share: required reason APIs, SDKs that need privacy manifests, purpose strings |
+| `catalogs/` | Shared reference data: required reason APIs, SDKs that need privacy manifests, purpose strings, app traits, app-type profiles, dated Apple deadlines |
 | [`rulebook.json`](rulebook.json) | Every rule and catalog compiled into one file for tools to consume |
 | [`COVERAGE.md`](COVERAGE.md) | Every guideline against the rules that cover it |
 | `tools/` | `rulebook` Python CLI: mirror, validate, and compile the rulebook |
@@ -43,6 +43,7 @@ severity = "error"                       # error, warning, or note
 evidence = ["source", "binary", "manifest"]
 enforced_by = "upload"                   # upload, app-store-connect, or app-review
 guidelines = ["5.1.1"]
+applies_when = []                        # traits from catalogs/traits.toml; empty means every app
 since = "2024-05-01"
 itms = ["ITMS-91053"]
 summary = "What goes wrong and why Apple cares."
@@ -51,6 +52,7 @@ references = ["https://developer.apple.com/..."]
 
 [check]                                  # what a machine can verify
 id = "required-reason-apis"
+confidence = "medium"                    # high: exact evidence, medium: strong signal, low: heuristic
 catalog = "required-reason-apis"
 
 [review]                                 # what a person must judge

@@ -13,5 +13,6 @@ Shorten the name and move descriptive words to the subtitle or keywords.
 
 [check]
 id = "metadata-length"
+confidence = "high"
 field = "name"
 max = 30

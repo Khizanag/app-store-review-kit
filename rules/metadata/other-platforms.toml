@@ -13,5 +13,6 @@ Remove references to other platforms and stores, unless the app's core function 
 
 [check]
 id = "metadata-terms"
+confidence = "medium"
 fields = ["name", "subtitle", "description", "keywords", "promotional_text", "release_notes"]
 terms = ["Android", "Google Play", "Play Store", "Windows Phone", "BlackBerry", "Huawei AppGallery", "Galaxy Store"]

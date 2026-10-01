@@ -4,6 +4,7 @@ severity = "warning"
 evidence = ["source", "human"]
 enforced_by = "app-review"
 guidelines = ["5.1.2"]
+applies_when = ["ai"]
 since = "2025-11-13"
 summary = """
 The app calls a hosted AI model, such as OpenAI, Anthropic, or Google Gemini. Guideline 5.1.2(i) requires clear disclosure of where personal data goes, including to third-party AI, and explicit permission before sharing it.
@@ -17,6 +18,7 @@ references = [
 
 [check]
 id = "third-party-ai-endpoints"
+confidence = "medium"
 hosts = [
   "api.openai.com",
   "api.anthropic.com",

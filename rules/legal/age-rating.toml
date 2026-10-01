@@ -17,6 +17,7 @@ references = [
 
 [check]
 id = "asc-age-rating"
+confidence = "high"
 
 [review]
 questions = [

@@ -28,6 +28,7 @@ fix = "Fix."
 
 [check]
 id = "example"
+confidence = "high"
 catalog = "codes"
 """
 
@@ -40,6 +41,9 @@ def repo(tmp_path: Path) -> Path:
     (tmp_path / "guidelines" / "index.json").write_text(json.dumps(INDEX))
     (tmp_path / "catalogs").mkdir()
     (tmp_path / "catalogs" / "codes.toml").write_text('codes = ["CA92.1"]\n')
+    (tmp_path / "catalogs" / "traits.toml").write_text(
+        '[[traits]]\nid = "accounts"\nsummary = "Has accounts."\n'
+    )
     (tmp_path / "rules" / "privacy").mkdir(parents=True)
     return tmp_path
 

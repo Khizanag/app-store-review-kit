@@ -16,3 +16,4 @@ references = [
 
 [check]
 id = "ipv4-literals"
+confidence = "low"

@@ -16,4 +16,5 @@ references = [
 
 [check]
 id = "sdk-version"
+confidence = "high"
 minimum = { iphoneos = "26.0", appletvos = "26.0", xros = "26.0", watchos = "26.0", macosx = "26.0" }

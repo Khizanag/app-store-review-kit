@@ -17,4 +17,5 @@ references = [
 
 [check]
 id = "usage-descriptions"
+confidence = "medium"
 catalog = "usage-descriptions"

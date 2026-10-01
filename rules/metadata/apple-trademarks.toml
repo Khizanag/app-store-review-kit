@@ -16,6 +16,7 @@ references = [
 
 [check]
 id = "metadata-terms"
+confidence = "medium"
 fields = ["name", "subtitle"]
 terms = ["iPhone", "iPad", "iOS", "Apple", "Mac", "Siri", "App Store", "Apple Watch", "AirPods", "FaceTime", "iCloud"]
 

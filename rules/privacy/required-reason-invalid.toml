@@ -17,4 +17,5 @@ references = [
 
 [check]
 id = "required-reason-codes"
+confidence = "high"
 catalog = "required-reason-apis"

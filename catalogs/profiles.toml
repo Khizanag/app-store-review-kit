@@ -1,0 +1,41 @@
+# App types a developer can pick instead of listing traits.
+
+[[profiles]]
+id = "utility"
+summary = "Offline tool with no accounts or purchases."
+traits = []
+
+[[profiles]]
+id = "subscription"
+summary = "Subscription app with accounts."
+traits = ["accounts", "in-app-purchase", "subscriptions"]
+
+[[profiles]]
+id = "social"
+summary = "Social or community app with user content."
+traits = ["accounts", "user-content"]
+
+[[profiles]]
+id = "kids"
+summary = "App for the Kids Category."
+traits = ["kids"]
+
+[[profiles]]
+id = "game"
+summary = "Game with in-app purchases."
+traits = ["games", "in-app-purchase"]
+
+[[profiles]]
+id = "ai"
+summary = "App built on a hosted AI model."
+traits = ["ai", "accounts"]
+
+[[profiles]]
+id = "health"
+summary = "Health or fitness app."
+traits = ["health"]
+
+[[profiles]]
+id = "fintech"
+summary = "Banking, payments, lending, or crypto app."
+traits = ["accounts", "regulated", "crypto"]

@@ -17,6 +17,7 @@ references = [
 
 [check]
 id = "external-payments"
+confidence = "low"
 signals = ["StripePaymentSheet", "Stripe", "PayPalCheckout", "Braintree", "checkout.stripe.com", "paypal.com/checkoutnow"]
 
 [review]

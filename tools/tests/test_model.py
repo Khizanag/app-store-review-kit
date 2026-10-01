@@ -80,7 +80,12 @@ def test_unknown_field_stops_validation(repo: Path, write_rule: WriteRule) -> No
 
 def test_fields_after_a_table_belong_to_it(repo: Path, write_rule: WriteRule) -> None:
     write_rule("privacy/example.toml", VALID_RULE + 'itms = ["91053"]\n')
-    assert load(repo).rules[0].check == {"id": "example", "catalog": "codes", "itms": ["91053"]}
+    assert load(repo).rules[0].check == {
+        "id": "example",
+        "confidence": "high",
+        "catalog": "codes",
+        "itms": ["91053"],
+    }
 
 
 def test_requires_check_or_review(repo: Path, write_rule: WriteRule) -> None:
@@ -122,3 +127,21 @@ def test_rejects_badly_shaped_id(repo: Path, write_rule: WriteRule) -> None:
 def test_evidence_cannot_be_empty(repo: Path, write_rule: WriteRule) -> None:
     write_rule("privacy/example.toml", VALID_RULE.replace('["manifest"]', "[]"))
     assert problems(repo) == ["rules/privacy/example.toml: evidence must list at least one kind"]
+
+
+def test_check_needs_valid_confidence(repo: Path, write_rule: WriteRule) -> None:
+    write_rule("privacy/example.toml", VALID_RULE.replace('confidence = "high"\n', ""))
+    assert problems(repo) == [
+        "rules/privacy/example.toml: [check] needs a 'confidence' of high, medium, or low"
+    ]
+    write_rule("privacy/example.toml", VALID_RULE.replace('"high"', '"certain"'))
+    assert any("confidence 'certain'" in p for p in problems(repo))
+
+
+def test_applies_when_names_known_traits(repo: Path, write_rule: WriteRule) -> None:
+    rule = VALID_RULE.replace("summary =", 'applies_when = ["accounts"]\nsummary =')
+    write_rule("privacy/example.toml", rule)
+    assert load(repo).rules[0].applies_when == ("accounts",)
+
+    write_rule("privacy/example.toml", rule.replace('"accounts"', '"pets"'))
+    assert problems(repo) == ["rules/privacy/example.toml: unknown trait 'pets' in applies_when"]

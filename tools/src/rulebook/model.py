@@ -9,10 +9,20 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
+from rulebook.catalogs import trait_names, validate_catalogs
+
 RULE_ID = re.compile(r"^[a-z]+(-[a-z]+)*\.[a-z0-9]+(-[a-z0-9]+)*$")
 ITMS_CODE = re.compile(r"^ITMS-\d{5}$")
 REQUIRED_FIELDS = ("id", "title", "severity", "evidence", "enforced_by", "summary", "fix")
-OPTIONAL_FIELDS = ("guidelines", "since", "itms", "references", "check", "review")
+OPTIONAL_FIELDS = (
+    "guidelines",
+    "applies_when",
+    "since",
+    "itms",
+    "references",
+    "check",
+    "review",
+)
 
 
 class Severity(StrEnum):
@@ -39,6 +49,12 @@ class Enforcement(StrEnum):
     APP_REVIEW = "app-review"
 
 
+class Confidence(StrEnum):
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+
+
 class Automation(StrEnum):
     AUTOMATED = "automated"
     ASSISTED = "assisted"
@@ -55,6 +71,7 @@ class Rule:
     summary: str
     fix: str
     guidelines: tuple[str, ...] = ()
+    applies_when: tuple[str, ...] = ()
     since: str | None = None
     itms: tuple[str, ...] = ()
     references: tuple[str, ...] = ()
@@ -77,6 +94,7 @@ class Rule:
             "enforced_by": self.enforced_by.value,
             "automation": self.automation.value,
             "guidelines": list(self.guidelines),
+            "applies_when": list(self.applies_when),
             "summary": self.summary,
             "fix": self.fix,
         }
@@ -118,6 +136,7 @@ def load(root: Path) -> Rulebook:
         if rule is not None:
             rules.append(rule)
 
+    problems.extend(validate_catalogs(catalogs, {rule.id for rule in rules}))
     if problems:
         raise RulebookError(problems)
     return Rulebook(tuple(rules), catalogs, index["last_updated"], sections)
@@ -169,6 +188,14 @@ def _parse_rule(
     if enforced_by is Enforcement.APP_REVIEW and not guidelines:
         problems.append(f"{where}: app-review rules must cite at least one guideline")
 
+    applies_when = tuple(data.get("applies_when", ()))
+    known_traits = trait_names(catalogs)
+    problems.extend(
+        f"{where}: unknown trait '{trait}' in applies_when"
+        for trait in applies_when
+        if trait not in known_traits
+    )
+
     itms = tuple(data.get("itms", ()))
     problems.extend(
         f"{where}: bad ITMS code '{code}'" for code in itms if not ITMS_CODE.match(code)
@@ -196,6 +223,10 @@ def _parse_rule(
     if check is not None:
         if "id" not in check:
             problems.append(f"{where}: [check] needs an 'id' naming the engine check")
+        if "confidence" not in check:
+            problems.append(f"{where}: [check] needs a 'confidence' of high, medium, or low")
+        else:
+            _enum(Confidence, check["confidence"], "confidence", where, problems)
         catalog = check.get("catalog")
         if catalog is not None and catalog not in catalogs:
             problems.append(f"{where}: [check] names unknown catalog '{catalog}'")
@@ -213,6 +244,7 @@ def _parse_rule(
             summary=data["summary"].strip(),
             fix=data["fix"].strip(),
             guidelines=guidelines,
+            applies_when=applies_when,
             since=since,
             itms=itms,
             references=references,

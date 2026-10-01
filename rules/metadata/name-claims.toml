@@ -13,5 +13,6 @@ Describe what the app does in plain words. Move prices and offers to promotional
 
 [check]
 id = "metadata-terms"
+confidence = "medium"
 fields = ["name", "subtitle"]
 terms = ["free", "$", "€", "% off", "sale", "best", "#1", "number one", "top rated", "no. 1", "discount"]

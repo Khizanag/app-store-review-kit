@@ -16,6 +16,7 @@ references = [
 
 [check]
 id = "screenshot-sets"
+confidence = "medium"
 
 [review]
 questions = [

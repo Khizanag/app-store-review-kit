@@ -1,0 +1,69 @@
+# App traits that decide which rules apply. The engine detects each trait from its signals;
+# a profile or config can also set traits directly.
+
+[[traits]]
+id = "accounts"
+summary = "People create or sign in to an account."
+signals = ["ASAuthorizationAppleIDProvider", "SignInWithAppleButton", "GoogleSignIn", "FBSDKLoginKit", "FirebaseAuth", "Auth.auth()", "signUp", "createUser", "SecureField"]
+
+[[traits]]
+id = "in-app-purchase"
+summary = "The app sells anything through StoreKit."
+signals = ["import StoreKit", "Product.products", "SKProductsRequest", "StoreView", "ProductView", "RevenueCat", "Purchases.shared"]
+
+[[traits]]
+id = "subscriptions"
+summary = "The app sells auto-renewable subscriptions."
+signals = ["SubscriptionStoreView", "subscriptionStatus", "Product.SubscriptionInfo", "autoRenewable", "Purchases.shared.getOfferings"]
+
+[[traits]]
+id = "user-content"
+summary = "People post, share, or message content other people see."
+signals = ["UGC", "reportContent", "blockUser", "comment", "chat"]
+
+[[traits]]
+id = "kids"
+summary = "The app is in the Kids Category or aimed at children."
+
+[[traits]]
+id = "health"
+summary = "The app reads or writes health or medical data."
+signals = ["HKHealthStore", "HealthKit", "com.apple.developer.healthkit"]
+
+[[traits]]
+id = "crypto"
+summary = "The app handles cryptocurrency wallets, exchanges, or mining."
+signals = ["WalletConnect", "web3", "ethers", "BIP39", "seed phrase", "MoonPay", "Coinbase"]
+
+[[traits]]
+id = "ai"
+summary = "The app sends data to a hosted AI model or generates content with AI."
+signals = ["api.openai.com", "api.anthropic.com", "generativelanguage.googleapis.com", "FoundationModels", "LanguageModelSession"]
+
+[[traits]]
+id = "advertising"
+summary = "The app shows ads or shares data with ad or attribution networks."
+signals = ["GoogleMobileAds", "AppLovinSDK", "UnityAds", "AppsFlyerLib", "Adjust", "ASIdentifierManager"]
+
+[[traits]]
+id = "vpn"
+summary = "The app configures a VPN or network extension."
+signals = ["NETunnelProviderManager", "NEVPNManager", "com.apple.developer.networking.networkextension"]
+
+[[traits]]
+id = "web-content"
+summary = "The app shows web content in a web view."
+signals = ["WKWebView", "WebView(", "WebPage("]
+
+[[traits]]
+id = "games"
+summary = "The app is a game."
+signals = ["GameKit", "SpriteKit", "SceneKit", "GKLocalPlayer", "UnityFramework"]
+
+[[traits]]
+id = "regulated"
+summary = "The app offers a regulated service: banking, lending, healthcare, gambling, or similar."
+
+[[traits]]
+id = "macos"
+summary = "The app ships on the Mac App Store."

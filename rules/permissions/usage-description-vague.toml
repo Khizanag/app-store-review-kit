@@ -16,6 +16,7 @@ references = [
 
 [check]
 id = "usage-description-quality"
+confidence = "low"
 min_length = 25
 placeholders = ["TODO", "TBD", "lorem", "placeholder", "test", "description", "needs access", "requires access", "would like to access"]
 

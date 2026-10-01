@@ -16,6 +16,9 @@
       "guidelines": [
         "5.1.1"
       ],
+      "applies_when": [
+        "accounts"
+      ],
       "summary": "Apps that support account creation must let people start deleting the account from inside the app, not only by email or a website hidden behind support. Apps using Sign in with Apple must also revoke the user's tokens when the account is deleted.",
       "fix": "Add a clearly labeled delete-account action in account settings. Confirm, then delete the account and its data, or explain the timeline if regulations require retention. For Sign in with Apple, call the REST API to revoke tokens.",
       "since": "2022-06-30",
@@ -24,6 +27,7 @@
       ],
       "check": {
         "id": "account-deletion",
+        "confidence": "low",
         "creation_signals": [
           "createUser",
           "signUp",
@@ -59,10 +63,14 @@
       "guidelines": [
         "2.1"
       ],
+      "applies_when": [
+        "accounts"
+      ],
       "summary": "Guideline 2.1 asks for demo account details when the app has a login, with the backend running during review. A missing or broken demo account is one of the most common 2.1 rejections.",
       "fix": "Fill in Sign-in Information under App Review Information in App Store Connect with a working account that exposes every feature, including paid ones. If login needs a code or hardware, explain how to get past it in the review notes or provide a demo mode.",
       "check": {
         "id": "demo-account",
+        "confidence": "medium",
         "login_signals": [
           "ASAuthorizationAppleIDProvider",
           "GoogleSignIn",
@@ -89,6 +97,9 @@
       "guidelines": [
         "5.1.1"
       ],
+      "applies_when": [
+        "accounts"
+      ],
       "summary": "Guideline 5.1.1(v): if the app lacks significant account-based features, people must be able to use it without logging in. Requiring personal data that the core function does not need is also not allowed.",
       "fix": "Let people browse and use non-account features before signing in. Ask for sign-in only at the feature that needs it.",
       "review": [
@@ -109,6 +120,9 @@
       "guidelines": [
         "4.8"
       ],
+      "applies_when": [
+        "accounts"
+      ],
       "summary": "Apps that use a third-party or social login service, such as Google or Facebook, to set up the primary account must also offer an equivalent login that limits collection to name and email, lets people keep their email private, and does not track without consent. Sign in with Apple meets all three.",
       "fix": "Add Sign in with Apple, or another service with the same privacy properties, alongside the existing social logins, with equal prominence.",
       "references": [
@@ -117,6 +131,7 @@
       ],
       "check": {
         "id": "login-services",
+        "confidence": "medium",
         "third_party": [
           "GoogleSignIn",
           "FBSDKLoginKit",
@@ -146,6 +161,7 @@
       "enforced_by": "upload",
       "automation": "automated",
       "guidelines": [],
+      "applies_when": [],
       "summary": "The app needs a 1024 by 1024 App Store icon in its asset catalog, without an alpha channel. A missing or transparent marketing icon fails upload validation.",
       "fix": "Add a 1024 by 1024 opaque PNG to the AppIcon set, or design it in Icon Composer, and archive again.",
       "itms": [
@@ -155,7 +171,8 @@
         "https://developer.apple.com/design/human-interface-guidelines/app-icons"
       ],
       "check": {
-        "id": "app-icon"
+        "id": "app-icon",
+        "confidence": "high"
       }
     },
     {
@@ -171,10 +188,12 @@
       "guidelines": [
         "2.1"
       ],
+      "applies_when": [],
       "summary": "URLs pointing at localhost, private network addresses, tunnels, or staging hosts in the release build usually mean a feature that fails for the reviewer, which is a 2.1 completeness rejection.",
       "fix": "Move environment URLs behind build configurations and make sure the Release configuration points at production.",
       "check": {
         "id": "debug-hosts",
+        "confidence": "low",
         "patterns": [
           "localhost",
           "127.0.0.1",
@@ -201,10 +220,12 @@
       "guidelines": [
         "2.5.2"
       ],
+      "applies_when": [],
       "summary": "Apps must be self-contained and may not download, install, or execute code that adds or changes features. `dlopen` on a downloaded path, loading bundles from the Documents folder, or evaluating remote scripts that drive native features are red flags. Interpreted code that runs in WebKit or JavaScriptCore is allowed when it does not change the app's primary purpose.",
       "fix": "Ship features in the binary and gate them with local flags. Keep remote content to data, not code.",
       "check": {
         "id": "dynamic-code",
+        "confidence": "low",
         "patterns": [
           "dlopen(",
           "Bundle(path:",
@@ -226,13 +247,15 @@
       "enforced_by": "upload",
       "automation": "automated",
       "guidelines": [],
+      "applies_when": [],
       "summary": "iPhone and iPad apps must provide a launch screen through `UILaunchScreen` or `UILaunchStoryboardName`. Without one the app runs letterboxed on modern devices and the upload is rejected.",
       "fix": "Add a `UILaunchScreen` dictionary to Info.plist, or the Launch Screen section in the target's Info tab.",
       "references": [
         "https://developer.apple.com/documentation/bundleresources/information-property-list/uilaunchscreen"
       ],
       "check": {
-        "id": "launch-screen"
+        "id": "launch-screen",
+        "confidence": "high"
       }
     },
     {
@@ -248,10 +271,12 @@
       "guidelines": [
         "2.5.1"
       ],
+      "applies_when": [],
       "summary": "Apps may use public APIs only. Linking a private framework, calling underscore-prefixed or undocumented selectors, or reaching private classes through `NSClassFromString` or `perform(_:)` leads to rejection, often by automated binary scanning.",
       "fix": "Replace the call with a public API. If a dependency does it, update or replace the dependency.",
       "check": {
         "id": "private-symbols",
+        "confidence": "medium",
         "patterns": [
           "/PrivateFrameworks/",
           "LSApplicationWorkspace",
@@ -273,6 +298,7 @@
       "enforced_by": "upload",
       "automation": "automated",
       "guidelines": [],
+      "applies_when": [],
       "summary": "Since April 28, 2026, new apps and updates must be built with the iOS 26, iPadOS 26, tvOS 26, visionOS 26, or watchOS 26 SDK, which means Xcode 26 or later. Older builds are rejected at upload.",
       "fix": "Build and archive with Xcode 26 or later. The deployment target can stay lower; only the SDK must be current.",
       "since": "2026-04-28",
@@ -281,6 +307,7 @@
       ],
       "check": {
         "id": "sdk-version",
+        "confidence": "high",
         "minimum": {
           "iphoneos": "26.0",
           "appletvos": "26.0",
@@ -304,6 +331,7 @@
         "4.1",
         "5.2.5"
       ],
+      "applies_when": [],
       "summary": "Apps may not copy another developer's name, icon, brand, or UI, and may not look confusingly similar to Apple products, interfaces, or apps.",
       "fix": "Use an original name and icon, and check them against the App Store and a trademark search before submitting.",
       "review": [
@@ -324,10 +352,12 @@
       "guidelines": [
         "2.4.1"
       ],
+      "applies_when": [],
       "summary": "iPhone apps should run on iPad whenever possible, and App Review tests iPhone-only apps on iPad too. Clipped layouts or crashes there count against the submission.",
       "fix": "Support iPad in the target, or at least test the iPhone app in compatibility mode on an iPad simulator before submitting.",
       "check": {
-        "id": "device-family"
+        "id": "device-family",
+        "confidence": "low"
       },
       "review": [
         "Does every screen lay out and work on the smallest and largest iPad?"
@@ -345,6 +375,7 @@
       "guidelines": [
         "4.3"
       ],
+      "applies_when": [],
       "summary": "Guideline 4.3 rejects multiple bundle IDs for the same app, apps indistinguishable from what is widely available, and template-based apps. Since June 2026, existing apps that are not updated, improved, or attracting customers may also be removed.",
       "fix": "Merge variants into one app with in-app choices. In the review notes, state what is distinctive about the app compared with the category.",
       "review": [
@@ -367,10 +398,14 @@
         "4.2",
         "4.2.2"
       ],
+      "applies_when": [
+        "web-content"
+      ],
       "summary": "Apps must offer features, content, and UI beyond a repackaged website. An app whose main screen is a `WKWebView` loading the developer's site, with little native functionality, is rejected for minimum functionality.",
       "fix": "Build the core flows natively and use platform capabilities the website cannot, such as offline use, widgets, notifications, or system integrations.",
       "check": {
         "id": "web-wrapper",
+        "confidence": "low",
         "signals": [
           "WKWebView",
           "WebView(",
@@ -393,13 +428,15 @@
       "enforced_by": "app-store-connect",
       "automation": "automated",
       "guidelines": [],
+      "applies_when": [],
       "summary": "Accessibility Nutrition Labels show on the product page which features, such as VoiceOver, Larger Text, or Sufficient Contrast, the app supports for its common tasks. Declaring them is voluntary today, and Apple has said it will become required over time.",
       "fix": "Test the common tasks with each feature, then declare the supported ones per device in App Store Connect under Accessibility.",
       "references": [
         "https://developer.apple.com/help/app-store-connect/manage-app-accessibility/overview-of-accessibility-nutrition-labels"
       ],
       "check": {
-        "id": "asc-accessibility-labels"
+        "id": "asc-accessibility-labels",
+        "confidence": "high"
       }
     },
     {
@@ -415,6 +452,7 @@
       "guidelines": [
         "2.3.6"
       ],
+      "applies_when": [],
       "summary": "App Store ratings now include 13+, 16+, and 18+, with new required questions on in-app controls, capabilities, medical or wellness topics, and violent themes. Updates cannot be submitted until the new questionnaire is answered, and inaccurate answers draw 2.3.6 rejections.",
       "fix": "Answer the updated age rating questionnaire in App Store Connect honestly, covering user-generated content, web access, and AI chat features.",
       "since": "2026-01-31",
@@ -422,7 +460,8 @@
         "https://developer.apple.com/news/?id=ks775ehf"
       ],
       "check": {
-        "id": "asc-age-rating"
+        "id": "asc-age-rating",
+        "confidence": "high"
       },
       "review": [
         "Do the answers account for user-generated content, unrestricted web access, and AI-generated content?"
@@ -438,6 +477,7 @@
       "enforced_by": "app-store-connect",
       "automation": "automated",
       "guidelines": [],
+      "applies_when": [],
       "summary": "Under the EU Digital Services Act, every developer must declare whether they are a trader to distribute in the European Union. Traders must also verify an address, phone number, and email, which appear on the product page. Apps without a declaration are removed from EU storefronts.",
       "fix": "Set the trader status under Business in App Store Connect and complete verification if you are a trader.",
       "since": "2025-02-17",
@@ -445,7 +485,8 @@
         "https://developer.apple.com/help/app-store-connect/manage-compliance-information/manage-european-union-digital-services-act-trader-requirements"
       ],
       "check": {
-        "id": "asc-trader-status"
+        "id": "asc-trader-status",
+        "confidence": "high"
       }
     },
     {
@@ -458,6 +499,7 @@
       "enforced_by": "app-store-connect",
       "automation": "automated",
       "guidelines": [],
+      "applies_when": [],
       "summary": "Without `ITSAppUsesNonExemptEncryption` in Info.plist, App Store Connect asks the export compliance questions for every build, and the build waits until someone answers.",
       "fix": "Set `ITSAppUsesNonExemptEncryption` to `false` if the app uses only exempt encryption, such as HTTPS and Apple's system APIs. Otherwise answer the questions and upload the documentation.",
       "references": [
@@ -465,6 +507,7 @@
       ],
       "check": {
         "id": "plist-key-present",
+        "confidence": "high",
         "key": "ITSAppUsesNonExemptEncryption"
       }
     },
@@ -482,6 +525,7 @@
         "5.2.5",
         "2.3.7"
       ],
+      "applies_when": [],
       "summary": "Apps may not look confusingly similar to Apple products or imply Apple endorsement. Using Apple trademarks such as iPhone, iPad, Apple Watch, Siri, or App Store as part of the app name, or Apple product images in the icon, is a common rejection.",
       "fix": "Use Apple trademarks only referentially in the description, for example \"for iPhone\". Keep them out of the name and icon.",
       "references": [
@@ -489,6 +533,7 @@
       ],
       "check": {
         "id": "metadata-terms",
+        "confidence": "medium",
         "fields": [
           "name",
           "subtitle"
@@ -521,6 +566,7 @@
       "enforced_by": "app-store-connect",
       "automation": "automated",
       "guidelines": [],
+      "applies_when": [],
       "summary": "App Store Connect caps the subtitle at 30 characters, keywords at 100 bytes, promotional text at 170 characters, and the description and What's New text at 4,000 characters each, per localization.",
       "fix": "Trim the field. Keywords count bytes, so non-Latin scripts fit fewer characters; separate them with commas and no spaces.",
       "references": [
@@ -528,6 +574,7 @@
       ],
       "check": {
         "id": "metadata-length",
+        "confidence": "high",
         "limits": {
           "subtitle": 30,
           "promotional_text": 170,
@@ -551,10 +598,12 @@
       "guidelines": [
         "2.3.7"
       ],
+      "applies_when": [],
       "summary": "Names, subtitles, screenshots, and previews may not include prices, terms that do not describe the app, or unverifiable claims such as \"best\" or \"#1\", and may not pack popular app names or trademarks.",
       "fix": "Describe what the app does in plain words. Move prices and offers to promotional text.",
       "check": {
         "id": "metadata-terms",
+        "confidence": "medium",
         "fields": [
           "name",
           "subtitle"
@@ -586,10 +635,12 @@
       "guidelines": [
         "2.3.7"
       ],
+      "applies_when": [],
       "summary": "App names are limited to 30 characters. App Store Connect refuses longer names for every localization.",
       "fix": "Shorten the name and move descriptive words to the subtitle or keywords.",
       "check": {
         "id": "metadata-length",
+        "confidence": "high",
         "field": "name",
         "max": 30
       }
@@ -606,10 +657,12 @@
       "guidelines": [
         "2.3.10"
       ],
+      "applies_when": [],
       "summary": "Metadata must focus on the Apple platforms the app supports and not mention other mobile platforms or their stores.",
       "fix": "Remove references to other platforms and stores, unless the app's core function is interoperating with them.",
       "check": {
         "id": "metadata-terms",
+        "confidence": "medium",
         "fields": [
           "name",
           "subtitle",
@@ -643,10 +696,12 @@
         "2.1",
         "2.3.1"
       ],
+      "applies_when": [],
       "summary": "Submissions must be final: placeholder text, empty web pages, and temporary content must be gone. Lorem ipsum, TODO strings, or \"test\" entries in String Catalogs or store text are rejected under 2.1.",
       "fix": "Replace every placeholder with final copy in each shipped localization, and check that every URL in the metadata opens a real page.",
       "check": {
         "id": "placeholder-strings",
+        "confidence": "medium",
         "terms": [
           "lorem ipsum",
           "TODO",
@@ -673,10 +728,12 @@
         "2.3.1",
         "2.1"
       ],
+      "applies_when": [],
       "summary": "Guideline 2.3.1 forbids hidden, dormant, or undocumented features, and asks for every new feature and in-app purchase to be described with specificity in the Notes for Review. Remote feature flags, region-locked features, hardware dependencies, and special configuration all need explaining.",
       "fix": "List each feature that is not obvious from the first launch, how to reach it, and any account, location, or hardware it needs. Mention remote configuration and what it can change.",
       "check": {
         "id": "review-notes",
+        "confidence": "low",
         "flag_signals": [
           "RemoteConfig",
           "FirebaseRemoteConfig",
@@ -704,13 +761,15 @@
       "guidelines": [
         "2.3.3"
       ],
+      "applies_when": [],
       "summary": "App Store Connect needs at least one screenshot in an accepted size for each supported device family. Screenshots must show the app in use, not just title art, a login page, or a splash screen, and must not show features the build lacks.",
       "fix": "Capture real screens from the submitted build for every supported device family, such as iPhone and iPad, and keep marketing text to a caption.",
       "references": [
         "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications"
       ],
       "check": {
-        "id": "screenshot-sets"
+        "id": "screenshot-sets",
+        "confidence": "medium"
       },
       "review": [
         "Does every screenshot show a screen that exists in this build?",
@@ -730,10 +789,12 @@
       "guidelines": [
         "1.5"
       ],
+      "applies_when": [],
       "summary": "The Support URL must load and give people an easy way to reach the developer. Broken pages and pages with no contact path draw 1.5 and 2.1 rejections.",
       "fix": "Point the Support URL at a live page with an email address or contact form, and keep it reachable without signing in.",
       "check": {
         "id": "url-reachable",
+        "confidence": "medium",
         "fields": [
           "support_url",
           "marketing_url",
@@ -757,10 +818,12 @@
       "guidelines": [
         "2.3.12"
       ],
+      "applies_when": [],
       "summary": "What's New must describe new features and product changes. Generic text is fine only for bug fixes, security updates, and performance improvements.",
       "fix": "List the user-visible changes in the release notes for each localization.",
       "check": {
         "id": "release-notes-generic",
+        "confidence": "low",
         "phrases": [
           "bug fixes and performance improvements",
           "bug fixes and improvements",
@@ -785,13 +848,15 @@
       "guidelines": [
         "1.6"
       ],
+      "applies_when": [],
       "summary": "`NSAllowsArbitraryLoads` turns off App Transport Security for every connection. App Review asks for a justification, and plain HTTP exposes user data.",
       "fix": "Remove the global exception. Use HTTPS, or add a narrow `NSExceptionDomains` entry for the specific host that cannot, and explain it in the review notes.",
       "references": [
         "https://developer.apple.com/documentation/bundleresources/information-property-list/nsapptransportsecurity"
       ],
       "check": {
-        "id": "ats-exceptions"
+        "id": "ats-exceptions",
+        "confidence": "high"
       },
       "review": [
         "Which hosts cannot use HTTPS, and is the exception limited to them?"
@@ -809,13 +874,15 @@
       "guidelines": [
         "2.5.5"
       ],
+      "applies_when": [],
       "summary": "Apps must work on IPv6-only networks, which App Review uses. Connecting to IPv4 literals or using IPv4-only socket APIs fails there.",
       "fix": "Connect by hostname with `URLSession` or `Network.framework`, which handle NAT64 automatically.",
       "references": [
         "https://developer.apple.com/support/ipv6/"
       ],
       "check": {
-        "id": "ipv4-literals"
+        "id": "ipv4-literals",
+        "confidence": "low"
       }
     },
     {
@@ -832,6 +899,7 @@
         "3.1.1",
         "3.1.3"
       ],
+      "applies_when": [],
       "summary": "The app links a general payment SDK, such as Stripe or PayPal, or opens checkout URLs. Unlocking features, content, or subscriptions inside the app must use in-app purchase unless an exception in 3.1.3 applies, such as physical goods and services consumed outside the app, reader apps, or storefront-specific entitlements.",
       "fix": "Route digital unlocks through StoreKit. Keep the external processor only for physical goods, real-world services, or a storefront where you hold the matching entitlement, and say which exception applies in the review notes.",
       "references": [
@@ -840,6 +908,7 @@
       ],
       "check": {
         "id": "external-payments",
+        "confidence": "low",
         "signals": [
           "StripePaymentSheet",
           "Stripe",
@@ -867,6 +936,9 @@
       "guidelines": [
         "3.1.1"
       ],
+      "applies_when": [
+        "in-app-purchase"
+      ],
       "summary": "The app sells non-consumables or subscriptions but has no visible way to restore them. Guideline 3.1.1 expects a restore mechanism for any restorable in-app purchase.",
       "fix": "Add a Restore Purchases action that calls `AppStore.sync()`, or use the StoreKit views, which include it. Place it where people look for it: the paywall and settings.",
       "references": [
@@ -874,6 +946,7 @@
       ],
       "check": {
         "id": "restore-purchases",
+        "confidence": "medium",
         "purchase_signals": [
           "Product.purchase",
           "product.purchase(",
@@ -904,6 +977,9 @@
       "guidelines": [
         "3.1.2"
       ],
+      "applies_when": [
+        "subscriptions"
+      ],
       "summary": "Auto-renewable subscriptions must provide ongoing value, last at least seven days, and state clearly what the person gets, the price, and the billing period before purchase. The app and its metadata must link the Terms of Use (EULA) and the privacy policy.",
       "fix": "Show price, period, and what is included on the paywall, with the billed amount as the most prominent price. Link Terms of Use and Privacy Policy on the paywall and in the App Store description or the EULA field.",
       "references": [
@@ -911,6 +987,7 @@
       ],
       "check": {
         "id": "subscription-links",
+        "confidence": "low",
         "signals": [
           "SubscriptionStoreView",
           "subscription",
@@ -935,6 +1012,7 @@
       "guidelines": [
         "5.1.1"
       ],
+      "applies_when": [],
       "summary": "`NSLocationAlwaysAndWhenInUseUsageDescription` is set but `NSLocationWhenInUseUsageDescription` is missing. The system needs both to show the upgrade prompt, and the upload is flagged.",
       "fix": "Add `NSLocationWhenInUseUsageDescription`. Ask for when-in-use first and request always access only when a feature needs background location.",
       "references": [
@@ -942,6 +1020,7 @@
       ],
       "check": {
         "id": "plist-key-pairs",
+        "confidence": "high",
         "requires": {
           "NSLocationAlwaysAndWhenInUseUsageDescription": "NSLocationWhenInUseUsageDescription"
         }
@@ -960,6 +1039,7 @@
       "guidelines": [
         "5.1.1"
       ],
+      "applies_when": [],
       "summary": "Guideline 5.1.1(iv) forbids manipulating or forcing consent, and expects alternatives when the person declines. Requesting several permissions at launch, re-prompting after a denial, or blocking the app until access is granted all draw rejections.",
       "fix": "Request each permission at the moment the feature needs it. Keep the app usable after a denial: offer a manual alternative, such as typing an address instead of sharing location, and a link to Settings.",
       "review": [
@@ -981,6 +1061,7 @@
       "guidelines": [
         "5.1.1"
       ],
+      "applies_when": [],
       "summary": "The app calls an API that requests access to a protected resource, such as the camera, photos, location, or contacts, but its Info.plist lacks the matching purpose string. Upload is rejected, and at runtime the app crashes when it asks.",
       "fix": "Add the purpose string key for the resource to Info.plist, or the target's Info tab, with a specific sentence on why the app needs it. Localize it like the rest of the UI.",
       "itms": [
@@ -991,6 +1072,7 @@
       ],
       "check": {
         "id": "usage-descriptions",
+        "confidence": "medium",
         "catalog": "usage-descriptions"
       }
     },
@@ -1007,6 +1089,7 @@
       "guidelines": [
         "5.1.1"
       ],
+      "applies_when": [],
       "summary": "Guideline 5.1.1(ii) requires purpose strings that \"clearly and completely describe your use of the data\". Strings like \"This app needs camera access\" or a bare product name are among the most common 5.1.1 rejections.",
       "fix": "Say what feature uses the data and what the person gets, with an example: \"Scan receipts with the camera to add expenses automatically.\"",
       "references": [
@@ -1014,6 +1097,7 @@
       ],
       "check": {
         "id": "usage-description-quality",
+        "confidence": "low",
         "min_length": 25,
         "placeholders": [
           "TODO",
@@ -1045,6 +1129,7 @@
         "5.1.1",
         "5.1.2"
       ],
+      "applies_when": [],
       "summary": "The app bundle ships without a `PrivacyInfo.xcprivacy`. Any use of a required reason API, including `UserDefaults`, then fails upload validation, and the App Store privacy report has nothing to aggregate from the app's own code.",
       "fix": "Add a `PrivacyInfo.xcprivacy` to the app target (File > New > File > App Privacy). Declare tracking, collected data types, and every required reason API category the app's own code uses.",
       "since": "2024-05-01",
@@ -1052,7 +1137,8 @@
         "https://developer.apple.com/documentation/bundleresources/privacy-manifest-files"
       ],
       "check": {
-        "id": "privacy-manifest-present"
+        "id": "privacy-manifest-present",
+        "confidence": "high"
       }
     },
     {
@@ -1069,10 +1155,12 @@
       "guidelines": [
         "5.1.1"
       ],
+      "applies_when": [],
       "summary": "Every app needs a privacy policy linked both in the App Store Connect metadata and inside the app, easy to find. The policy must say what data is collected and how, who it is shared with, how long it is kept, and how to revoke consent or request deletion.",
       "fix": "Set the Privacy Policy URL in App Store Connect, link the same page from the app's settings or about screen, and make sure the policy covers collection, sharing, retention, deletion, and consent withdrawal.",
       "check": {
-        "id": "privacy-policy-url"
+        "id": "privacy-policy-url",
+        "confidence": "medium"
       },
       "review": [
         "Is the privacy policy reachable from inside the app without signing in?",
@@ -1091,6 +1179,7 @@
       "guidelines": [
         "5.1.1"
       ],
+      "applies_when": [],
       "summary": "A reason code in `NSPrivacyAccessedAPITypeReasons` is not one Apple lists for that category, or is an SDK-only reason (`0A2A.1`, `C56D.1`) declared by the app itself.",
       "fix": "Use only the reason codes Apple lists for each category, and only the ones that describe the real use. Remove SDK-wrapper reasons from the app target's manifest.",
       "since": "2024-05-01",
@@ -1099,6 +1188,7 @@
       ],
       "check": {
         "id": "required-reason-codes",
+        "confidence": "high",
         "catalog": "required-reason-apis"
       }
     },
@@ -1116,6 +1206,7 @@
       "guidelines": [
         "5.1.1"
       ],
+      "applies_when": [],
       "summary": "Code in the bundle calls an API from a required reason category, such as `UserDefaults`, file timestamps, system boot time, disk space, or active keyboards, and the bundle's privacy manifest does not declare that category. App Store Connect rejects the upload.",
       "fix": "Add an `NSPrivacyAccessedAPITypes` entry for the category with the approved reason codes that match the real use. Each framework that calls the API needs the declaration in its own manifest; the app's manifest does not cover an SDK.",
       "since": "2024-05-01",
@@ -1127,6 +1218,7 @@
       ],
       "check": {
         "id": "required-reason-apis",
+        "confidence": "medium",
         "catalog": "required-reason-apis"
       }
     },
@@ -1143,6 +1235,7 @@
       "guidelines": [
         "5.1.2"
       ],
+      "applies_when": [],
       "summary": "The app embeds an SDK from Apple's list of commonly used third-party SDKs, and that copy has no privacy manifest or, as a binary dependency, no valid signature. Uploads of new apps and of updates that add the SDK are rejected.",
       "fix": "Update the SDK to a release that includes `PrivacyInfo.xcprivacy` and, for XCFrameworks, a signature. If no such release exists, replace the SDK.",
       "since": "2025-02-12",
@@ -1154,6 +1247,7 @@
       ],
       "check": {
         "id": "sdk-privacy-manifests",
+        "confidence": "high",
         "catalog": "third-party-sdks"
       }
     },
@@ -1170,6 +1264,9 @@
       "guidelines": [
         "5.1.2"
       ],
+      "applies_when": [
+        "ai"
+      ],
       "summary": "The app calls a hosted AI model, such as OpenAI, Anthropic, or Google Gemini. Guideline 5.1.2(i) requires clear disclosure of where personal data goes, including to third-party AI, and explicit permission before sharing it.",
       "fix": "Before the first request, show what data goes to which provider and why, and get explicit consent. Mirror it in the privacy policy and the App Privacy details. Prefer on-device models where they do the job.",
       "since": "2025-11-13",
@@ -1178,6 +1275,7 @@
       ],
       "check": {
         "id": "third-party-ai-endpoints",
+        "confidence": "medium",
         "hosts": [
           "api.openai.com",
           "api.anthropic.com",
@@ -1213,13 +1311,15 @@
       "guidelines": [
         "5.1.2"
       ],
+      "applies_when": [],
       "summary": "`NSPrivacyTracking` is true but `NSPrivacyTrackingDomains` is empty. The system blocks connections to tracking domains until the person grants permission, so undeclared domains keep receiving traffic the person never agreed to.",
       "fix": "List every domain that receives tracking data in `NSPrivacyTrackingDomains`, and request App Tracking Transparency permission before contacting them.",
       "references": [
         "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacytrackingdomains"
       ],
       "check": {
-        "id": "manifest-tracking-domains"
+        "id": "manifest-tracking-domains",
+        "confidence": "high"
       }
     },
     {
@@ -1237,10 +1337,14 @@
         "1.3",
         "5.1.4"
       ],
+      "applies_when": [
+        "kids"
+      ],
       "summary": "Kids Category apps may not include third-party analytics or advertising, with narrow exceptions, may not send personal information or device data to third parties, and must put links out of the app and purchases behind a parental gate.",
       "fix": "Remove third-party analytics and ad SDKs, or move the app out of the Kids Category. Add a parental gate before external links and purchases.",
       "check": {
         "id": "kids-sdks",
+        "confidence": "medium",
         "sdks": [
           "FirebaseAnalytics",
           "GoogleMobileAds",
@@ -1271,6 +1375,9 @@
         "5.1.1",
         "1.4.1"
       ],
+      "applies_when": [
+        "regulated"
+      ],
       "summary": "Apps in highly regulated fields, such as banking, healthcare, gambling, cannabis, air travel, or crypto exchanges, or apps that need sensitive data, should be submitted by the legal entity that provides the service. Medical apps that could cause harm get extra scrutiny.",
       "fix": "Submit from the organization's developer account, and include licenses or regulatory approvals in the review notes.",
       "review": [
@@ -1292,10 +1399,14 @@
       "guidelines": [
         "1.2"
       ],
+      "applies_when": [
+        "user-content"
+      ],
       "summary": "Apps with user-generated content or social features must filter objectionable material, let people report offensive content with timely responses, let people block abusive users, and publish contact information. Random or anonymous chat apps fall under the same rule.",
       "fix": "Ship report and block actions on every piece of user content and every profile, a filtering step, published contact details, and terms that forbid objectionable content.",
       "check": {
         "id": "ugc-signals",
+        "confidence": "low",
         "signals": [
           "comment",
           "post",
@@ -1325,6 +1436,9 @@
       "guidelines": [
         "5.1.2"
       ],
+      "applies_when": [
+        "advertising"
+      ],
       "summary": "The app or an SDK reads the advertising identifier (`ASIdentifierManager.advertisingIdentifier`) or links an ad or attribution SDK, but never requests tracking permission with `ATTrackingManager`, or has no `NSUserTrackingUsageDescription`.",
       "fix": "Request permission with `ATTrackingManager.requestTrackingAuthorization` before any tracking, add the purpose string, and declare tracking in the privacy manifest and App Privacy details. If the app does not track, remove the identifier access.",
       "references": [
@@ -1332,6 +1446,7 @@
       ],
       "check": {
         "id": "att-usage",
+        "confidence": "medium",
         "signals": [
           "ASIdentifierManager",
           "advertisingIdentifier",
@@ -1355,6 +1470,7 @@
       "guidelines": [
         "5.1.2"
       ],
+      "applies_when": [],
       "summary": "Fingerprinting is not allowed, with or without tracking permission. Combining signals such as boot time, disk size, keyboard list, screen metrics, or locale into an identifier, or sending required reason API data off-device, breaks both the guideline and the declared reasons.",
       "fix": "Use required reason APIs only for their declared reasons, keep derived values on-device unless the reason allows otherwise, and never combine device signals into an identifier.",
       "references": [
@@ -1366,6 +1482,71 @@
     }
   ],
   "catalogs": {
+    "profiles": {
+      "profiles": [
+        {
+          "id": "utility",
+          "summary": "Offline tool with no accounts or purchases.",
+          "traits": []
+        },
+        {
+          "id": "subscription",
+          "summary": "Subscription app with accounts.",
+          "traits": [
+            "accounts",
+            "in-app-purchase",
+            "subscriptions"
+          ]
+        },
+        {
+          "id": "social",
+          "summary": "Social or community app with user content.",
+          "traits": [
+            "accounts",
+            "user-content"
+          ]
+        },
+        {
+          "id": "kids",
+          "summary": "App for the Kids Category.",
+          "traits": [
+            "kids"
+          ]
+        },
+        {
+          "id": "game",
+          "summary": "Game with in-app purchases.",
+          "traits": [
+            "games",
+            "in-app-purchase"
+          ]
+        },
+        {
+          "id": "ai",
+          "summary": "App built on a hosted AI model.",
+          "traits": [
+            "ai",
+            "accounts"
+          ]
+        },
+        {
+          "id": "health",
+          "summary": "Health or fitness app.",
+          "traits": [
+            "health"
+          ]
+        },
+        {
+          "id": "fintech",
+          "summary": "Banking, payments, lending, or crypto app.",
+          "traits": [
+            "accounts",
+            "regulated",
+            "crypto"
+          ]
+        }
+      ]
+    },
     "required-reason-apis": {
       "source": "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitype",
       "verified": "2026-10-01",
@@ -1604,6 +1785,146 @@
         "video_player_avfoundation",
         "wakelock",
         "webview_flutter_wkwebview"
+      ]
+    },
+    "traits": {
+      "traits": [
+        {
+          "id": "accounts",
+          "summary": "People create or sign in to an account.",
+          "signals": [
+            "ASAuthorizationAppleIDProvider",
+            "SignInWithAppleButton",
+            "GoogleSignIn",
+            "FBSDKLoginKit",
+            "FirebaseAuth",
+            "Auth.auth()",
+            "signUp",
+            "createUser",
+            "SecureField"
+          ]
+        },
+        {
+          "id": "in-app-purchase",
+          "summary": "The app sells anything through StoreKit.",
+          "signals": [
+            "import StoreKit",
+            "Product.products",
+            "SKProductsRequest",
+            "StoreView",
+            "ProductView",
+            "RevenueCat",
+            "Purchases.shared"
+          ]
+        },
+        {
+          "id": "subscriptions",
+          "summary": "The app sells auto-renewable subscriptions.",
+          "signals": [
+            "SubscriptionStoreView",
+            "subscriptionStatus",
+            "Product.SubscriptionInfo",
+            "autoRenewable",
+            "Purchases.shared.getOfferings"
+          ]
+        },
+        {
+          "id": "user-content",
+          "summary": "People post, share, or message content other people see.",
+          "signals": [
+            "UGC",
+            "reportContent",
+            "blockUser",
+            "comment",
+            "chat"
+          ]
+        },
+        {
+          "id": "kids",
+          "summary": "The app is in the Kids Category or aimed at children."
+        },
+        {
+          "id": "health",
+          "summary": "The app reads or writes health or medical data.",
+          "signals": [
+            "HKHealthStore",
+            "HealthKit",
+            "com.apple.developer.healthkit"
+          ]
+        },
+        {
+          "id": "crypto",
+          "summary": "The app handles cryptocurrency wallets, exchanges, or mining.",
+          "signals": [
+            "WalletConnect",
+            "web3",
+            "ethers",
+            "BIP39",
+            "seed phrase",
+            "MoonPay",
+            "Coinbase"
+          ]
+        },
+        {
+          "id": "ai",
+          "summary": "The app sends data to a hosted AI model or generates content with AI.",
+          "signals": [
+            "api.openai.com",
+            "api.anthropic.com",
+            "generativelanguage.googleapis.com",
+            "FoundationModels",
+            "LanguageModelSession"
+          ]
+        },
+        {
+          "id": "advertising",
+          "summary": "The app shows ads or shares data with ad or attribution networks.",
+          "signals": [
+            "GoogleMobileAds",
+            "AppLovinSDK",
+            "UnityAds",
+            "AppsFlyerLib",
+            "Adjust",
+            "ASIdentifierManager"
+          ]
+        },
+        {
+          "id": "vpn",
+          "summary": "The app configures a VPN or network extension.",
+          "signals": [
+            "NETunnelProviderManager",
+            "NEVPNManager",
+            "com.apple.developer.networking.networkextension"
+          ]
+        },
+        {
+          "id": "web-content",
+          "summary": "The app shows web content in a web view.",
+          "signals": [
+            "WKWebView",
+            "WebView(",
+            "WebPage("
+          ]
+        },
+        {
+          "id": "games",
+          "summary": "The app is a game.",
+          "signals": [
+            "GameKit",
+            "SpriteKit",
+            "SceneKit",
+            "GKLocalPlayer",
+            "UnityFramework"
+          ]
+        },
+        {
+          "id": "regulated",
+          "summary": "The app offers a regulated service: banking, lending, healthcare, gambling, or similar."
+        },
+        {
+          "id": "macos",
+          "summary": "The app ships on the Mac App Store."
+        }
       ]
     },
     "usage-descriptions": {

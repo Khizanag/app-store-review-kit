@@ -4,6 +4,7 @@ severity = "warning"
 evidence = ["source", "runtime"]
 enforced_by = "app-review"
 guidelines = ["3.1.1"]
+applies_when = ["in-app-purchase"]
 summary = """
 The app sells non-consumables or subscriptions but has no visible way to restore them. Guideline 3.1.1 expects a restore mechanism for any restorable in-app purchase.
 """
@@ -16,5 +17,6 @@ references = [
 
 [check]
 id = "restore-purchases"
+confidence = "medium"
 purchase_signals = ["Product.purchase", "product.purchase(", "SKPaymentQueue", "SubscriptionStoreView", "StoreView"]
 restore_signals = ["AppStore.sync", "restoreCompletedTransactions", "SubscriptionStoreView", "StoreView", ".storeButton(.visible, for: .restorePurchases)"]

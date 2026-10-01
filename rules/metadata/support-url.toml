@@ -13,6 +13,7 @@ Point the Support URL at a live page with an email address or contact form, and 
 
 [check]
 id = "url-reachable"
+confidence = "medium"
 fields = ["support_url", "marketing_url", "privacy_policy_url"]
 
 [review]

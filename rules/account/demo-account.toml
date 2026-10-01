@@ -4,6 +4,7 @@ severity = "error"
 evidence = ["metadata", "source"]
 enforced_by = "app-review"
 guidelines = ["2.1"]
+applies_when = ["accounts"]
 summary = """
 Guideline 2.1 asks for demo account details when the app has a login, with the backend running during review. A missing or broken demo account is one of the most common 2.1 rejections.
 """
@@ -13,6 +14,7 @@ Fill in Sign-in Information under App Review Information in App Store Connect wi
 
 [check]
 id = "demo-account"
+confidence = "medium"
 login_signals = ["ASAuthorizationAppleIDProvider", "GoogleSignIn", "SecureField", "signIn(", "login("]
 
 [review]

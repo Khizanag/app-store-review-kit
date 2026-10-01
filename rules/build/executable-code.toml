@@ -13,6 +13,7 @@ Ship features in the binary and gate them with local flags. Keep remote content 
 
 [check]
 id = "dynamic-code"
+confidence = "low"
 patterns = ["dlopen(", "Bundle(path:", "NSBundle bundleWithPath", "evaluateScript("]
 
 [review]

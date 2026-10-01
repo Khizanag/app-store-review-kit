@@ -13,4 +13,5 @@ Move environment URLs behind build configurations and make sure the Release conf
 
 [check]
 id = "debug-hosts"
+confidence = "low"
 patterns = ["localhost", "127.0.0.1", "0.0.0.0", "192.168.", "10.0.2.2", ".ngrok", ".local:", "staging.", "dev."]
