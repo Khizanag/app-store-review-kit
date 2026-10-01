@@ -1,0 +1,1216 @@
+{
+  "source": "https://developer.apple.com/app-store/review/guidelines/",
+  "last_updated": "2026-06-08",
+  "sections": [
+    {
+      "slug": "introduction",
+      "number": null,
+      "title": "Introduction",
+      "parent": null,
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "before-you-submit",
+      "number": null,
+      "title": "Before You Submit",
+      "parent": null,
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "1",
+      "number": "1",
+      "title": "Safety",
+      "parent": null,
+      "notarization": true,
+      "children": [
+        "1.1",
+        "1.2",
+        "1.3",
+        "1.4",
+        "1.5",
+        "1.6",
+        "1.7"
+      ]
+    },
+    {
+      "slug": "1.1",
+      "number": "1.1",
+      "title": "Objectionable Content",
+      "parent": "1",
+      "notarization": false,
+      "children": [
+        "1.1.1",
+        "1.1.2",
+        "1.1.3",
+        "1.1.4",
+        "1.1.5",
+        "1.1.6",
+        "1.1.7"
+      ]
+    },
+    {
+      "slug": "1.1.1",
+      "number": "1.1.1",
+      "title": "",
+      "parent": "1.1",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "1.1.2",
+      "number": "1.1.2",
+      "title": "",
+      "parent": "1.1",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "1.1.3",
+      "number": "1.1.3",
+      "title": "",
+      "parent": "1.1",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "1.1.4",
+      "number": "1.1.4",
+      "title": "",
+      "parent": "1.1",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "1.1.5",
+      "number": "1.1.5",
+      "title": "",
+      "parent": "1.1",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "1.1.6",
+      "number": "1.1.6",
+      "title": "",
+      "parent": "1.1",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "1.1.7",
+      "number": "1.1.7",
+      "title": "",
+      "parent": "1.1",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "1.2",
+      "number": "1.2",
+      "title": "User-Generated Content",
+      "parent": "1",
+      "notarization": true,
+      "children": [
+        "1.2.1"
+      ]
+    },
+    {
+      "slug": "1.2.1",
+      "number": "1.2.1",
+      "title": "Creator Content",
+      "parent": "1.2",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "1.3",
+      "number": "1.3",
+      "title": "Kids Category",
+      "parent": "1",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "1.4",
+      "number": "1.4",
+      "title": "Physical Harm",
+      "parent": "1",
+      "notarization": true,
+      "children": [
+        "1.4.1",
+        "1.4.2",
+        "1.4.3",
+        "1.4.4",
+        "1.4.5"
+      ]
+    },
+    {
+      "slug": "1.4.1",
+      "number": "1.4.1",
+      "title": "",
+      "parent": "1.4",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "1.4.2",
+      "number": "1.4.2",
+      "title": "",
+      "parent": "1.4",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "1.4.3",
+      "number": "1.4.3",
+      "title": "",
+      "parent": "1.4",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "1.4.4",
+      "number": "1.4.4",
+      "title": "",
+      "parent": "1.4",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "1.4.5",
+      "number": "1.4.5",
+      "title": "",
+      "parent": "1.4",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "1.5",
+      "number": "1.5",
+      "title": "Developer Information",
+      "parent": "1",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "1.6",
+      "number": "1.6",
+      "title": "Data Security",
+      "parent": "1",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "1.7",
+      "number": "1.7",
+      "title": "Reporting Criminal Activity",
+      "parent": "1",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2",
+      "number": "2",
+      "title": "Performance",
+      "parent": null,
+      "notarization": true,
+      "children": [
+        "2.1",
+        "2.2",
+        "2.3",
+        "2.4",
+        "2.5"
+      ]
+    },
+    {
+      "slug": "2.1",
+      "number": "2.1",
+      "title": "App Completeness",
+      "parent": "2",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.2",
+      "number": "2.2",
+      "title": "Beta Testing",
+      "parent": "2",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2.3",
+      "number": "2.3",
+      "title": "Accurate Metadata",
+      "parent": "2",
+      "notarization": true,
+      "children": [
+        "2.3.1",
+        "2.3.2",
+        "2.3.3",
+        "2.3.4",
+        "2.3.5",
+        "2.3.6",
+        "2.3.7",
+        "2.3.8",
+        "2.3.9",
+        "2.3.10",
+        "2.3.11",
+        "2.3.12",
+        "2.3.13"
+      ]
+    },
+    {
+      "slug": "2.3.1",
+      "number": "2.3.1",
+      "title": "",
+      "parent": "2.3",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.3.2",
+      "number": "2.3.2",
+      "title": "",
+      "parent": "2.3",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2.3.3",
+      "number": "2.3.3",
+      "title": "",
+      "parent": "2.3",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2.3.4",
+      "number": "2.3.4",
+      "title": "",
+      "parent": "2.3",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2.3.5",
+      "number": "2.3.5",
+      "title": "",
+      "parent": "2.3",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.3.6",
+      "number": "2.3.6",
+      "title": "",
+      "parent": "2.3",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.3.7",
+      "number": "2.3.7",
+      "title": "",
+      "parent": "2.3",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.3.8",
+      "number": "2.3.8",
+      "title": "",
+      "parent": "2.3",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.3.9",
+      "number": "2.3.9",
+      "title": "",
+      "parent": "2.3",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2.3.10",
+      "number": "2.3.10",
+      "title": "",
+      "parent": "2.3",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2.3.11",
+      "number": "2.3.11",
+      "title": "",
+      "parent": "2.3",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2.3.12",
+      "number": "2.3.12",
+      "title": "",
+      "parent": "2.3",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2.3.13",
+      "number": "2.3.13",
+      "title": "",
+      "parent": "2.3",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2.4",
+      "number": "2.4",
+      "title": "Hardware Compatibility",
+      "parent": "2",
+      "notarization": true,
+      "children": [
+        "2.4.1",
+        "2.4.2",
+        "2.4.3",
+        "2.4.4",
+        "2.4.5"
+      ]
+    },
+    {
+      "slug": "2.4.1",
+      "number": "2.4.1",
+      "title": "",
+      "parent": "2.4",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2.4.2",
+      "number": "2.4.2",
+      "title": "",
+      "parent": "2.4",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.4.3",
+      "number": "2.4.3",
+      "title": "",
+      "parent": "2.4",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2.4.4",
+      "number": "2.4.4",
+      "title": "",
+      "parent": "2.4",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.4.5",
+      "number": "2.4.5",
+      "title": "",
+      "parent": "2.4",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2.5",
+      "number": "2.5",
+      "title": "Software Requirements",
+      "parent": "2",
+      "notarization": true,
+      "children": [
+        "2.5.1",
+        "2.5.2",
+        "2.5.3",
+        "2.5.4",
+        "2.5.5",
+        "2.5.6",
+        "2.5.7",
+        "2.5.8",
+        "2.5.9",
+        "2.5.10",
+        "2.5.11",
+        "2.5.12",
+        "2.5.13",
+        "2.5.14",
+        "2.5.15",
+        "2.5.16",
+        "2.5.17",
+        "2.5.18"
+      ]
+    },
+    {
+      "slug": "2.5.1",
+      "number": "2.5.1",
+      "title": "",
+      "parent": "2.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.5.2",
+      "number": "2.5.2",
+      "title": "",
+      "parent": "2.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.5.3",
+      "number": "2.5.3",
+      "title": "",
+      "parent": "2.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.5.4",
+      "number": "2.5.4",
+      "title": "",
+      "parent": "2.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.5.5",
+      "number": "2.5.5",
+      "title": "",
+      "parent": "2.5",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2.5.6",
+      "number": "2.5.6",
+      "title": "",
+      "parent": "2.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.5.7",
+      "number": "2.5.7",
+      "title": "",
+      "parent": "2.5",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2.5.8",
+      "number": "2.5.8",
+      "title": "",
+      "parent": "2.5",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2.5.9",
+      "number": "2.5.9",
+      "title": "",
+      "parent": "2.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.5.10",
+      "number": "2.5.10",
+      "title": "",
+      "parent": "2.5",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2.5.11",
+      "number": "2.5.11",
+      "title": "",
+      "parent": "2.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.5.12",
+      "number": "2.5.12",
+      "title": "",
+      "parent": "2.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.5.13",
+      "number": "2.5.13",
+      "title": "",
+      "parent": "2.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.5.14",
+      "number": "2.5.14",
+      "title": "",
+      "parent": "2.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.5.15",
+      "number": "2.5.15",
+      "title": "",
+      "parent": "2.5",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "2.5.16",
+      "number": "2.5.16",
+      "title": "",
+      "parent": "2.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.5.17",
+      "number": "2.5.17",
+      "title": "",
+      "parent": "2.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "2.5.18",
+      "number": "2.5.18",
+      "title": "",
+      "parent": "2.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "3",
+      "number": "3",
+      "title": "Business",
+      "parent": null,
+      "notarization": false,
+      "children": [
+        "3.1",
+        "3.2"
+      ]
+    },
+    {
+      "slug": "3.1",
+      "number": "3.1",
+      "title": "Payments",
+      "parent": "3",
+      "notarization": false,
+      "children": [
+        "3.1.1",
+        "3.1.2",
+        "3.1.3",
+        "3.1.4",
+        "3.1.5"
+      ]
+    },
+    {
+      "slug": "3.1.1",
+      "number": "3.1.1",
+      "title": "In-App Purchase",
+      "parent": "3.1",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "3.1.2",
+      "number": "3.1.2",
+      "title": "Subscriptions",
+      "parent": "3.1",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "3.1.3",
+      "number": "3.1.3",
+      "title": "Other Purchase Methods",
+      "parent": "3.1",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "3.1.4",
+      "number": "3.1.4",
+      "title": "Hardware-Specific Content",
+      "parent": "3.1",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "3.1.5",
+      "number": "3.1.5",
+      "title": "Cryptocurrencies",
+      "parent": "3.1",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "3.2",
+      "number": "3.2",
+      "title": "Other Business Model Issues",
+      "parent": "3",
+      "notarization": false,
+      "children": [
+        "3.2.1",
+        "3.2.2"
+      ]
+    },
+    {
+      "slug": "3.2.1",
+      "number": "3.2.1",
+      "title": "Acceptable",
+      "parent": "3.2",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "3.2.2",
+      "number": "3.2.2",
+      "title": "Unacceptable",
+      "parent": "3.2",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "4",
+      "number": "4",
+      "title": "Design",
+      "parent": null,
+      "notarization": true,
+      "children": [
+        "4.1",
+        "4.2",
+        "4.3",
+        "4.4",
+        "4.5",
+        "4.6",
+        "4.7",
+        "4.8",
+        "4.9",
+        "4.10"
+      ]
+    },
+    {
+      "slug": "4.1",
+      "number": "4.1",
+      "title": "Copycats",
+      "parent": "4",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "4.2",
+      "number": "4.2",
+      "title": "Minimum Functionality",
+      "parent": "4",
+      "notarization": false,
+      "children": [
+        "4.2.1",
+        "4.2.2",
+        "4.2.3",
+        "4.2.4",
+        "4.2.5",
+        "4.2.6",
+        "4.2.7"
+      ]
+    },
+    {
+      "slug": "4.2.1",
+      "number": "4.2.1",
+      "title": "",
+      "parent": "4.2",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "4.2.2",
+      "number": "4.2.2",
+      "title": "",
+      "parent": "4.2",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "4.2.3",
+      "number": "4.2.3",
+      "title": "",
+      "parent": "4.2",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "4.2.4",
+      "number": "4.2.4",
+      "title": "",
+      "parent": "4.2",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "4.2.5",
+      "number": "4.2.5",
+      "title": "",
+      "parent": "4.2",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "4.2.6",
+      "number": "4.2.6",
+      "title": "",
+      "parent": "4.2",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "4.2.7",
+      "number": "4.2.7",
+      "title": "Remote Desktop Clients",
+      "parent": "4.2",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "4.3",
+      "number": "4.3",
+      "title": "Spam",
+      "parent": "4",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "4.4",
+      "number": "4.4",
+      "title": "Extensions",
+      "parent": "4",
+      "notarization": true,
+      "children": [
+        "4.4.1",
+        "4.4.2",
+        "4.4.3"
+      ]
+    },
+    {
+      "slug": "4.4.1",
+      "number": "4.4.1",
+      "title": "",
+      "parent": "4.4",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "4.4.2",
+      "number": "4.4.2",
+      "title": "",
+      "parent": "4.4",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "4.4.3",
+      "number": "4.4.3",
+      "title": "",
+      "parent": "4.4",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "4.5",
+      "number": "4.5",
+      "title": "Apple Sites and Services",
+      "parent": "4",
+      "notarization": true,
+      "children": [
+        "4.5.1",
+        "4.5.2",
+        "4.5.3",
+        "4.5.4",
+        "4.5.5",
+        "4.5.6"
+      ]
+    },
+    {
+      "slug": "4.5.1",
+      "number": "4.5.1",
+      "title": "",
+      "parent": "4.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "4.5.2",
+      "number": "4.5.2",
+      "title": "",
+      "parent": "4.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "4.5.3",
+      "number": "4.5.3",
+      "title": "",
+      "parent": "4.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "4.5.4",
+      "number": "4.5.4",
+      "title": "",
+      "parent": "4.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "4.5.5",
+      "number": "4.5.5",
+      "title": "",
+      "parent": "4.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "4.5.6",
+      "number": "4.5.6",
+      "title": "",
+      "parent": "4.5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "4.6",
+      "number": "4.6",
+      "title": "",
+      "parent": "4",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "4.7",
+      "number": "4.7",
+      "title": "Mini apps, mini games, streaming games, chatbots, plug-ins, and game emulators",
+      "parent": "4",
+      "notarization": true,
+      "children": [
+        "4.7.1",
+        "4.7.2",
+        "4.7.3",
+        "4.7.4",
+        "4.7.5"
+      ]
+    },
+    {
+      "slug": "4.7.1",
+      "number": "4.7.1",
+      "title": "",
+      "parent": "4.7",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "4.7.2",
+      "number": "4.7.2",
+      "title": "",
+      "parent": "4.7",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "4.7.3",
+      "number": "4.7.3",
+      "title": "",
+      "parent": "4.7",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "4.7.4",
+      "number": "4.7.4",
+      "title": "",
+      "parent": "4.7",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "4.7.5",
+      "number": "4.7.5",
+      "title": "",
+      "parent": "4.7",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "4.8",
+      "number": "4.8",
+      "title": "Login Services",
+      "parent": "4",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "4.9",
+      "number": "4.9",
+      "title": "Apple Pay",
+      "parent": "4",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "4.10",
+      "number": "4.10",
+      "title": "Monetizing Built-In Capabilities",
+      "parent": "4",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "5",
+      "number": "5",
+      "title": "Legal",
+      "parent": null,
+      "notarization": true,
+      "children": [
+        "5.1",
+        "5.2",
+        "5.3",
+        "5.4",
+        "5.5",
+        "5.6"
+      ]
+    },
+    {
+      "slug": "5.1",
+      "number": "5.1",
+      "title": "Privacy",
+      "parent": "5",
+      "notarization": true,
+      "children": [
+        "5.1.1",
+        "5.1.2",
+        "5.1.3",
+        "5.1.4",
+        "5.1.5"
+      ]
+    },
+    {
+      "slug": "5.1.1",
+      "number": "5.1.1",
+      "title": "Data Collection and Storage",
+      "parent": "5.1",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "5.1.2",
+      "number": "5.1.2",
+      "title": "Data Use and Sharing",
+      "parent": "5.1",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "5.1.3",
+      "number": "5.1.3",
+      "title": "Health and Health Research",
+      "parent": "5.1",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "5.1.4",
+      "number": "5.1.4",
+      "title": "Kids",
+      "parent": "5.1",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "5.1.5",
+      "number": "5.1.5",
+      "title": "Location Services",
+      "parent": "5.1",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "5.2",
+      "number": "5.2",
+      "title": "Intellectual Property",
+      "parent": "5",
+      "notarization": false,
+      "children": [
+        "5.2.1",
+        "5.2.2",
+        "5.2.3",
+        "5.2.4",
+        "5.2.5"
+      ]
+    },
+    {
+      "slug": "5.2.1",
+      "number": "5.2.1",
+      "title": "Generally",
+      "parent": "5.2",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "5.2.2",
+      "number": "5.2.2",
+      "title": "Third-Party Sites/Services",
+      "parent": "5.2",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "5.2.3",
+      "number": "5.2.3",
+      "title": "Audio/Video Downloading",
+      "parent": "5.2",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "5.2.4",
+      "number": "5.2.4",
+      "title": "Apple Endorsements",
+      "parent": "5.2",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "5.2.5",
+      "number": "5.2.5",
+      "title": "Apple Products",
+      "parent": "5.2",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "5.3",
+      "number": "5.3",
+      "title": "Gaming, Gambling, and Lotteries",
+      "parent": "5",
+      "notarization": false,
+      "children": [
+        "5.3.1",
+        "5.3.2",
+        "5.3.3",
+        "5.3.4"
+      ]
+    },
+    {
+      "slug": "5.3.1",
+      "number": "5.3.1",
+      "title": "",
+      "parent": "5.3",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "5.3.2",
+      "number": "5.3.2",
+      "title": "",
+      "parent": "5.3",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "5.3.3",
+      "number": "5.3.3",
+      "title": "",
+      "parent": "5.3",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "5.3.4",
+      "number": "5.3.4",
+      "title": "",
+      "parent": "5.3",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "5.4",
+      "number": "5.4",
+      "title": "VPN Apps",
+      "parent": "5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "5.5",
+      "number": "5.5",
+      "title": "Mobile Device Management",
+      "parent": "5",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "5.6",
+      "number": "5.6",
+      "title": "Developer Code of Conduct",
+      "parent": "5",
+      "notarization": true,
+      "children": [
+        "5.6.1",
+        "5.6.2",
+        "5.6.3",
+        "5.6.4"
+      ]
+    },
+    {
+      "slug": "5.6.1",
+      "number": "5.6.1",
+      "title": "App Store Reviews",
+      "parent": "5.6",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "5.6.2",
+      "number": "5.6.2",
+      "title": "Developer Identity",
+      "parent": "5.6",
+      "notarization": true,
+      "children": []
+    },
+    {
+      "slug": "5.6.3",
+      "number": "5.6.3",
+      "title": "Discovery Fraud",
+      "parent": "5.6",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "5.6.4",
+      "number": "5.6.4",
+      "title": "App Quality",
+      "parent": "5.6",
+      "notarization": false,
+      "children": []
+    },
+    {
+      "slug": "after-you-submit",
+      "number": null,
+      "title": "After You Submit",
+      "parent": null,
+      "notarization": false,
+      "children": []
+    }
+  ]
+}
