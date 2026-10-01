@@ -8,14 +8,14 @@ A section's level is the strongest automation among its rules: **automated** nee
 
 | Level | Sections | Rules |
 | --- | --- | --- |
-| automated | 9 | 26 |
-| assisted | 16 | 20 |
-| manual | 3 | 6 |
+| automated | 9 | 28 |
+| assisted | 19 | 42 |
+| manual | 3 | 9 |
 | subsections | 7 | - |
-| uncovered | 84 | - |
+| uncovered | 81 | - |
 | n/a | 6 | - |
 
-52 rules in total, including ones enforced by upload validation or App Store Connect rather than a guideline section.
+79 rules in total, including ones enforced by upload validation or App Store Connect rather than a guideline section.
 
 ## Sections
 
@@ -31,7 +31,7 @@ A section's level is the strongest automation among its rules: **automated** nee
 | [1.1.7](guidelines/1.1.7.md) | uncovered | - |
 | [1.2 User-Generated Content](guidelines/1.2.md) | assisted | `safety.ugc-moderation` |
 | [1.2.1 Creator Content](guidelines/1.2.1.md) | uncovered | - |
-| [1.3 Kids Category](guidelines/1.3.md) | assisted | `safety.kids-category` |
+| [1.3 Kids Category](guidelines/1.3.md) | assisted | `privacy.kids-data-collection`, `safety.kids-category` |
 | [1.4 Physical Harm](guidelines/1.4.md) | subsections | - |
 | [1.4.1](guidelines/1.4.1.md) | manual | `safety.regulated-services` |
 | [1.4.2](guidelines/1.4.2.md) | uncovered | - |
@@ -41,7 +41,7 @@ A section's level is the strongest automation among its rules: **automated** nee
 | [1.5 Developer Information](guidelines/1.5.md) | assisted | `metadata.support-url` |
 | [1.6 Data Security](guidelines/1.6.md) | assisted | `network.ats-arbitrary-loads` |
 | [1.7 Reporting Criminal Activity](guidelines/1.7.md) | uncovered | - |
-| [2.1 App Completeness](guidelines/2.1.md) | automated | `account.demo-account`, `build.debug-endpoints`, `metadata.placeholder-text`, `metadata.review-notes`, `payments.legacy-receipt-validation` |
+| [2.1 App Completeness](guidelines/2.1.md) | automated | `account.demo-account`, `build.debug-endpoints`, `metadata.placeholder-text`, `metadata.review-notes`, `payments.legacy-receipt-validation`, `tracking.prompt-not-shown` |
 | [2.2 Beta Testing](guidelines/2.2.md) | uncovered | - |
 | [2.3 Accurate Metadata](guidelines/2.3.md) | subsections | - |
 | [2.3.1](guidelines/2.3.1.md) | automated | `metadata.placeholder-text`, `metadata.review-notes` |
@@ -67,7 +67,7 @@ A section's level is the strongest automation among its rules: **automated** nee
 | [2.5.1](guidelines/2.5.1.md) | automated | `build.private-api` |
 | [2.5.2](guidelines/2.5.2.md) | assisted | `build.executable-code` |
 | [2.5.3](guidelines/2.5.3.md) | uncovered | - |
-| [2.5.4](guidelines/2.5.4.md) | uncovered | - |
+| [2.5.4](guidelines/2.5.4.md) | assisted | `permissions.location-background` |
 | [2.5.5](guidelines/2.5.5.md) | automated | `network.ipv4-literals` |
 | [2.5.6](guidelines/2.5.6.md) | uncovered | - |
 | [2.5.7](guidelines/2.5.7.md) | n/a | - |
@@ -123,11 +123,11 @@ A section's level is the strongest automation among its rules: **automated** nee
 | [4.9 Apple Pay](guidelines/4.9.md) | uncovered | - |
 | [4.10 Monetizing Built-In Capabilities](guidelines/4.10.md) | uncovered | - |
 | [5.1 Privacy](guidelines/5.1.md) | subsections | - |
-| [5.1.1 Data Collection and Storage](guidelines/5.1.1.md) | automated | `account.deletion-missing`, `account.login-required`, `permissions.location-always-pair`, `permissions.request-before-value`, `permissions.usage-description-missing`, `permissions.usage-description-vague`, `privacy.manifest-missing`, `privacy.policy-link`, `privacy.required-reason-invalid`, `privacy.required-reason-undeclared`, `safety.regulated-services` |
-| [5.1.2 Data Use and Sharing](guidelines/5.1.2.md) | automated | `privacy.manifest-missing`, `privacy.sdk-manifest-missing`, `privacy.third-party-ai-disclosure`, `privacy.tracking-domains-missing`, `tracking.att-missing`, `tracking.fingerprinting` |
-| [5.1.3 Health and Health Research](guidelines/5.1.3.md) | uncovered | - |
-| [5.1.4 Kids](guidelines/5.1.4.md) | assisted | `safety.kids-category` |
-| [5.1.5 Location Services](guidelines/5.1.5.md) | uncovered | - |
+| [5.1.1 Data Collection and Storage](guidelines/5.1.1.md) | automated | `account.deletion-missing`, `account.login-required`, `permissions.full-access-over-picker`, `permissions.location-always-pair`, `permissions.location-background`, `permissions.pre-permission-steering`, `permissions.request-before-value`, `permissions.usage-description-missing`, `permissions.usage-description-unused`, `permissions.usage-description-vague`, `privacy.collected-data-undeclared`, `privacy.consent-before-collection`, `privacy.contact-info-optional`, `privacy.data-compilation`, `privacy.manifest-invalid`, `privacy.manifest-missing`, `privacy.policy-link`, `privacy.required-reason-invalid`, `privacy.required-reason-undeclared`, `privacy.safari-view-hidden`, `privacy.social-network-credentials`, `privacy.surreptitious-discovery`, `safety.regulated-services` |
+| [5.1.2 Data Use and Sharing](guidelines/5.1.2.md) | automated | `permissions.pre-permission-steering`, `privacy.apple-pay-data-sharing`, `privacy.collected-data-undeclared`, `privacy.contacts-bulk-invite`, `privacy.contacts-harvesting`, `privacy.data-repurposed`, `privacy.health-data-sharing`, `privacy.installed-apps-probing`, `privacy.manifest-invalid`, `privacy.manifest-missing`, `privacy.raw-identifiers-to-analytics`, `privacy.sdk-manifest-missing`, `privacy.sensitive-api-data-ads`, `privacy.third-party-ai-disclosure`, `privacy.tracking-domains-missing`, `privacy.tracking-flag-mismatch`, `tracking.att-missing`, `tracking.before-authorization`, `tracking.fingerprinting`, `tracking.prompt-not-shown` |
+| [5.1.3 Health and Health Research](guidelines/5.1.3.md) | assisted | `privacy.health-data-sharing`, `privacy.health-icloud-storage`, `privacy.health-research-consent` |
+| [5.1.4 Kids](guidelines/5.1.4.md) | assisted | `privacy.kids-data-collection`, `safety.kids-category` |
+| [5.1.5 Location Services](guidelines/5.1.5.md) | assisted | `permissions.location-background`, `privacy.location-services` |
 | [5.2 Intellectual Property](guidelines/5.2.md) | subsections | - |
 | [5.2.1 Generally](guidelines/5.2.1.md) | uncovered | - |
 | [5.2.2 Third-Party Sites/Services](guidelines/5.2.2.md) | uncovered | - |

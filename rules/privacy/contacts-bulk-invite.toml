@@ -1,0 +1,27 @@
+id = "privacy.contacts-bulk-invite"
+title = "Invites sent to contacts in bulk or without a message preview"
+severity = "error"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.2"]
+summary = """
+Guideline 5.1.2(v) allows contacting people found through Contacts or Photos only at the explicit, individual initiative of the person, bans a Select All option or any default selection of all contacts, and requires showing what the message will say and who it will appear to come from before sending.
+"""
+fix = """
+Let the person choose recipients one by one, with nothing preselected and no Select All. Show the full message and sender before sending, preferably in `MFMessageComposeViewController` or the share sheet, and never send from your server without that confirmation.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.2",
+]
+
+[check]
+id = "contacts-invite"
+confidence = "low"
+contacts_signals = ["CNContactStore", "react-native-contacts", "expo-contacts", "flutter_contacts"]
+bulk_signals = ["Select All", "selectAll", "Invite All", "inviteAll"]
+
+[review]
+questions = [
+  "Does the person pick each recipient, with nothing preselected and no Select All?",
+  "Before sending, does the person see the exact message and the sender it will show?",
+]

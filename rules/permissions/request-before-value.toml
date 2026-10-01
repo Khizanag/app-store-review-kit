@@ -10,6 +10,9 @@ Guideline 5.1.1(iv) forbids manipulating or forcing consent, and expects alterna
 fix = """
 Request each permission at the moment the feature needs it. Keep the app usable after a denial: offer a manual alternative, such as typing an address instead of sharing location, and a link to Settings.
 """
+references = [
+  "https://developer.apple.com/design/human-interface-guidelines/privacy",
+]
 
 [review]
 questions = [

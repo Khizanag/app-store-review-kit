@@ -1,0 +1,27 @@
+id = "privacy.contacts-harvesting"
+title = "Contacts or photos uploaded to build a database"
+severity = "error"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.2"]
+summary = """
+Guideline 5.1.2(iv) bans using Contacts, Photos, or other APIs that access user data to build a contact database for the developer's own use or for sale or distribution. Enumerating the whole address book and uploading it, for friend matching or growth, is the usual pattern reviewers reject.
+"""
+fix = """
+Let the person pick specific contacts with `CNContactPickerViewController` and send only what the feature needs. If you match contacts against your user base, say so before asking, send only what matching needs, keep nothing about non-users, and never sell or share the data.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.2",
+  "https://developer.apple.com/documentation/contactsui/cncontactpickerviewcontroller",
+]
+
+[check]
+id = "contacts-enumeration"
+confidence = "low"
+signals = ["enumerateContacts(with:", "unifiedContacts(matching:", "CNContactFetchRequest", "react-native-contacts", "expo-contacts", "flutter_contacts"]
+
+[review]
+questions = [
+  "Does the app upload contacts or photo data beyond what the person explicitly selected for a feature?",
+  "Is any uploaded contact data kept for people who are not users, or shared with anyone else?",
+]

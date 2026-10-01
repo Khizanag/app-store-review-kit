@@ -1,0 +1,21 @@
+id = "privacy.tracking-flag-mismatch"
+title = "Privacy manifest contradicts itself about tracking"
+severity = "warning"
+evidence = ["manifest", "source"]
+enforced_by = "app-review"
+guidelines = ["5.1.2"]
+summary = """
+`NSPrivacyTracking` is false or absent, yet the manifest lists `NSPrivacyTrackingDomains` or marks a collected data type with `NSPrivacyCollectedDataTypeTracking`. Or tracking is declared true and the app never calls App Tracking Transparency. The privacy report and App Privacy details then misstate tracking, and tracking domains only get blocked when the declaration is consistent.
+"""
+fix = """
+Decide whether the app or its SDKs track. If they do, set `NSPrivacyTracking` to true, list the tracking domains, and request permission with `ATTrackingManager` before tracking. If they do not, remove the domains and set every `NSPrivacyCollectedDataTypeTracking` to false.
+"""
+references = [
+  "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacytracking",
+  "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacytrackingdomains",
+]
+
+[check]
+id = "manifest-tracking-consistency"
+confidence = "high"
+att_signals = ["ATTrackingManager", "requestTrackingAuthorization", "expo-tracking-transparency", "react-native-tracking-transparency"]

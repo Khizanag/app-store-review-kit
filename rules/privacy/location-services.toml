@@ -1,0 +1,30 @@
+id = "privacy.location-services"
+title = "Location used without a clear in-app purpose or consent"
+severity = "warning"
+evidence = ["source", "plist", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.5"]
+summary = """
+Guideline 5.1.5 allows Location Services only when directly relevant to the app's features, requires notice and consent before collecting, transmitting, or using location, and expects the app to explain the purpose. Location-based APIs may not drive emergency services or autonomous control of vehicles, aircraft, or other devices, apart from small devices such as lightweight drones and toys.
+"""
+fix = """
+Request location at the feature that needs it, explain in the app what it is for, and tell the person before location leaves the device. Use `LocationButton` for one-off needs, and set `NSLocationDefaultAccuracyReduced` when approximate location is enough.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.5",
+  "https://developer.apple.com/documentation/corelocation/requesting-authorization-to-use-location-services",
+  "https://developer.apple.com/documentation/corelocationui/locationbutton",
+]
+
+[check]
+id = "location-usage"
+confidence = "low"
+signals = ["CLLocationManager", "CLLocationUpdate.liveUpdates", "CLServiceSession", "requestWhenInUseAuthorization", "requestAlwaysAuthorization"]
+
+[review]
+questions = [
+  "Is location directly relevant to a feature the person can see, and does the app explain it before asking?",
+  "Is the person told before location is sent to a server or third party?",
+  "Would approximate location or a one-time LocationButton grant do the job?",
+  "Does any feature rely on location for emergency services or for controlling a vehicle or aircraft?",
+]

@@ -1,0 +1,26 @@
+id = "privacy.safari-view-hidden"
+title = "SFSafariViewController hidden, embedded, or used to track"
+severity = "error"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.1"]
+summary = """
+Guideline 5.1.1(vii) requires `SFSafariViewController` to visibly present information; it may not be hidden or obscured, and may not track people without their knowledge and consent. A zero-size, transparent, off-screen, or child-embedded Safari view that loads pages in the background reads as covert cookie or identity syncing.
+"""
+fix = """
+Present `SFSafariViewController` modally with `present(_:animated:)` and only when the person asked to open a page. Never set its view hidden, transparent, or off-screen. Use `ASWebAuthenticationSession` for sign-in and the App Tracking Transparency prompt for any tracking.
+"""
+references = [
+  "https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller",
+]
+
+[check]
+id = "safari-view-visibility"
+confidence = "low"
+signals = ["SFSafariViewController"]
+hidden_signals = ["addChild(", "addChildViewController", ".isHidden = true", ".alpha = 0", "CGRect.zero", "CGRectZero", "frame = .zero"]
+
+[review]
+questions = [
+  "Does every Safari view appear full screen, in response to the person's action, with nothing drawn over it?",
+]

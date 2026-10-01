@@ -1,0 +1,26 @@
+id = "permissions.usage-description-unused"
+title = "Purpose string or entitlement declared for a resource the app never uses"
+severity = "warning"
+evidence = ["plist", "entitlements", "source", "binary"]
+enforced_by = "app-review"
+guidelines = ["5.1.1"]
+summary = """
+Info.plist carries a purpose string, or the target an entitlement such as HealthKit, for a resource no code in the app or its SDKs requests. Guideline 5.1.1(iii) limits access requests to data relevant to the core function, and a declared resource with no visible feature invites the question of what it is for. Template projects and removed features often leave these behind.
+"""
+fix = """
+Delete purpose strings and entitlements with no matching API call. If an SDK needs one for an optional feature you do not use, configure the SDK to drop that feature; if you keep the key, explain the feature in the review notes.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.1",
+]
+
+[check]
+id = "unused-usage-descriptions"
+confidence = "medium"
+catalog = "usage-descriptions"
+entitlements = ["com.apple.developer.healthkit", "com.apple.developer.homekit"]
+
+[review]
+questions = [
+  "For each purpose string and privacy-sensitive entitlement, which visible feature uses it?",
+]

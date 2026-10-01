@@ -5,10 +5,10 @@ evidence = ["source", "human"]
 enforced_by = "app-review"
 guidelines = ["5.1.2"]
 summary = """
-Fingerprinting is not allowed, with or without tracking permission. Combining signals such as boot time, disk size, keyboard list, screen metrics, or locale into an identifier, or sending required reason API data off-device, breaks both the guideline and the declared reasons.
+Fingerprinting is not allowed, with or without tracking permission: the Developer Program License Agreement forbids deriving data from a device to identify it uniquely, and apps whose SDKs do it may be rejected. Combining signals such as boot time, disk size, keyboard list, screen metrics, or locale into an identifier, or sending required reason API data off-device, breaks both that rule and the declared reasons. Guideline 5.1.2(iii) also bans building user profiles surreptitiously or re-identifying people from data described as anonymous or aggregated.
 """
 fix = """
-Use required reason APIs only for their declared reasons, keep derived values on-device unless the reason allows otherwise, and never combine device signals into an identifier.
+Use required reason APIs only for their declared reasons, keep derived values on-device unless the reason allows otherwise, and never combine device signals into an identifier. Use `identifierForVendor` or an account ID for first-party needs.
 """
 references = [
   "https://developer.apple.com/app-store/user-privacy-and-data-use/",
@@ -17,4 +17,5 @@ references = [
 [review]
 questions = [
   "Does any code or SDK combine device properties into an identifier or send them to a server?",
+  "Does the app or a partner join data described as anonymous or aggregated back to individual people?",
 ]

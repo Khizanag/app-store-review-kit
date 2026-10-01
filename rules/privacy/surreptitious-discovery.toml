@@ -1,0 +1,28 @@
+id = "privacy.surreptitious-discovery"
+title = "App harvests passwords or private data without the person knowing"
+severity = "error"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.1"]
+summary = """
+Guideline 5.1.1(vi) removes developers whose apps surreptitiously discover passwords or other private data from the Developer Program. Reading the pasteboard at launch without a paste action, login prompts that imitate Apple or another service, and sending credentials or private content to a server the person did not choose all look like harvesting. The system notifies the person when an app reads another app's pasteboard content without a paste action.
+"""
+fix = """
+Read the pasteboard only after a paste action, or use `PasteButton` or `UIPasteControl`; check `hasStrings` or `detectPatterns` instead of reading content to decide whether to offer a paste. Collect credentials only for your own service, through your own clearly branded screen, Sign in with Apple, or `ASWebAuthenticationSession`.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.1",
+  "https://developer.apple.com/documentation/uikit/uipasteboard",
+]
+
+[check]
+id = "pasteboard-reads"
+confidence = "low"
+signals = ["UIPasteboard.general.string", "UIPasteboard.general.strings", "UIPasteboard.general.url", "UIPasteboard.general.items", "UIPasteboard.general.image", "NSPasteboard.general.string(forType:"]
+early_contexts = ["didFinishLaunchingWithOptions", "sceneDidBecomeActive", "applicationDidBecomeActive", "scenePhase"]
+
+[review]
+questions = [
+  "Does the app read the pasteboard, keychain items, or other private data without an explicit action by the person?",
+  "Does any screen ask for the password of a service other than the app's own, or imitate a system sign-in prompt?",
+]

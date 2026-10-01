@@ -1,21 +1,25 @@
 id = "tracking.att-missing"
-title = "Advertising identifier read without App Tracking Transparency"
+title = "Advertising identifier or tracking SDK without App Tracking Transparency"
 severity = "error"
-evidence = ["source", "plist"]
+evidence = ["source", "binary", "plist"]
 enforced_by = "app-review"
 guidelines = ["5.1.2"]
 applies_when = ["advertising"]
 summary = """
-The app or an SDK reads the advertising identifier (`ASIdentifierManager.advertisingIdentifier`) or links an ad or attribution SDK, but never requests tracking permission with `ATTrackingManager`, or has no `NSUserTrackingUsageDescription`.
+The app or an SDK reads the advertising identifier (`ASIdentifierManager.advertisingIdentifier`) or links an advertising or attribution SDK, but never requests tracking permission with `ATTrackingManager`, or has no `NSUserTrackingUsageDescription`. Guideline 5.1.2(i) requires explicit permission through App Tracking Transparency before tracking, and an SDK that combines your app's data with other companies' data counts as tracking even if you never use it that way.
 """
 fix = """
-Request permission with `ATTrackingManager.requestTrackingAuthorization` before any tracking, add the purpose string, and declare tracking in the privacy manifest and App Privacy details. If the app does not track, remove the identifier access.
+Request permission with `ATTrackingManager.requestTrackingAuthorization` before any tracking, add the purpose string, and declare tracking in the privacy manifest and App Privacy details. If the app does not track, remove the identifier access and configure each SDK to not track.
 """
 references = [
   "https://developer.apple.com/documentation/apptrackingtransparency",
+  "https://developer.apple.com/app-store/user-privacy-and-data-use/",
 ]
 
 [check]
 id = "att-usage"
 confidence = "medium"
-signals = ["ASIdentifierManager", "advertisingIdentifier", "AppsFlyerLib", "Adjust", "FBAudienceNetwork", "GoogleMobileAds"]
+catalog = "tracking-sdks"
+kinds = ["advertising", "attribution"]
+signals = ["ASIdentifierManager", "advertisingIdentifier"]
+att_signals = ["ATTrackingManager", "requestTrackingAuthorization", "expo-tracking-transparency", "react-native-tracking-transparency"]

@@ -1,0 +1,26 @@
+id = "permissions.location-background"
+title = "Always or background location without a feature that needs it"
+severity = "warning"
+evidence = ["plist", "source", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.5", "2.5.4", "5.1.1"]
+summary = """
+The app requests Always authorization, declares the `location` background mode, or sets `allowsBackgroundLocationUpdates`. Reviewers ask which feature needs location while the app is not in use and reject the build when none is visible, since When in Use is the preferred level and background modes may serve only their intended purpose.
+"""
+fix = """
+Request When in Use, and upgrade to Always only when the person turns on a feature that works in the background, such as geofenced reminders or workout tracking. Drop the `location` background mode if no such feature exists, and name the feature in the purpose string and the review notes.
+"""
+references = [
+  "https://developer.apple.com/documentation/corelocation/requesting-authorization-to-use-location-services",
+]
+
+[check]
+id = "background-location"
+confidence = "medium"
+signals = ["requestAlwaysAuthorization", "allowsBackgroundLocationUpdates", "startMonitoringSignificantLocationChanges", "NSLocationAlwaysAndWhenInUseUsageDescription"]
+background_modes = ["location"]
+
+[review]
+questions = [
+  "Which visible feature needs location while the app is in the background, and is it shown in the review notes or a demo video?",
+]

@@ -1,0 +1,27 @@
+id = "privacy.raw-identifiers-to-analytics"
+title = "Personal identifiers sent to third-party analytics"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.2"]
+summary = """
+The app passes an email address, phone number, name, or similar personal identifier as the user ID or an event property to a third-party analytics, crash, or attribution SDK. That shares personal data with a third party, which guideline 5.1.2(i) allows only with disclosure and permission, and it makes the data linked to the person in App Privacy.
+"""
+fix = """
+Send an opaque, app-scoped identifier, such as a random UUID or a salted hash of your account ID, never contact details. If the vendor needs personal data, disclose it, get permission, and declare it as linked in App Privacy.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.2",
+  "https://developer.apple.com/app-store/app-privacy-details/",
+]
+
+[check]
+id = "analytics-identifiers"
+confidence = "low"
+calls = ["setUserID(", "setUserId(", "identify(", "setUserProperty(", "setCustomValue(", "setUser(", "logEvent(", "track("]
+identifiers = ["email", "phone", "phoneNumber", "fullName", "firstName", "lastName"]
+
+[review]
+questions = [
+  "Does any analytics, crash, or attribution call receive contact details or a real name?",
+]

@@ -1,0 +1,25 @@
+id = "privacy.apple-pay-data-sharing"
+title = "Apple Pay data shared beyond fulfilling the order"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.2"]
+summary = """
+Guideline 5.1.2(vii) lets apps share user data acquired through Apple Pay with third parties only to facilitate or improve delivery of goods and services. Passing the billing contact, shipping address, or email from a payment sheet to marketing, analytics, or ad partners breaks it.
+"""
+fix = """
+Send Apple Pay contact and address data only to the payment processor and fulfillment partners. Ask separately, with its own consent, before adding the person to marketing.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.2",
+]
+
+[check]
+id = "apple-pay-usage"
+confidence = "low"
+signals = ["PKPaymentAuthorizationController", "PKPaymentAuthorizationViewController", "PayWithApplePayButton", "PKPaymentButton", "billingContact", "shippingContact"]
+
+[review]
+questions = [
+  "Does any Apple Pay billing or shipping contact data go anywhere besides the payment processor and fulfillment partners?",
+]

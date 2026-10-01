@@ -1,0 +1,29 @@
+id = "permissions.pre-permission-steering"
+title = "Pre-permission screen or rewards steer people toward allowing access"
+severity = "error"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.1", "5.1.2"]
+summary = """
+Guideline 5.1.1(iv) bans manipulating, tricking, or forcing consent, and 5.1.2(i) bans requiring people to enable system features such as notifications, location, or tracking to use the app or to earn rewards. A custom screen before the system alert may explain the request, with a single button that opens the alert; an "Allow" title or a second button that skips the alert manipulates the choice. For tracking, Apple rejects screens that offer incentives, look like a request, show an image of the alert, or annotate the screen behind it, and gating features on tracking permission is not allowed.
+"""
+fix = """
+Give any pre-permission screen one button titled "Continue" or "Next" that opens the system alert, with honest copy and no close or cancel option. Remove rewards, coins, or unlocks tied to granting a permission, and keep every feature that does not truly need the permission available after a denial.
+"""
+references = [
+  "https://developer.apple.com/design/human-interface-guidelines/privacy",
+  "https://developer.apple.com/app-store/user-privacy-and-data-use/",
+]
+
+[check]
+id = "pre-permission-copy"
+confidence = "low"
+request_signals = ["requestTrackingAuthorization", "requestAuthorization(options:", "requestWhenInUseAuthorization", "requestAccess(for:", "PHPhotoLibrary.requestAuthorization"]
+steering_phrases = ["allow tracking", "enable tracking", "turn on notifications to unlock", "allow to continue", "unlock with", "get rewards", "earn coins", "free coins"]
+
+[review]
+questions = [
+  "Does each pre-permission screen have exactly one button, titled Continue or Next, that opens the system alert?",
+  "Is any reward, discount, content, or feature tied to allowing tracking, notifications, or location?",
+  "Does any screen imitate the system alert, show a picture of it, or point at its Allow button?",
+]

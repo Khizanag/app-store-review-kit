@@ -1,0 +1,27 @@
+id = "tracking.prompt-not-shown"
+title = "Tracking purpose string declared but the prompt never appears"
+severity = "error"
+evidence = ["plist", "source", "runtime"]
+enforced_by = "app-review"
+guidelines = ["5.1.2", "2.1"]
+summary = """
+`NSUserTrackingUsageDescription` is set, or the App Privacy details say the app tracks, but the reviewer never sees the App Tracking Transparency prompt. Common causes: the app never calls `requestTrackingAuthorization`, or calls it at launch before the app is active, when the system skips the prompt. Reviewers then reject the build because they cannot find the request.
+"""
+fix = """
+Call `ATTrackingManager.requestTrackingAuthorization` once the app is active, for example from the first screen's task or after `sceneDidBecomeActive`, not in `application(_:didFinishLaunchingWithOptions:)`. If the app does not track, remove the purpose string and set tracking to No in App Privacy. Say in the review notes where the prompt appears.
+"""
+references = [
+  "https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/requesttrackingauthorization(completionhandler:)",
+]
+
+[check]
+id = "att-prompt-reachable"
+confidence = "medium"
+plist_keys = ["NSUserTrackingUsageDescription"]
+request_signals = ["requestTrackingAuthorization", "expo-tracking-transparency", "react-native-tracking-transparency"]
+early_contexts = ["didFinishLaunchingWithOptions", "willFinishLaunchingWithOptions"]
+
+[review]
+questions = [
+  "On a fresh install, does the tracking prompt appear before any tracking, and do the review notes say where?",
+]

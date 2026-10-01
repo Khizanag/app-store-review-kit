@@ -1,0 +1,21 @@
+id = "privacy.contact-info-optional"
+title = "Name, email, or other personal details required to use the app"
+severity = "warning"
+evidence = ["runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.1"]
+summary = """
+Guideline 5.1.1(x) allows asking for basic contact information, such as name and email, only when the request is optional and no feature or service depends on providing it. Guideline 5.1.1(v) bars requiring personal information unless it is directly relevant to the core function or required by law. Mandatory phone number, birthdate, gender, or address fields at sign-up, and newsletter emails as a condition of entry, draw rejections.
+"""
+fix = """
+Mark contact fields optional, let people skip them, and keep every feature working without them. Require a field only when the feature cannot work without it, such as a delivery address for shipping, or the law demands it, and say why next to the field.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.1",
+]
+
+[review]
+questions = [
+  "Can a person skip every name, email, phone, birthdate, gender, and address field and still use the app?",
+  "For each required personal field, which core feature or law needs it?",
+]

@@ -1,0 +1,160 @@
+# Third-party SDKs that collect data off-device, with the signals that reveal them in source,
+# package manifests, lockfiles, or linked frameworks. Signals are module, class, or package names,
+# never bare words.
+#
+# kind:
+#   advertising      serves ads; usually tracks and needs App Tracking Transparency
+#   attribution      measures ad campaigns across apps; usually tracks
+#   analytics        product analytics; collects usage data, tracks only if the vendor shares it for ads
+#   crash-reporting  collects crash and performance diagnostics
+#   engagement       push, messaging, and marketing automation; collects identifiers and contact info
+#
+# Tracking is defined in https://developer.apple.com/app-store/user-privacy-and-data-use/.
+# Initial list adapted from RevylAI/greenlight (MIT), internal/privacy/scanner.go.
+
+verified = 2026-10-01
+
+[[sdks]]
+name = "Google Mobile Ads"
+kind = "advertising"
+signals = ["GoogleMobileAds", "GADMobileAds", "GADBannerView", "react-native-google-mobile-ads", "google_mobile_ads"]
+
+[[sdks]]
+name = "Meta Audience Network"
+kind = "advertising"
+signals = ["FBAudienceNetwork", "FBAdView", "FBInterstitialAd"]
+
+[[sdks]]
+name = "AppLovin"
+kind = "advertising"
+signals = ["AppLovinSDK", "ALSdk", "applovin_max", "react-native-applovin-max"]
+
+[[sdks]]
+name = "Unity Ads"
+kind = "advertising"
+signals = ["UnityAds", "unity_ads_plugin"]
+
+[[sdks]]
+name = "ironSource LevelPlay"
+kind = "advertising"
+signals = ["IronSource", "IronSourceSDK", "ironsource_mediation"]
+
+[[sdks]]
+name = "Liftoff Vungle"
+kind = "advertising"
+signals = ["VungleSDK", "VungleAdsSDK"]
+
+[[sdks]]
+name = "Chartboost"
+kind = "advertising"
+signals = ["ChartboostSDK"]
+
+[[sdks]]
+name = "InMobi"
+kind = "advertising"
+signals = ["InMobiSDK"]
+
+[[sdks]]
+name = "Mintegral"
+kind = "advertising"
+signals = ["MTGSDK", "MintegralAdSDK"]
+
+[[sdks]]
+name = "Pangle"
+kind = "advertising"
+signals = ["PAGAdSDK", "BUAdSDK"]
+
+[[sdks]]
+name = "Amazon Publisher Services"
+kind = "advertising"
+signals = ["DTBiOSSDK"]
+
+[[sdks]]
+name = "AppsFlyer"
+kind = "attribution"
+signals = ["AppsFlyerLib", "react-native-appsflyer", "appsflyer_sdk"]
+
+[[sdks]]
+name = "Adjust"
+kind = "attribution"
+signals = ["AdjustSdk", "ADJConfig", "react-native-adjust", "adjust_sdk"]
+
+[[sdks]]
+name = "Branch"
+kind = "attribution"
+signals = ["BranchSDK", "Branch.getInstance", "react-native-branch", "flutter_branch_sdk"]
+
+[[sdks]]
+name = "Kochava"
+kind = "attribution"
+signals = ["KochavaTracker", "KochavaNetworking"]
+
+[[sdks]]
+name = "Singular"
+kind = "attribution"
+signals = ["SingularConfig", "singular-react-native"]
+
+[[sdks]]
+name = "Tenjin"
+kind = "attribution"
+signals = ["TenjinSDK"]
+
+[[sdks]]
+name = "Meta SDK app events"
+kind = "attribution"
+signals = ["FBSDKCoreKit", "FBSDKAppEvents", "react-native-fbsdk-next", "facebook_app_events"]
+
+[[sdks]]
+name = "Firebase Analytics"
+kind = "analytics"
+signals = ["FirebaseAnalytics", "@react-native-firebase/analytics", "firebase_analytics"]
+
+[[sdks]]
+name = "Amplitude"
+kind = "analytics"
+signals = ["AmplitudeSwift", "Amplitude.instance", "@amplitude/analytics-react-native", "amplitude_flutter"]
+
+[[sdks]]
+name = "Mixpanel"
+kind = "analytics"
+signals = ["Mixpanel.initialize", "Mixpanel.mainInstance", "mixpanel-react-native", "mixpanel_flutter"]
+
+[[sdks]]
+name = "Segment"
+kind = "analytics"
+signals = ["import Segment", "SEGAnalytics", "@segment/analytics-react-native"]
+
+[[sdks]]
+name = "PostHog"
+kind = "analytics"
+signals = ["PostHogSDK", "posthog-react-native", "posthog_flutter"]
+
+[[sdks]]
+name = "Datadog RUM"
+kind = "analytics"
+signals = ["DatadogRUM", "@datadog/mobile-react-native"]
+
+[[sdks]]
+name = "Firebase Crashlytics"
+kind = "crash-reporting"
+signals = ["FirebaseCrashlytics", "@react-native-firebase/crashlytics", "firebase_crashlytics"]
+
+[[sdks]]
+name = "Sentry"
+kind = "crash-reporting"
+signals = ["SentrySDK", "@sentry/react-native", "sentry_flutter"]
+
+[[sdks]]
+name = "Bugsnag"
+kind = "crash-reporting"
+signals = ["BugsnagPerformance", "Bugsnag.start", "@bugsnag/react-native"]
+
+[[sdks]]
+name = "OneSignal"
+kind = "engagement"
+signals = ["OneSignalFramework", "react-native-onesignal", "onesignal_flutter"]
+
+[[sdks]]
+name = "Braze"
+kind = "engagement"
+signals = ["BrazeKit", "@braze/react-native-sdk", "braze_plugin"]

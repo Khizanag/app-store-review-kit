@@ -10,6 +10,9 @@ Every app needs a privacy policy linked both in the App Store Connect metadata a
 fix = """
 Set the Privacy Policy URL in App Store Connect, link the same page from the app's settings or about screen, and make sure the policy covers collection, sharing, retention, deletion, and consent withdrawal.
 """
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.1",
+]
 
 [check]
 id = "privacy-policy-url"
@@ -19,4 +22,6 @@ confidence = "medium"
 questions = [
   "Is the privacy policy reachable from inside the app without signing in?",
   "Does it cover collection, third-party sharing, retention, deletion, and consent withdrawal?",
+  "Does the URL load over HTTPS as a web page that names this app, not a dead link or another product's template?",
+  "Does it confirm that third parties receiving data, including SDK vendors and AI providers, protect it as the policy does?",
 ]

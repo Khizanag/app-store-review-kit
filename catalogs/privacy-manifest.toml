@@ -1,0 +1,172 @@
+# Keys, types, and allowed values of a privacy manifest (PrivacyInfo.xcprivacy).
+# Source: https://developer.apple.com/documentation/bundleresources/app-privacy-configuration
+
+source = "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration"
+verified = 2026-10-01
+
+# Top-level keys and their property list types.
+[[keys]]
+key = "NSPrivacyTracking"
+type = "boolean"
+
+[[keys]]
+key = "NSPrivacyTrackingDomains"
+type = "array<string>"
+note = "List domains only with NSPrivacyTracking set to true. Requests to them fail until the person grants tracking permission."
+
+[[keys]]
+key = "NSPrivacyCollectedDataTypes"
+type = "array<dictionary>"
+
+[[keys]]
+key = "NSPrivacyAccessedAPITypes"
+type = "array<dictionary>"
+
+# Keys of every NSPrivacyCollectedDataTypes entry.
+# Source: https://developer.apple.com/documentation/bundleresources/describing-data-use-in-privacy-manifests
+[[collected_data_keys]]
+key = "NSPrivacyCollectedDataType"
+type = "string"
+
+[[collected_data_keys]]
+key = "NSPrivacyCollectedDataTypeLinked"
+type = "boolean"
+
+[[collected_data_keys]]
+key = "NSPrivacyCollectedDataTypeTracking"
+type = "boolean"
+
+[[collected_data_keys]]
+key = "NSPrivacyCollectedDataTypePurposes"
+type = "array<string>"
+
+# Keys of every NSPrivacyAccessedAPITypes entry. Reason codes live in required-reason-apis.toml.
+[[accessed_api_keys]]
+key = "NSPrivacyAccessedAPIType"
+type = "string"
+
+[[accessed_api_keys]]
+key = "NSPrivacyAccessedAPITypeReasons"
+type = "array<string>"
+
+# Allowed NSPrivacyCollectedDataType values.
+# Source: https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacycollecteddatatypes/nsprivacycollecteddatatype
+[[data_types]]
+category = "Contact info"
+values = [
+  "NSPrivacyCollectedDataTypeName",
+  "NSPrivacyCollectedDataTypeEmailAddress",
+  "NSPrivacyCollectedDataTypePhoneNumber",
+  "NSPrivacyCollectedDataTypePhysicalAddress",
+  "NSPrivacyCollectedDataTypeOtherUserContactInfo",
+]
+
+[[data_types]]
+category = "Health and fitness"
+values = [
+  "NSPrivacyCollectedDataTypeHealth",
+  "NSPrivacyCollectedDataTypeFitness",
+]
+
+[[data_types]]
+category = "Financial info"
+values = [
+  "NSPrivacyCollectedDataTypePaymentInfo",
+  "NSPrivacyCollectedDataTypeCreditInfo",
+  "NSPrivacyCollectedDataTypeOtherFinancialInfo",
+]
+
+[[data_types]]
+category = "Location"
+values = [
+  "NSPrivacyCollectedDataTypePreciseLocation",
+  "NSPrivacyCollectedDataTypeCoarseLocation",
+]
+
+[[data_types]]
+category = "Sensitive info"
+values = ["NSPrivacyCollectedDataTypeSensitiveInfo"]
+
+[[data_types]]
+category = "Contacts"
+values = ["NSPrivacyCollectedDataTypeContacts"]
+
+[[data_types]]
+category = "User content"
+values = [
+  "NSPrivacyCollectedDataTypeEmailsOrTextMessages",
+  "NSPrivacyCollectedDataTypePhotosorVideos",
+  "NSPrivacyCollectedDataTypeAudioData",
+  "NSPrivacyCollectedDataTypeGameplayContent",
+  "NSPrivacyCollectedDataTypeCustomerSupport",
+  "NSPrivacyCollectedDataTypeOtherUserContent",
+]
+
+[[data_types]]
+category = "Browsing and search history"
+values = [
+  "NSPrivacyCollectedDataTypeBrowsingHistory",
+  "NSPrivacyCollectedDataTypeSearchHistory",
+]
+
+[[data_types]]
+category = "Identifiers"
+values = [
+  "NSPrivacyCollectedDataTypeUserID",
+  "NSPrivacyCollectedDataTypeDeviceID",
+]
+
+[[data_types]]
+category = "Usage data"
+values = [
+  "NSPrivacyCollectedDataTypePurchaseHistory",
+  "NSPrivacyCollectedDataTypeProductInteraction",
+  "NSPrivacyCollectedDataTypeAdvertisingData",
+  "NSPrivacyCollectedDataTypeOtherUsageData",
+]
+
+[[data_types]]
+category = "Diagnostics"
+values = [
+  "NSPrivacyCollectedDataTypeCrashData",
+  "NSPrivacyCollectedDataTypePerformanceData",
+  "NSPrivacyCollectedDataTypeOtherDiagnosticData",
+]
+
+[[data_types]]
+category = "Surroundings and body"
+values = [
+  "NSPrivacyCollectedDataTypeEnvironmentScanning",
+  "NSPrivacyCollectedDataTypeHands",
+  "NSPrivacyCollectedDataTypeHead",
+]
+
+[[data_types]]
+category = "Other"
+values = ["NSPrivacyCollectedDataTypeOtherDataTypes"]
+
+# Allowed NSPrivacyCollectedDataTypePurposes values.
+# Source: https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacycollecteddatatypes/nsprivacycollecteddatatypepurposes
+[[purposes]]
+value = "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising"
+summary = "Third-party ads in the app, or sharing data with entities that show third-party ads."
+
+[[purposes]]
+value = "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising"
+summary = "The developer's own ads or marketing, or sharing data with entities that show them."
+
+[[purposes]]
+value = "NSPrivacyCollectedDataTypePurposeAnalytics"
+summary = "Evaluating behavior, measuring audience, or understanding feature effectiveness."
+
+[[purposes]]
+value = "NSPrivacyCollectedDataTypePurposeProductPersonalization"
+summary = "Customizing what the person sees, such as recommendations or suggestions."
+
+[[purposes]]
+value = "NSPrivacyCollectedDataTypePurposeAppFunctionality"
+summary = "Authentication, features, fraud prevention, security, uptime, crash minimization, performance, or support."
+
+[[purposes]]
+value = "NSPrivacyCollectedDataTypePurposeOther"
+summary = "Any purpose not listed."

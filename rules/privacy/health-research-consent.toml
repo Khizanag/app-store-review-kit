@@ -1,0 +1,28 @@
+id = "privacy.health-research-consent"
+title = "Health research without complete consent or ethics approval"
+severity = "error"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.3"]
+applies_when = ["health"]
+summary = """
+Guidelines 5.1.3(iii) and (iv) require apps running health-related human subject research to obtain informed consent from participants, or a parent or guardian for minors, and approval from an independent ethics review board. Consent must cover the nature, purpose, and duration of the research; procedures, risks, and benefits; confidentiality and data handling, including third-party sharing; a contact for questions; and how to withdraw.
+"""
+fix = """
+Build the consent flow, for example with ResearchKit's consent steps, so it covers all five required elements, and record each participant's consent. Get independent ethics board approval before launch and keep proof ready to share on request.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.3",
+]
+
+[check]
+id = "research-frameworks"
+confidence = "low"
+signals = ["import ResearchKit", "ORKConsentDocument", "ORKTaskViewController", "import SensorKit", "SRSensorReader"]
+
+[review]
+questions = [
+  "Does the consent screen cover nature, purpose, and duration; procedures, risks, and benefits; confidentiality and data sharing; a contact; and withdrawal?",
+  "Does a parent or guardian consent for minors?",
+  "Is independent ethics review board approval on file, and is it mentioned in the review notes?",
+]

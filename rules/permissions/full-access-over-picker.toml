@@ -1,0 +1,27 @@
+id = "permissions.full-access-over-picker"
+title = "Full photo library or contacts access where a picker would do"
+severity = "warning"
+evidence = ["source", "plist", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.1"]
+summary = """
+Guideline 5.1.1(iii) asks apps to use the out-of-process picker or a share sheet rather than requesting full access to protected resources like Photos or Contacts where possible. Requesting library-wide or address-book-wide access to attach one photo or pick one contact collects more than the task needs. The pickers need no permission prompt and no purpose string.
+"""
+fix = """
+Use `PhotosPicker` or `PHPickerViewController` to choose photos and videos, `CNContactPickerViewController` to choose contacts, and request add-only photo access with `NSPhotoLibraryAddUsageDescription` when the app only saves. Keep full access for features that truly browse or manage the whole library.
+"""
+references = [
+  "https://developer.apple.com/documentation/photokit/delivering-an-enhanced-privacy-experience-in-your-photos-app",
+  "https://developer.apple.com/documentation/contactsui/cncontactpickerviewcontroller",
+]
+
+[check]
+id = "picker-preferred"
+confidence = "low"
+full_access_signals = ["PHPhotoLibrary.requestAuthorization", "PHAsset.fetchAssets", "PHFetchResult", "CNContactStore().requestAccess", "requestAccess(for: .contacts", "enumerateContacts(with:"]
+picker_signals = ["PhotosPicker", "PHPickerViewController", "CNContactPickerViewController"]
+
+[review]
+questions = [
+  "Does any feature that requests full Photos or Contacts access only let the person choose a few items?",
+]

@@ -1,0 +1,23 @@
+id = "privacy.manifest-invalid"
+title = "Privacy manifest is malformed or uses undocumented keys or values"
+severity = "error"
+evidence = ["manifest"]
+enforced_by = "upload"
+guidelines = ["5.1.1", "5.1.2"]
+since = "2024-05-01"
+itms = ["ITMS-91056"]
+summary = """
+A `PrivacyInfo.xcprivacy` in the bundle does not parse as a property list, gives a key the wrong type, uses a key Apple does not document, or has a collected data entry missing one of its four keys or using a data type or purpose Apple does not list. App Store Connect rejects the upload with ITMS-91056, and Xcode cannot build a correct privacy report from custom data types or purposes.
+"""
+fix = """
+Recreate the file from Xcode's App Privacy template and edit it in the property list editor. Give every `NSPrivacyCollectedDataTypes` entry `NSPrivacyCollectedDataType`, `NSPrivacyCollectedDataTypeLinked`, `NSPrivacyCollectedDataTypeTracking`, and `NSPrivacyCollectedDataTypePurposes`, and use only the documented data types and purposes. If the invalid file belongs to an SDK, update the SDK.
+"""
+references = [
+  "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration",
+  "https://developer.apple.com/documentation/bundleresources/describing-data-use-in-privacy-manifests",
+]
+
+[check]
+id = "privacy-manifest-schema"
+confidence = "high"
+catalog = "privacy-manifest"

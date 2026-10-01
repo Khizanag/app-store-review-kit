@@ -1,0 +1,29 @@
+id = "privacy.consent-before-collection"
+title = "Data collected without consent or a way to withdraw it"
+severity = "warning"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.1"]
+summary = """
+Guideline 5.1.1(ii) requires consent for collecting user or usage data, even data considered anonymous, an easy way to withdraw that consent, and no paid functionality that depends on granting data access. Analytics or crash SDKs that send events on first launch, before any notice, and apps with no in-app setting to turn collection off fall short.
+"""
+fix = """
+Tell people what is collected before collection starts, ask where the law or your policy requires it, and add an in-app control that stops collection and is honored at once. Start SDKs with collection disabled until consent, using each vendor's opt-in or opt-out API. Never unlock paid features in exchange for data access.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.1",
+]
+
+[check]
+id = "consent-controls"
+confidence = "low"
+catalog = "tracking-sdks"
+kinds = ["analytics", "crash-reporting", "attribution", "engagement"]
+opt_out_signals = ["setAnalyticsCollectionEnabled", "setCrashlyticsCollectionEnabled", "isCrashlyticsCollectionEnabled", "optOutTracking", ".optOut = true", "FIREBASE_ANALYTICS_COLLECTION_ENABLED", "FirebaseCrashlyticsCollectionEnabled"]
+
+[review]
+questions = [
+  "Does any analytics or diagnostics data leave the device before the person has seen a notice or given consent?",
+  "Can the person withdraw consent inside the app, without contacting support, and does collection stop?",
+  "Does any paid feature depend on granting access to data?",
+]

@@ -1085,6 +1085,48 @@
       ]
     },
     {
+      "id": "permissions.full-access-over-picker",
+      "title": "Full photo library or contacts access where a picker would do",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "plist",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.1"
+      ],
+      "applies_when": [],
+      "summary": "Guideline 5.1.1(iii) asks apps to use the out-of-process picker or a share sheet rather than requesting full access to protected resources like Photos or Contacts where possible. Requesting library-wide or address-book-wide access to attach one photo or pick one contact collects more than the task needs. The pickers need no permission prompt and no purpose string.",
+      "fix": "Use `PhotosPicker` or `PHPickerViewController` to choose photos and videos, `CNContactPickerViewController` to choose contacts, and request add-only photo access with `NSPhotoLibraryAddUsageDescription` when the app only saves. Keep full access for features that truly browse or manage the whole library.",
+      "references": [
+        "https://developer.apple.com/documentation/photokit/delivering-an-enhanced-privacy-experience-in-your-photos-app",
+        "https://developer.apple.com/documentation/contactsui/cncontactpickerviewcontroller"
+      ],
+      "check": {
+        "id": "picker-preferred",
+        "confidence": "low",
+        "full_access_signals": [
+          "PHPhotoLibrary.requestAuthorization",
+          "PHAsset.fetchAssets",
+          "PHFetchResult",
+          "CNContactStore().requestAccess",
+          "requestAccess(for: .contacts",
+          "enumerateContacts(with:"
+        ],
+        "picker_signals": [
+          "PhotosPicker",
+          "PHPickerViewController",
+          "CNContactPickerViewController"
+        ]
+      },
+      "review": [
+        "Does any feature that requests full Photos or Contacts access only let the person choose a few items?"
+      ]
+    },
+    {
       "id": "permissions.location-always-pair",
       "title": "Always-location purpose string without the when-in-use string",
       "severity": "error",
@@ -1111,6 +1153,94 @@
       }
     },
     {
+      "id": "permissions.location-background",
+      "title": "Always or background location without a feature that needs it",
+      "severity": "warning",
+      "evidence": [
+        "plist",
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.5",
+        "2.5.4",
+        "5.1.1"
+      ],
+      "applies_when": [],
+      "summary": "The app requests Always authorization, declares the `location` background mode, or sets `allowsBackgroundLocationUpdates`. Reviewers ask which feature needs location while the app is not in use and reject the build when none is visible, since When in Use is the preferred level and background modes may serve only their intended purpose.",
+      "fix": "Request When in Use, and upgrade to Always only when the person turns on a feature that works in the background, such as geofenced reminders or workout tracking. Drop the `location` background mode if no such feature exists, and name the feature in the purpose string and the review notes.",
+      "references": [
+        "https://developer.apple.com/documentation/corelocation/requesting-authorization-to-use-location-services"
+      ],
+      "check": {
+        "id": "background-location",
+        "confidence": "medium",
+        "signals": [
+          "requestAlwaysAuthorization",
+          "allowsBackgroundLocationUpdates",
+          "startMonitoringSignificantLocationChanges",
+          "NSLocationAlwaysAndWhenInUseUsageDescription"
+        ],
+        "background_modes": [
+          "location"
+        ]
+      },
+      "review": [
+        "Which visible feature needs location while the app is in the background, and is it shown in the review notes or a demo video?"
+      ]
+    },
+    {
+      "id": "permissions.pre-permission-steering",
+      "title": "Pre-permission screen or rewards steer people toward allowing access",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.1",
+        "5.1.2"
+      ],
+      "applies_when": [],
+      "summary": "Guideline 5.1.1(iv) bans manipulating, tricking, or forcing consent, and 5.1.2(i) bans requiring people to enable system features such as notifications, location, or tracking to use the app or to earn rewards. A custom screen before the system alert may explain the request, with a single button that opens the alert; an \"Allow\" title or a second button that skips the alert manipulates the choice. For tracking, Apple rejects screens that offer incentives, look like a request, show an image of the alert, or annotate the screen behind it, and gating features on tracking permission is not allowed.",
+      "fix": "Give any pre-permission screen one button titled \"Continue\" or \"Next\" that opens the system alert, with honest copy and no close or cancel option. Remove rewards, coins, or unlocks tied to granting a permission, and keep every feature that does not truly need the permission available after a denial.",
+      "references": [
+        "https://developer.apple.com/design/human-interface-guidelines/privacy",
+        "https://developer.apple.com/app-store/user-privacy-and-data-use/"
+      ],
+      "check": {
+        "id": "pre-permission-copy",
+        "confidence": "low",
+        "request_signals": [
+          "requestTrackingAuthorization",
+          "requestAuthorization(options:",
+          "requestWhenInUseAuthorization",
+          "requestAccess(for:",
+          "PHPhotoLibrary.requestAuthorization"
+        ],
+        "steering_phrases": [
+          "allow tracking",
+          "enable tracking",
+          "turn on notifications to unlock",
+          "allow to continue",
+          "unlock with",
+          "get rewards",
+          "earn coins",
+          "free coins"
+        ]
+      },
+      "review": [
+        "Does each pre-permission screen have exactly one button, titled Continue or Next, that opens the system alert?",
+        "Is any reward, discount, content, or feature tied to allowing tracking, notifications, or location?",
+        "Does any screen imitate the system alert, show a picture of it, or point at its Allow button?"
+      ]
+    },
+    {
       "id": "permissions.request-before-value",
       "title": "Permissions requested before the person sees why",
       "severity": "warning",
@@ -1126,6 +1256,9 @@
       "applies_when": [],
       "summary": "Guideline 5.1.1(iv) forbids manipulating or forcing consent, and expects alternatives when the person declines. Requesting several permissions at launch, re-prompting after a denial, or blocking the app until access is granted all draw rejections.",
       "fix": "Request each permission at the moment the feature needs it. Keep the app usable after a denial: offer a manual alternative, such as typing an address instead of sharing location, and a link to Settings.",
+      "references": [
+        "https://developer.apple.com/design/human-interface-guidelines/privacy"
+      ],
       "review": [
         "Does the app ask for any permission before the person starts the feature that needs it?",
         "Does every feature still work, or offer an alternative, after the person declines?",
@@ -1138,7 +1271,8 @@
       "severity": "error",
       "evidence": [
         "source",
-        "plist"
+        "plist",
+        "project"
       ],
       "enforced_by": "upload",
       "automation": "automated",
@@ -1146,19 +1280,71 @@
         "5.1.1"
       ],
       "applies_when": [],
-      "summary": "The app calls an API that requests access to a protected resource, such as the camera, photos, location, or contacts, but its Info.plist lacks the matching purpose string. Upload is rejected, and at runtime the app crashes when it asks.",
+      "summary": "The app calls an API that requests access to a protected resource, such as the camera, photos, location, or contacts, but its Info.plist lacks the matching purpose string. Upload is rejected, and at runtime the app crashes when it asks. Out-of-process pickers need no purpose string, and playing media is not capturing it, so only capture and full-library APIs count.",
       "fix": "Add the purpose string key for the resource to Info.plist, or the target's Info tab, with a specific sentence on why the app needs it. Localize it like the rest of the UI.",
       "itms": [
         "ITMS-90683"
       ],
       "references": [
-        "https://developer.apple.com/documentation/uikit/requesting-access-to-protected-resources"
+        "https://developer.apple.com/documentation/uikit/requesting-access-to-protected-resources",
+        "https://developer.apple.com/documentation/photokit/delivering-an-enhanced-privacy-experience-in-your-photos-app"
       ],
       "check": {
         "id": "usage-descriptions",
         "confidence": "medium",
-        "catalog": "usage-descriptions"
+        "catalog": "usage-descriptions",
+        "key_sources": [
+          "Info.plist",
+          "INFOPLIST_KEY_*",
+          "expo.ios.infoPlist"
+        ],
+        "exempt_symbols": [
+          "PHPickerViewController",
+          "PhotosPicker",
+          "CNContactPickerViewController"
+        ],
+        "not_capture_symbols": [
+          "AVPlayer",
+          "AVPlayerViewController",
+          "VideoPlayer",
+          "AVAudioPlayer",
+          "AVQueuePlayer"
+        ]
       }
+    },
+    {
+      "id": "permissions.usage-description-unused",
+      "title": "Purpose string or entitlement declared for a resource the app never uses",
+      "severity": "warning",
+      "evidence": [
+        "plist",
+        "entitlements",
+        "source",
+        "binary"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.1"
+      ],
+      "applies_when": [],
+      "summary": "Info.plist carries a purpose string, or the target an entitlement such as HealthKit, for a resource no code in the app or its SDKs requests. Guideline 5.1.1(iii) limits access requests to data relevant to the core function, and a declared resource with no visible feature invites the question of what it is for. Template projects and removed features often leave these behind.",
+      "fix": "Delete purpose strings and entitlements with no matching API call. If an SDK needs one for an optional feature you do not use, configure the SDK to drop that feature; if you keep the key, explain the feature in the review notes.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.1"
+      ],
+      "check": {
+        "id": "unused-usage-descriptions",
+        "confidence": "medium",
+        "catalog": "usage-descriptions",
+        "entitlements": [
+          "com.apple.developer.healthkit",
+          "com.apple.developer.homekit"
+        ]
+      },
+      "review": [
+        "For each purpose string and privacy-sensitive entitlement, which visible feature uses it?"
+      ]
     },
     {
       "id": "permissions.usage-description-vague",
@@ -1174,30 +1360,590 @@
         "5.1.1"
       ],
       "applies_when": [],
-      "summary": "Guideline 5.1.1(ii) requires purpose strings that \"clearly and completely describe your use of the data\". Strings like \"This app needs camera access\" or a bare product name are among the most common 5.1.1 rejections.",
-      "fix": "Say what feature uses the data and what the person gets, with an example: \"Scan receipts with the camera to add expenses automatically.\"",
+      "summary": "Guideline 5.1.1(ii) requires purpose strings that \"clearly and completely describe your use of the data\". Strings like \"This app needs camera access\", an untouched Expo config plugin default such as \"Allow $(PRODUCT_NAME) to access your camera\", or a bare product name are among the most common 5.1.1 rejections.",
+      "fix": "Say what feature uses the data and what the person gets, in a complete active sentence: \"Scan receipts with the camera to add expenses automatically.\" Localize every purpose string.",
       "references": [
-        "https://developer.apple.com/app-store/review/guidelines/#5.1.1"
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.1",
+        "https://developer.apple.com/design/human-interface-guidelines/privacy"
       ],
       "check": {
         "id": "usage-description-quality",
         "confidence": "low",
         "min_length": 25,
         "placeholders": [
-          "TODO",
-          "TBD",
-          "lorem",
-          "placeholder",
+          "todo",
+          "tbd",
           "test",
           "description",
-          "needs access",
-          "requires access",
-          "would like to access"
+          "usage",
+          "reason",
+          "permission",
+          "placeholder",
+          "lorem ipsum",
+          "n/a",
+          "na",
+          "x",
+          "xxx",
+          "required",
+          "needed"
+        ],
+        "vague_phrases": [
+          "allow $(product_name)",
+          "this app needs",
+          "this app requires",
+          "this app uses",
+          "app needs access",
+          "app requires access",
+          "needs access to",
+          "requires access to",
+          "would like to access",
+          "we need",
+          "for better experience",
+          "for a better experience",
+          "for the app to work",
+          "to function properly",
+          "for app functionality",
+          "lorem ipsum"
         ]
       },
       "review": [
-        "Does each purpose string name the feature that uses the data and what the person gets from it?"
+        "Does each purpose string name the feature that uses the data and what the person gets from it?",
+        "Is every purpose string translated in each language the app supports?"
       ]
+    },
+    {
+      "id": "privacy.apple-pay-data-sharing",
+      "title": "Apple Pay data shared beyond fulfilling the order",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.2"
+      ],
+      "applies_when": [],
+      "summary": "Guideline 5.1.2(vii) lets apps share user data acquired through Apple Pay with third parties only to facilitate or improve delivery of goods and services. Passing the billing contact, shipping address, or email from a payment sheet to marketing, analytics, or ad partners breaks it.",
+      "fix": "Send Apple Pay contact and address data only to the payment processor and fulfillment partners. Ask separately, with its own consent, before adding the person to marketing.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.2"
+      ],
+      "check": {
+        "id": "apple-pay-usage",
+        "confidence": "low",
+        "signals": [
+          "PKPaymentAuthorizationController",
+          "PKPaymentAuthorizationViewController",
+          "PayWithApplePayButton",
+          "PKPaymentButton",
+          "billingContact",
+          "shippingContact"
+        ]
+      },
+      "review": [
+        "Does any Apple Pay billing or shipping contact data go anywhere besides the payment processor and fulfillment partners?"
+      ]
+    },
+    {
+      "id": "privacy.collected-data-undeclared",
+      "title": "Data-collecting SDKs present but no collected data declared",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "binary",
+        "manifest",
+        "human"
+      ],
+      "enforced_by": "app-store-connect",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.1",
+        "5.1.2"
+      ],
+      "applies_when": [],
+      "summary": "The app links analytics, crash-reporting, advertising, attribution, or engagement SDKs, yet no privacy manifest in the bundle declares `NSPrivacyCollectedDataTypes`. App Privacy details must cover data that third-party partners collect through your app, and Xcode's privacy report, the starting point for those answers, shows nothing for the app's own collection.",
+      "fix": "List what each SDK collects, from the vendor's privacy documentation and its own manifest, and declare it in App Store Connect App Privacy and in the app's manifest with the right linked, tracking, and purpose values. Update SDKs whose releases ship no manifest.",
+      "references": [
+        "https://developer.apple.com/app-store/app-privacy-details/",
+        "https://developer.apple.com/documentation/bundleresources/describing-data-use-in-privacy-manifests"
+      ],
+      "check": {
+        "id": "collected-data-declared",
+        "confidence": "medium",
+        "catalog": "tracking-sdks"
+      },
+      "review": [
+        "Do the App Privacy answers in App Store Connect include every data type each SDK collects, marked linked or tracking where it is?"
+      ]
+    },
+    {
+      "id": "privacy.consent-before-collection",
+      "title": "Data collected without consent or a way to withdraw it",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.1"
+      ],
+      "applies_when": [],
+      "summary": "Guideline 5.1.1(ii) requires consent for collecting user or usage data, even data considered anonymous, an easy way to withdraw that consent, and no paid functionality that depends on granting data access. Analytics or crash SDKs that send events on first launch, before any notice, and apps with no in-app setting to turn collection off fall short.",
+      "fix": "Tell people what is collected before collection starts, ask where the law or your policy requires it, and add an in-app control that stops collection and is honored at once. Start SDKs with collection disabled until consent, using each vendor's opt-in or opt-out API. Never unlock paid features in exchange for data access.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.1"
+      ],
+      "check": {
+        "id": "consent-controls",
+        "confidence": "low",
+        "catalog": "tracking-sdks",
+        "kinds": [
+          "analytics",
+          "crash-reporting",
+          "attribution",
+          "engagement"
+        ],
+        "opt_out_signals": [
+          "setAnalyticsCollectionEnabled",
+          "setCrashlyticsCollectionEnabled",
+          "isCrashlyticsCollectionEnabled",
+          "optOutTracking",
+          ".optOut = true",
+          "FIREBASE_ANALYTICS_COLLECTION_ENABLED",
+          "FirebaseCrashlyticsCollectionEnabled"
+        ]
+      },
+      "review": [
+        "Does any analytics or diagnostics data leave the device before the person has seen a notice or given consent?",
+        "Can the person withdraw consent inside the app, without contacting support, and does collection stop?",
+        "Does any paid feature depend on granting access to data?"
+      ]
+    },
+    {
+      "id": "privacy.contact-info-optional",
+      "title": "Name, email, or other personal details required to use the app",
+      "severity": "warning",
+      "evidence": [
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "5.1.1"
+      ],
+      "applies_when": [],
+      "summary": "Guideline 5.1.1(x) allows asking for basic contact information, such as name and email, only when the request is optional and no feature or service depends on providing it. Guideline 5.1.1(v) bars requiring personal information unless it is directly relevant to the core function or required by law. Mandatory phone number, birthdate, gender, or address fields at sign-up, and newsletter emails as a condition of entry, draw rejections.",
+      "fix": "Mark contact fields optional, let people skip them, and keep every feature working without them. Require a field only when the feature cannot work without it, such as a delivery address for shipping, or the law demands it, and say why next to the field.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.1"
+      ],
+      "review": [
+        "Can a person skip every name, email, phone, birthdate, gender, and address field and still use the app?",
+        "For each required personal field, which core feature or law needs it?"
+      ]
+    },
+    {
+      "id": "privacy.contacts-bulk-invite",
+      "title": "Invites sent to contacts in bulk or without a message preview",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.2"
+      ],
+      "applies_when": [],
+      "summary": "Guideline 5.1.2(v) allows contacting people found through Contacts or Photos only at the explicit, individual initiative of the person, bans a Select All option or any default selection of all contacts, and requires showing what the message will say and who it will appear to come from before sending.",
+      "fix": "Let the person choose recipients one by one, with nothing preselected and no Select All. Show the full message and sender before sending, preferably in `MFMessageComposeViewController` or the share sheet, and never send from your server without that confirmation.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.2"
+      ],
+      "check": {
+        "id": "contacts-invite",
+        "confidence": "low",
+        "contacts_signals": [
+          "CNContactStore",
+          "react-native-contacts",
+          "expo-contacts",
+          "flutter_contacts"
+        ],
+        "bulk_signals": [
+          "Select All",
+          "selectAll",
+          "Invite All",
+          "inviteAll"
+        ]
+      },
+      "review": [
+        "Does the person pick each recipient, with nothing preselected and no Select All?",
+        "Before sending, does the person see the exact message and the sender it will show?"
+      ]
+    },
+    {
+      "id": "privacy.contacts-harvesting",
+      "title": "Contacts or photos uploaded to build a database",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.2"
+      ],
+      "applies_when": [],
+      "summary": "Guideline 5.1.2(iv) bans using Contacts, Photos, or other APIs that access user data to build a contact database for the developer's own use or for sale or distribution. Enumerating the whole address book and uploading it, for friend matching or growth, is the usual pattern reviewers reject.",
+      "fix": "Let the person pick specific contacts with `CNContactPickerViewController` and send only what the feature needs. If you match contacts against your user base, say so before asking, send only what matching needs, keep nothing about non-users, and never sell or share the data.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.2",
+        "https://developer.apple.com/documentation/contactsui/cncontactpickerviewcontroller"
+      ],
+      "check": {
+        "id": "contacts-enumeration",
+        "confidence": "low",
+        "signals": [
+          "enumerateContacts(with:",
+          "unifiedContacts(matching:",
+          "CNContactFetchRequest",
+          "react-native-contacts",
+          "expo-contacts",
+          "flutter_contacts"
+        ]
+      },
+      "review": [
+        "Does the app upload contacts or photo data beyond what the person explicitly selected for a feature?",
+        "Is any uploaded contact data kept for people who are not users, or shared with anyone else?"
+      ]
+    },
+    {
+      "id": "privacy.data-compilation",
+      "title": "App compiles personal information people did not provide",
+      "severity": "error",
+      "evidence": [
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "5.1.1"
+      ],
+      "applies_when": [],
+      "summary": "Guideline 5.1.1(viii) bans apps that compile personal information from any source other than the person, or without their explicit consent, even from public databases. People-search, background-check, reverse-lookup, and scraped-profile apps are rejected outright.",
+      "fix": "Show only data the person entered about themselves, or data a subject explicitly agreed to share through the app. Drop scraped, purchased, or public-record datasets about third parties.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.1"
+      ],
+      "review": [
+        "Does the app show or search personal information about people who never used it or agreed to it?",
+        "Does any data come from scraping, data brokers, or public records rather than from the person it describes?"
+      ]
+    },
+    {
+      "id": "privacy.data-repurposed",
+      "title": "Data collected for one purpose reused for another",
+      "severity": "warning",
+      "evidence": [
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "5.1.2"
+      ],
+      "applies_when": [],
+      "summary": "Guideline 5.1.2(ii) forbids repurposing data collected for one purpose without further consent, unless the law explicitly permits it. Using a delivery phone number for marketing texts, or photos uploaded for one feature to train models or target ads, are typical cases. Guideline 5.1.2(i) also limits sharing app data with third parties to improving the app or serving ads.",
+      "fix": "Use each data type only for the purpose shown when it was collected and stated in the privacy policy. Ask again, with a clear explanation, before any new use, and keep the original feature working if the person says no.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.2"
+      ],
+      "review": [
+        "Is any data used for a purpose beyond the one the person was told about when it was collected?",
+        "Is data shared with third parties for anything other than improving the app or serving ads?"
+      ]
+    },
+    {
+      "id": "privacy.health-data-sharing",
+      "title": "Health data can reach advertising or analytics SDKs",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "binary",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.3",
+        "5.1.2"
+      ],
+      "applies_when": [
+        "health"
+      ],
+      "summary": "The app reads HealthKit, clinical health records, or Motion and Fitness data and also links advertising, attribution, or analytics SDKs. Guidelines 5.1.3(i) and 5.1.2(vi) forbid using or disclosing health and fitness data for advertising, marketing, or use-based data mining, and HealthKit terms bar sharing it with a third party that does not provide a health or fitness service to the person.",
+      "fix": "Keep health data out of every analytics event, ad request, and attribution payload. Share it with a third party only with explicit permission and only for health management or research. Provide a privacy policy, required for any app that uses HealthKit, and disclose in it the specific health data the app collects.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.3",
+        "https://developer.apple.com/documentation/healthkit/protecting-user-privacy"
+      ],
+      "check": {
+        "id": "sensitive-data-with-sdks",
+        "confidence": "low",
+        "catalog": "tracking-sdks",
+        "signals": [
+          "HKHealthStore",
+          "HKClinicalRecord",
+          "com.apple.developer.healthkit",
+          "CMPedometer",
+          "CMMotionActivityManager"
+        ]
+      },
+      "review": [
+        "Does any HealthKit or fitness value, or anything derived from it, go into analytics events, ad targeting, or attribution?",
+        "Does the privacy policy name the specific health data the app collects?",
+        "If the app gives a benefit based on health data, such as an insurance discount, is it submitted by the entity giving the benefit, with no third-party sharing?"
+      ]
+    },
+    {
+      "id": "privacy.health-icloud-storage",
+      "title": "Health data may be stored in iCloud or written inaccurately",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "entitlements",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.3"
+      ],
+      "applies_when": [
+        "health"
+      ],
+      "summary": "Guideline 5.1.3(ii) forbids storing personal health information in iCloud and writing false or inaccurate data into HealthKit or other health apps. An app that has both HealthKit and iCloud, CloudKit, or key-value store entitlements can sync health records to iCloud without anyone deciding to.",
+      "fix": "Keep health data in HealthKit and on-device storage, or in your own secured backend with the person's consent. Exclude health models from CloudKit-backed stores and `NSUbiquitousKeyValueStore`. Write samples to HealthKit only from real measurements or explicit entries by the person.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.3"
+      ],
+      "check": {
+        "id": "health-with-icloud",
+        "confidence": "low",
+        "health_signals": [
+          "HKHealthStore",
+          "HKClinicalRecord",
+          "com.apple.developer.healthkit"
+        ],
+        "icloud_signals": [
+          "com.apple.developer.icloud-services",
+          "com.apple.developer.ubiquity-kvstore-identifier",
+          "CKContainer",
+          "NSPersistentCloudKitContainer",
+          "cloudKitDatabase",
+          "NSUbiquitousKeyValueStore"
+        ]
+      },
+      "review": [
+        "Does any health value, or a record derived from one, sync to iCloud through CloudKit, iCloud Drive, a CloudKit-backed store, or the key-value store?",
+        "Does the app write to HealthKit only values that were measured or entered by the person?"
+      ]
+    },
+    {
+      "id": "privacy.health-research-consent",
+      "title": "Health research without complete consent or ethics approval",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.3"
+      ],
+      "applies_when": [
+        "health"
+      ],
+      "summary": "Guidelines 5.1.3(iii) and (iv) require apps running health-related human subject research to obtain informed consent from participants, or a parent or guardian for minors, and approval from an independent ethics review board. Consent must cover the nature, purpose, and duration of the research; procedures, risks, and benefits; confidentiality and data handling, including third-party sharing; a contact for questions; and how to withdraw.",
+      "fix": "Build the consent flow, for example with ResearchKit's consent steps, so it covers all five required elements, and record each participant's consent. Get independent ethics board approval before launch and keep proof ready to share on request.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.3"
+      ],
+      "check": {
+        "id": "research-frameworks",
+        "confidence": "low",
+        "signals": [
+          "import ResearchKit",
+          "ORKConsentDocument",
+          "ORKTaskViewController",
+          "import SensorKit",
+          "SRSensorReader"
+        ]
+      },
+      "review": [
+        "Does the consent screen cover nature, purpose, and duration; procedures, risks, and benefits; confidentiality and data sharing; a contact; and withdrawal?",
+        "Does a parent or guardian consent for minors?",
+        "Is independent ethics review board approval on file, and is it mentioned in the review notes?"
+      ]
+    },
+    {
+      "id": "privacy.installed-apps-probing",
+      "title": "App probes which other apps are installed",
+      "severity": "warning",
+      "evidence": [
+        "plist",
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.2"
+      ],
+      "applies_when": [],
+      "summary": "Guideline 5.1.2(iv) forbids collecting which other apps are installed on a device for analytics, advertising, or marketing. A long `LSApplicationQueriesSchemes` list with `canOpenURL` checks for apps unrelated to the app's own features, such as competitors or social apps, reads as that kind of probing. The system caps the list at 50 entries, and at 25 for apps linked on iOS 27 or later.",
+      "fix": "Query only the schemes of apps the feature hands off to, such as a maps or payment app, and keep the result on the device. Remove scheme lists that ad or attribution SDKs ask you to add.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.2",
+        "https://developer.apple.com/documentation/uikit/uiapplication/canopenurl(_:)"
+      ],
+      "check": {
+        "id": "url-scheme-queries",
+        "confidence": "low",
+        "plist_key": "LSApplicationQueriesSchemes",
+        "max_entries": 15,
+        "signals": [
+          "canOpenURL"
+        ]
+      },
+      "review": [
+        "Does each queried URL scheme belong to an app the feature actually opens, and does the result stay on the device?"
+      ]
+    },
+    {
+      "id": "privacy.kids-data-collection",
+      "title": "Kids app collects or shares personal data or device identifiers",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "binary",
+        "plist",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.4",
+        "1.3"
+      ],
+      "applies_when": [
+        "kids"
+      ],
+      "summary": "Apps for kids may ask for birthdate and parental contact only to comply with children's privacy laws such as COPPA and GDPR, must stay useful whatever age is entered, and should not include third-party analytics or advertising. Apple's Kids Category guidance adds that kids apps should not send personally identifiable or device information to third parties, even from sections meant for adults, unless a parent explicitly consents. Any app that collects personal information from a minor, such as name, email, location, photos, chat, or persistent identifiers combined with them, needs a privacy policy and must comply with children's privacy statutes.",
+      "fix": "Collect nothing beyond what the feature needs and what the law permits. Drop advertising identifiers and third-party analytics and ad SDKs, or replace them with services that meet guideline 1.3. Get verifiable parental consent before collecting a child's personal data, and link a privacy policy that covers it.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.4",
+        "https://developer.apple.com/app-store/kids-apps/"
+      ],
+      "check": {
+        "id": "kids-data-signals",
+        "confidence": "medium",
+        "catalog": "tracking-sdks",
+        "signals": [
+          "ASIdentifierManager",
+          "advertisingIdentifier",
+          "ATTrackingManager",
+          "NSUserTrackingUsageDescription",
+          "CLLocationManager",
+          "CNContactStore",
+          "PHPhotoLibrary.requestAuthorization"
+        ]
+      },
+      "review": [
+        "Does the app ask a child for anything beyond a birthdate or a parent's contact, and only to comply with the law?",
+        "Does the app stay useful for every age entered, rather than turning young users away?",
+        "Is verifiable parental consent collected before any personal data, chat, photos, or location of a child is stored or shared?"
+      ]
+    },
+    {
+      "id": "privacy.location-services",
+      "title": "Location used without a clear in-app purpose or consent",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "plist",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.5"
+      ],
+      "applies_when": [],
+      "summary": "Guideline 5.1.5 allows Location Services only when directly relevant to the app's features, requires notice and consent before collecting, transmitting, or using location, and expects the app to explain the purpose. Location-based APIs may not drive emergency services or autonomous control of vehicles, aircraft, or other devices, apart from small devices such as lightweight drones and toys.",
+      "fix": "Request location at the feature that needs it, explain in the app what it is for, and tell the person before location leaves the device. Use `LocationButton` for one-off needs, and set `NSLocationDefaultAccuracyReduced` when approximate location is enough.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.5",
+        "https://developer.apple.com/documentation/corelocation/requesting-authorization-to-use-location-services",
+        "https://developer.apple.com/documentation/corelocationui/locationbutton"
+      ],
+      "check": {
+        "id": "location-usage",
+        "confidence": "low",
+        "signals": [
+          "CLLocationManager",
+          "CLLocationUpdate.liveUpdates",
+          "CLServiceSession",
+          "requestWhenInUseAuthorization",
+          "requestAlwaysAuthorization"
+        ]
+      },
+      "review": [
+        "Is location directly relevant to a feature the person can see, and does the app explain it before asking?",
+        "Is the person told before location is sent to a server or third party?",
+        "Would approximate location or a one-time LocationButton grant do the job?",
+        "Does any feature rely on location for emergency services or for controlling a vehicle or aircraft?"
+      ]
+    },
+    {
+      "id": "privacy.manifest-invalid",
+      "title": "Privacy manifest is malformed or uses undocumented keys or values",
+      "severity": "error",
+      "evidence": [
+        "manifest"
+      ],
+      "enforced_by": "upload",
+      "automation": "automated",
+      "guidelines": [
+        "5.1.1",
+        "5.1.2"
+      ],
+      "applies_when": [],
+      "summary": "A `PrivacyInfo.xcprivacy` in the bundle does not parse as a property list, gives a key the wrong type, uses a key Apple does not document, or has a collected data entry missing one of its four keys or using a data type or purpose Apple does not list. App Store Connect rejects the upload with ITMS-91056, and Xcode cannot build a correct privacy report from custom data types or purposes.",
+      "fix": "Recreate the file from Xcode's App Privacy template and edit it in the property list editor. Give every `NSPrivacyCollectedDataTypes` entry `NSPrivacyCollectedDataType`, `NSPrivacyCollectedDataTypeLinked`, `NSPrivacyCollectedDataTypeTracking`, and `NSPrivacyCollectedDataTypePurposes`, and use only the documented data types and purposes. If the invalid file belongs to an SDK, update the SDK.",
+      "since": "2024-05-01",
+      "itms": [
+        "ITMS-91056"
+      ],
+      "references": [
+        "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration",
+        "https://developer.apple.com/documentation/bundleresources/describing-data-use-in-privacy-manifests"
+      ],
+      "check": {
+        "id": "privacy-manifest-schema",
+        "confidence": "high",
+        "catalog": "privacy-manifest"
+      }
     },
     {
       "id": "privacy.manifest-missing",
@@ -1214,7 +1960,7 @@
         "5.1.2"
       ],
       "applies_when": [],
-      "summary": "The app bundle ships without a `PrivacyInfo.xcprivacy`. Any use of a required reason API, including `UserDefaults`, then fails upload validation, and the App Store privacy report has nothing to aggregate from the app's own code.",
+      "summary": "The app bundle, or an app extension bundle, ships without a `PrivacyInfo.xcprivacy`. Any use of a required reason API in that bundle, including `UserDefaults` and `@AppStorage`, then fails upload validation, and the App Store privacy report has nothing to aggregate from the app's own code.",
       "fix": "Add a `PrivacyInfo.xcprivacy` to the app target (File > New > File > App Privacy). Declare tracking, collected data types, and every required reason API category the app's own code uses.",
       "since": "2024-05-01",
       "references": [
@@ -1242,13 +1988,64 @@
       "applies_when": [],
       "summary": "Every app needs a privacy policy linked both in the App Store Connect metadata and inside the app, easy to find. The policy must say what data is collected and how, who it is shared with, how long it is kept, and how to revoke consent or request deletion.",
       "fix": "Set the Privacy Policy URL in App Store Connect, link the same page from the app's settings or about screen, and make sure the policy covers collection, sharing, retention, deletion, and consent withdrawal.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.1"
+      ],
       "check": {
         "id": "privacy-policy-url",
         "confidence": "medium"
       },
       "review": [
         "Is the privacy policy reachable from inside the app without signing in?",
-        "Does it cover collection, third-party sharing, retention, deletion, and consent withdrawal?"
+        "Does it cover collection, third-party sharing, retention, deletion, and consent withdrawal?",
+        "Does the URL load over HTTPS as a web page that names this app, not a dead link or another product's template?",
+        "Does it confirm that third parties receiving data, including SDK vendors and AI providers, protect it as the policy does?"
+      ]
+    },
+    {
+      "id": "privacy.raw-identifiers-to-analytics",
+      "title": "Personal identifiers sent to third-party analytics",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.2"
+      ],
+      "applies_when": [],
+      "summary": "The app passes an email address, phone number, name, or similar personal identifier as the user ID or an event property to a third-party analytics, crash, or attribution SDK. That shares personal data with a third party, which guideline 5.1.2(i) allows only with disclosure and permission, and it makes the data linked to the person in App Privacy.",
+      "fix": "Send an opaque, app-scoped identifier, such as a random UUID or a salted hash of your account ID, never contact details. If the vendor needs personal data, disclose it, get permission, and declare it as linked in App Privacy.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.2",
+        "https://developer.apple.com/app-store/app-privacy-details/"
+      ],
+      "check": {
+        "id": "analytics-identifiers",
+        "confidence": "low",
+        "calls": [
+          "setUserID(",
+          "setUserId(",
+          "identify(",
+          "setUserProperty(",
+          "setCustomValue(",
+          "setUser(",
+          "logEvent(",
+          "track("
+        ],
+        "identifiers": [
+          "email",
+          "phone",
+          "phoneNumber",
+          "fullName",
+          "firstName",
+          "lastName"
+        ]
+      },
+      "review": [
+        "Does any analytics, crash, or attribution call receive contact details or a real name?"
       ]
     },
     {
@@ -1307,6 +2104,46 @@
       }
     },
     {
+      "id": "privacy.safari-view-hidden",
+      "title": "SFSafariViewController hidden, embedded, or used to track",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.1"
+      ],
+      "applies_when": [],
+      "summary": "Guideline 5.1.1(vii) requires `SFSafariViewController` to visibly present information; it may not be hidden or obscured, and may not track people without their knowledge and consent. A zero-size, transparent, off-screen, or child-embedded Safari view that loads pages in the background reads as covert cookie or identity syncing.",
+      "fix": "Present `SFSafariViewController` modally with `present(_:animated:)` and only when the person asked to open a page. Never set its view hidden, transparent, or off-screen. Use `ASWebAuthenticationSession` for sign-in and the App Tracking Transparency prompt for any tracking.",
+      "references": [
+        "https://developer.apple.com/documentation/safariservices/sfsafariviewcontroller"
+      ],
+      "check": {
+        "id": "safari-view-visibility",
+        "confidence": "low",
+        "signals": [
+          "SFSafariViewController"
+        ],
+        "hidden_signals": [
+          "addChild(",
+          "addChildViewController",
+          ".isHidden = true",
+          ".alpha = 0",
+          "CGRect.zero",
+          "CGRectZero",
+          "frame = .zero"
+        ]
+      },
+      "review": [
+        "Does every Safari view appear full screen, in response to the person's action, with nothing drawn over it?"
+      ]
+    },
+    {
       "id": "privacy.sdk-manifest-missing",
       "title": "Listed third-party SDK ships without a privacy manifest or signature",
       "severity": "error",
@@ -1336,11 +2173,147 @@
       }
     },
     {
+      "id": "privacy.sensitive-api-data-ads",
+      "title": "Home, classroom, or face and depth data can reach ad or analytics SDKs",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "binary",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.2"
+      ],
+      "applies_when": [],
+      "summary": "Guideline 5.1.2(vi) bars using data from HomeKit, HealthKit, Clinical Health Records, MovementDisorder APIs, ClassKit, or depth and facial mapping tools such as ARKit face tracking and camera depth data for marketing, advertising, or use-based data mining, including by third parties. An app that reads these sources and also links ad or analytics SDKs needs to show the data never flows to them.",
+      "fix": "Keep values from these frameworks, and anything derived from them, out of analytics events, ad requests, and attribution payloads. Process face and depth data on the device and discard it after the feature uses it.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.2"
+      ],
+      "check": {
+        "id": "sensitive-data-with-sdks",
+        "confidence": "low",
+        "catalog": "tracking-sdks",
+        "signals": [
+          "HMHomeManager",
+          "CLSDataStore",
+          "ARFaceTrackingConfiguration",
+          "ARFaceAnchor",
+          "AVDepthData",
+          "isDepthDataDeliveryEnabled",
+          "sceneDepth"
+        ]
+      },
+      "review": [
+        "Does any HomeKit, ClassKit, face, or depth value, or anything derived from it, reach analytics, advertising, or a data broker?"
+      ]
+    },
+    {
+      "id": "privacy.social-network-credentials",
+      "title": "Social network login required, irrevocable, or its tokens stored off-device",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.1"
+      ],
+      "applies_when": [
+        "accounts"
+      ],
+      "summary": "Guideline 5.1.1(v): unless the core function is tied to a specific social network, the app must work without that network's login; pulling a profile, sharing, or inviting friends is not core functionality. The app must let people revoke the social network credentials and stop data exchange from inside the app, and may not store those credentials or tokens off the device or use them except to connect to the network directly from the app while it is in use.",
+      "fix": "Offer use without the social login, or another sign-in method. Add a Disconnect control that signs out of the network's SDK and deletes its tokens. Keep tokens in the device keychain, never on your server, and call the network's API only from the app in the foreground.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.1"
+      ],
+      "check": {
+        "id": "social-login-controls",
+        "confidence": "low",
+        "sdks": [
+          "FBSDKLoginKit",
+          "GoogleSignIn",
+          "TwitterKit",
+          "LineSDK",
+          "KakaoSDKAuth",
+          "WechatOpenSDK",
+          "react-native-fbsdk-next",
+          "@react-native-google-signin/google-signin"
+        ],
+        "revoke_signals": [
+          "logOut()",
+          "signOut()",
+          "disconnect(",
+          "revokeAccess",
+          "unlink("
+        ],
+        "token_upload_signals": [
+          "accessToken.tokenString",
+          "idToken.tokenString",
+          "AccessToken.current"
+        ]
+      },
+      "review": [
+        "Can a person use the app's core features without the social network's login?",
+        "Is there an in-app control that disconnects the social network and deletes its tokens?",
+        "Are social network tokens kept only on the device, never sent to or stored on the developer's server?"
+      ]
+    },
+    {
+      "id": "privacy.surreptitious-discovery",
+      "title": "App harvests passwords or private data without the person knowing",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.1"
+      ],
+      "applies_when": [],
+      "summary": "Guideline 5.1.1(vi) removes developers whose apps surreptitiously discover passwords or other private data from the Developer Program. Reading the pasteboard at launch without a paste action, login prompts that imitate Apple or another service, and sending credentials or private content to a server the person did not choose all look like harvesting. The system notifies the person when an app reads another app's pasteboard content without a paste action.",
+      "fix": "Read the pasteboard only after a paste action, or use `PasteButton` or `UIPasteControl`; check `hasStrings` or `detectPatterns` instead of reading content to decide whether to offer a paste. Collect credentials only for your own service, through your own clearly branded screen, Sign in with Apple, or `ASWebAuthenticationSession`.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.1.1",
+        "https://developer.apple.com/documentation/uikit/uipasteboard"
+      ],
+      "check": {
+        "id": "pasteboard-reads",
+        "confidence": "low",
+        "signals": [
+          "UIPasteboard.general.string",
+          "UIPasteboard.general.strings",
+          "UIPasteboard.general.url",
+          "UIPasteboard.general.items",
+          "UIPasteboard.general.image",
+          "NSPasteboard.general.string(forType:"
+        ],
+        "early_contexts": [
+          "didFinishLaunchingWithOptions",
+          "sceneDidBecomeActive",
+          "applicationDidBecomeActive",
+          "scenePhase"
+        ]
+      },
+      "review": [
+        "Does the app read the pasteboard, keychain items, or other private data without an explicit action by the person?",
+        "Does any screen ask for the password of a service other than the app's own, or imitate a system sign-in prompt?"
+      ]
+    },
+    {
       "id": "privacy.third-party-ai-disclosure",
       "title": "Personal data may be sent to a third-party AI service",
       "severity": "warning",
       "evidence": [
         "source",
+        "runtime",
         "human"
       ],
       "enforced_by": "app-review",
@@ -1351,8 +2324,8 @@
       "applies_when": [
         "ai"
       ],
-      "summary": "The app calls a hosted AI model, such as OpenAI, Anthropic, or Google Gemini. Guideline 5.1.2(i) requires clear disclosure of where personal data goes, including to third-party AI, and explicit permission before sharing it.",
-      "fix": "Before the first request, show what data goes to which provider and why, and get explicit consent. Mirror it in the privacy policy and the App Privacy details. Prefer on-device models where they do the job.",
+      "summary": "The app calls a hosted AI model, such as OpenAI, Anthropic, or Google Gemini. Guideline 5.1.2(i) requires clear disclosure of where personal data goes, including to third-party AI, and explicit permission before sharing it. A consent screen still falls short when it never names the provider, or when a seen or first-launch flag gates it, so the screen can be dismissed or skipped without an answer and requests go out anyway.",
+      "fix": "Before the first request, show what data goes to which named provider and why, and get explicit consent. Gate every request on the stored consent value alone, never on a seen or onboarding flag, and keep the app usable when the person declines. Mirror it in the privacy policy and the App Privacy details. Prefer on-device models where they do the job.",
       "since": "2025-11-13",
       "references": [
         "https://developer.apple.com/app-store/review/guidelines/#5.1.2"
@@ -1362,9 +2335,17 @@
         "confidence": "medium",
         "hosts": [
           "api.openai.com",
+          "openai.azure.com",
           "api.anthropic.com",
           "generativelanguage.googleapis.com",
+          "aiplatform.googleapis.com",
+          "bedrock-runtime",
+          "api.x.ai",
           "api.mistral.ai",
+          "api.cohere.com",
+          "api.cohere.ai",
+          "api.deepseek.com",
+          "api.perplexity.ai",
           "api.groq.com",
           "api.together.xyz",
           "openrouter.ai"
@@ -1373,13 +2354,47 @@
           "OpenAI",
           "SwiftOpenAI",
           "AnthropicSwiftSDK",
+          "SwiftAnthropic",
           "GoogleGenerativeAI",
           "FirebaseVertexAI",
           "FirebaseAI"
+        ],
+        "vendor_names": [
+          "OpenAI",
+          "ChatGPT",
+          "Anthropic",
+          "Claude",
+          "Gemini",
+          "Google AI",
+          "Mistral",
+          "Cohere",
+          "DeepSeek",
+          "Perplexity",
+          "xAI",
+          "Grok",
+          "Groq",
+          "Together AI",
+          "OpenRouter",
+          "Amazon Bedrock",
+          "Azure OpenAI"
+        ],
+        "consent_signals": [
+          "aiConsent",
+          "hasConsented",
+          "dataSharingConsent",
+          "ConsentView"
+        ],
+        "seen_flag_signals": [
+          "hasSeen",
+          "didShow",
+          "alreadyShown",
+          "onboardingComplete",
+          "isFirstLaunch"
         ]
       },
       "review": [
-        "Does the app tell the person which data goes to which AI provider before the first request?",
+        "Does the app name each AI provider and the data it receives before the first request?",
+        "Does the consent screen keep appearing until the person answers, with no request sent before they agree?",
         "Does the person give explicit permission, and does the app keep working when they decline?"
       ]
     },
@@ -1404,6 +2419,37 @@
       "check": {
         "id": "manifest-tracking-domains",
         "confidence": "high"
+      }
+    },
+    {
+      "id": "privacy.tracking-flag-mismatch",
+      "title": "Privacy manifest contradicts itself about tracking",
+      "severity": "warning",
+      "evidence": [
+        "manifest",
+        "source"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "5.1.2"
+      ],
+      "applies_when": [],
+      "summary": "`NSPrivacyTracking` is false or absent, yet the manifest lists `NSPrivacyTrackingDomains` or marks a collected data type with `NSPrivacyCollectedDataTypeTracking`. Or tracking is declared true and the app never calls App Tracking Transparency. The privacy report and App Privacy details then misstate tracking, and tracking domains only get blocked when the declaration is consistent.",
+      "fix": "Decide whether the app or its SDKs track. If they do, set `NSPrivacyTracking` to true, list the tracking domains, and request permission with `ATTrackingManager` before tracking. If they do not, remove the domains and set every `NSPrivacyCollectedDataTypeTracking` to false.",
+      "references": [
+        "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacytracking",
+        "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacytrackingdomains"
+      ],
+      "check": {
+        "id": "manifest-tracking-consistency",
+        "confidence": "high",
+        "att_signals": [
+          "ATTrackingManager",
+          "requestTrackingAuthorization",
+          "expo-tracking-transparency",
+          "react-native-tracking-transparency"
+        ]
       }
     },
     {
@@ -1509,10 +2555,11 @@
     },
     {
       "id": "tracking.att-missing",
-      "title": "Advertising identifier read without App Tracking Transparency",
+      "title": "Advertising identifier or tracking SDK without App Tracking Transparency",
       "severity": "error",
       "evidence": [
         "source",
+        "binary",
         "plist"
       ],
       "enforced_by": "app-review",
@@ -1523,23 +2570,78 @@
       "applies_when": [
         "advertising"
       ],
-      "summary": "The app or an SDK reads the advertising identifier (`ASIdentifierManager.advertisingIdentifier`) or links an ad or attribution SDK, but never requests tracking permission with `ATTrackingManager`, or has no `NSUserTrackingUsageDescription`.",
-      "fix": "Request permission with `ATTrackingManager.requestTrackingAuthorization` before any tracking, add the purpose string, and declare tracking in the privacy manifest and App Privacy details. If the app does not track, remove the identifier access.",
+      "summary": "The app or an SDK reads the advertising identifier (`ASIdentifierManager.advertisingIdentifier`) or links an advertising or attribution SDK, but never requests tracking permission with `ATTrackingManager`, or has no `NSUserTrackingUsageDescription`. Guideline 5.1.2(i) requires explicit permission through App Tracking Transparency before tracking, and an SDK that combines your app's data with other companies' data counts as tracking even if you never use it that way.",
+      "fix": "Request permission with `ATTrackingManager.requestTrackingAuthorization` before any tracking, add the purpose string, and declare tracking in the privacy manifest and App Privacy details. If the app does not track, remove the identifier access and configure each SDK to not track.",
       "references": [
-        "https://developer.apple.com/documentation/apptrackingtransparency"
+        "https://developer.apple.com/documentation/apptrackingtransparency",
+        "https://developer.apple.com/app-store/user-privacy-and-data-use/"
       ],
       "check": {
         "id": "att-usage",
         "confidence": "medium",
+        "catalog": "tracking-sdks",
+        "kinds": [
+          "advertising",
+          "attribution"
+        ],
         "signals": [
           "ASIdentifierManager",
-          "advertisingIdentifier",
-          "AppsFlyerLib",
-          "Adjust",
-          "FBAudienceNetwork",
-          "GoogleMobileAds"
+          "advertisingIdentifier"
+        ],
+        "att_signals": [
+          "ATTrackingManager",
+          "requestTrackingAuthorization",
+          "expo-tracking-transparency",
+          "react-native-tracking-transparency"
         ]
       }
+    },
+    {
+      "id": "tracking.before-authorization",
+      "title": "Tracking starts before the person answers the tracking prompt",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.2"
+      ],
+      "applies_when": [
+        "advertising"
+      ],
+      "summary": "An ad or attribution SDK starts, or code reads the advertising identifier, at launch, while the App Tracking Transparency request comes later or only on some paths. Data sent before the answer is tracking without permission, which guideline 5.1.2(i) forbids. If the app tracks from launch, the system prompt must come before any tracking data is collected.",
+      "fix": "Start tracking SDKs, or enable their tracking features, only in the completion of `requestTrackingAuthorization` and only when the status is `.authorized`. Read `advertisingIdentifier` only after authorization; before it, the identifier is all zeros anyway.",
+      "references": [
+        "https://developer.apple.com/documentation/apptrackingtransparency",
+        "https://developer.apple.com/design/human-interface-guidelines/privacy"
+      ],
+      "check": {
+        "id": "tracking-init-order",
+        "confidence": "low",
+        "catalog": "tracking-sdks",
+        "kinds": [
+          "advertising",
+          "attribution"
+        ],
+        "early_contexts": [
+          "didFinishLaunchingWithOptions",
+          "willFinishLaunchingWithOptions",
+          "App.init",
+          "@main"
+        ],
+        "gate_signals": [
+          "trackingAuthorizationStatus",
+          "requestTrackingAuthorization",
+          ".authorized"
+        ]
+      },
+      "review": [
+        "With tracking denied, does any SDK still send the advertising identifier or cross-app identifiers?"
+      ]
     },
     {
       "id": "tracking.fingerprinting",
@@ -1555,13 +2657,55 @@
         "5.1.2"
       ],
       "applies_when": [],
-      "summary": "Fingerprinting is not allowed, with or without tracking permission. Combining signals such as boot time, disk size, keyboard list, screen metrics, or locale into an identifier, or sending required reason API data off-device, breaks both the guideline and the declared reasons.",
-      "fix": "Use required reason APIs only for their declared reasons, keep derived values on-device unless the reason allows otherwise, and never combine device signals into an identifier.",
+      "summary": "Fingerprinting is not allowed, with or without tracking permission: the Developer Program License Agreement forbids deriving data from a device to identify it uniquely, and apps whose SDKs do it may be rejected. Combining signals such as boot time, disk size, keyboard list, screen metrics, or locale into an identifier, or sending required reason API data off-device, breaks both that rule and the declared reasons. Guideline 5.1.2(iii) also bans building user profiles surreptitiously or re-identifying people from data described as anonymous or aggregated.",
+      "fix": "Use required reason APIs only for their declared reasons, keep derived values on-device unless the reason allows otherwise, and never combine device signals into an identifier. Use `identifierForVendor` or an account ID for first-party needs.",
       "references": [
         "https://developer.apple.com/app-store/user-privacy-and-data-use/"
       ],
       "review": [
-        "Does any code or SDK combine device properties into an identifier or send them to a server?"
+        "Does any code or SDK combine device properties into an identifier or send them to a server?",
+        "Does the app or a partner join data described as anonymous or aggregated back to individual people?"
+      ]
+    },
+    {
+      "id": "tracking.prompt-not-shown",
+      "title": "Tracking purpose string declared but the prompt never appears",
+      "severity": "error",
+      "evidence": [
+        "plist",
+        "source",
+        "runtime"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.1.2",
+        "2.1"
+      ],
+      "applies_when": [],
+      "summary": "`NSUserTrackingUsageDescription` is set, or the App Privacy details say the app tracks, but the reviewer never sees the App Tracking Transparency prompt. Common causes: the app never calls `requestTrackingAuthorization`, or calls it at launch before the app is active, when the system skips the prompt. Reviewers then reject the build because they cannot find the request.",
+      "fix": "Call `ATTrackingManager.requestTrackingAuthorization` once the app is active, for example from the first screen's task or after `sceneDidBecomeActive`, not in `application(_:didFinishLaunchingWithOptions:)`. If the app does not track, remove the purpose string and set tracking to No in App Privacy. Say in the review notes where the prompt appears.",
+      "references": [
+        "https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/requesttrackingauthorization(completionhandler:)"
+      ],
+      "check": {
+        "id": "att-prompt-reachable",
+        "confidence": "medium",
+        "plist_keys": [
+          "NSUserTrackingUsageDescription"
+        ],
+        "request_signals": [
+          "requestTrackingAuthorization",
+          "expo-tracking-transparency",
+          "react-native-tracking-transparency"
+        ],
+        "early_contexts": [
+          "didFinishLaunchingWithOptions",
+          "willFinishLaunchingWithOptions"
+        ]
+      },
+      "review": [
+        "On a fresh install, does the tracking prompt appear before any tracking, and do the review notes say where?"
       ]
     }
   ],
@@ -1639,6 +2783,185 @@
           "summary": "iOS and iPadOS apps uploaded to App Store Connect must target iOS 13 or later.",
           "source": "https://developer.apple.com/news/upcoming-requirements/?id=0992026a",
           "rule": "build.deployment-target"
+        }
+      ]
+    },
+    "privacy-manifest": {
+      "source": "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration",
+      "verified": "2026-10-01",
+      "keys": [
+        {
+          "key": "NSPrivacyTracking",
+          "type": "boolean"
+        },
+        {
+          "key": "NSPrivacyTrackingDomains",
+          "type": "array<string>",
+          "note": "List domains only with NSPrivacyTracking set to true. Requests to them fail until the person grants tracking permission."
+        },
+        {
+          "key": "NSPrivacyCollectedDataTypes",
+          "type": "array<dictionary>"
+        },
+        {
+          "key": "NSPrivacyAccessedAPITypes",
+          "type": "array<dictionary>"
+        }
+      ],
+      "collected_data_keys": [
+        {
+          "key": "NSPrivacyCollectedDataType",
+          "type": "string"
+        },
+        {
+          "key": "NSPrivacyCollectedDataTypeLinked",
+          "type": "boolean"
+        },
+        {
+          "key": "NSPrivacyCollectedDataTypeTracking",
+          "type": "boolean"
+        },
+        {
+          "key": "NSPrivacyCollectedDataTypePurposes",
+          "type": "array<string>"
+        }
+      ],
+      "accessed_api_keys": [
+        {
+          "key": "NSPrivacyAccessedAPIType",
+          "type": "string"
+        },
+        {
+          "key": "NSPrivacyAccessedAPITypeReasons",
+          "type": "array<string>"
+        }
+      ],
+      "data_types": [
+        {
+          "category": "Contact info",
+          "values": [
+            "NSPrivacyCollectedDataTypeName",
+            "NSPrivacyCollectedDataTypeEmailAddress",
+            "NSPrivacyCollectedDataTypePhoneNumber",
+            "NSPrivacyCollectedDataTypePhysicalAddress",
+            "NSPrivacyCollectedDataTypeOtherUserContactInfo"
+          ]
+        },
+        {
+          "category": "Health and fitness",
+          "values": [
+            "NSPrivacyCollectedDataTypeHealth",
+            "NSPrivacyCollectedDataTypeFitness"
+          ]
+        },
+        {
+          "category": "Financial info",
+          "values": [
+            "NSPrivacyCollectedDataTypePaymentInfo",
+            "NSPrivacyCollectedDataTypeCreditInfo",
+            "NSPrivacyCollectedDataTypeOtherFinancialInfo"
+          ]
+        },
+        {
+          "category": "Location",
+          "values": [
+            "NSPrivacyCollectedDataTypePreciseLocation",
+            "NSPrivacyCollectedDataTypeCoarseLocation"
+          ]
+        },
+        {
+          "category": "Sensitive info",
+          "values": [
+            "NSPrivacyCollectedDataTypeSensitiveInfo"
+          ]
+        },
+        {
+          "category": "Contacts",
+          "values": [
+            "NSPrivacyCollectedDataTypeContacts"
+          ]
+        },
+        {
+          "category": "User content",
+          "values": [
+            "NSPrivacyCollectedDataTypeEmailsOrTextMessages",
+            "NSPrivacyCollectedDataTypePhotosorVideos",
+            "NSPrivacyCollectedDataTypeAudioData",
+            "NSPrivacyCollectedDataTypeGameplayContent",
+            "NSPrivacyCollectedDataTypeCustomerSupport",
+            "NSPrivacyCollectedDataTypeOtherUserContent"
+          ]
+        },
+        {
+          "category": "Browsing and search history",
+          "values": [
+            "NSPrivacyCollectedDataTypeBrowsingHistory",
+            "NSPrivacyCollectedDataTypeSearchHistory"
+          ]
+        },
+        {
+          "category": "Identifiers",
+          "values": [
+            "NSPrivacyCollectedDataTypeUserID",
+            "NSPrivacyCollectedDataTypeDeviceID"
+          ]
+        },
+        {
+          "category": "Usage data",
+          "values": [
+            "NSPrivacyCollectedDataTypePurchaseHistory",
+            "NSPrivacyCollectedDataTypeProductInteraction",
+            "NSPrivacyCollectedDataTypeAdvertisingData",
+            "NSPrivacyCollectedDataTypeOtherUsageData"
+          ]
+        },
+        {
+          "category": "Diagnostics",
+          "values": [
+            "NSPrivacyCollectedDataTypeCrashData",
+            "NSPrivacyCollectedDataTypePerformanceData",
+            "NSPrivacyCollectedDataTypeOtherDiagnosticData"
+          ]
+        },
+        {
+          "category": "Surroundings and body",
+          "values": [
+            "NSPrivacyCollectedDataTypeEnvironmentScanning",
+            "NSPrivacyCollectedDataTypeHands",
+            "NSPrivacyCollectedDataTypeHead"
+          ]
+        },
+        {
+          "category": "Other",
+          "values": [
+            "NSPrivacyCollectedDataTypeOtherDataTypes"
+          ]
+        }
+      ],
+      "purposes": [
+        {
+          "value": "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising",
+          "summary": "Third-party ads in the app, or sharing data with entities that show third-party ads."
+        },
+        {
+          "value": "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising",
+          "summary": "The developer's own ads or marketing, or sharing data with entities that show them."
+        },
+        {
+          "value": "NSPrivacyCollectedDataTypePurposeAnalytics",
+          "summary": "Evaluating behavior, measuring audience, or understanding feature effectiveness."
+        },
+        {
+          "value": "NSPrivacyCollectedDataTypePurposeProductPersonalization",
+          "summary": "Customizing what the person sees, such as recommendations or suggestions."
+        },
+        {
+          "value": "NSPrivacyCollectedDataTypePurposeAppFunctionality",
+          "summary": "Authentication, features, fraud prevention, security, uptime, crash minimization, performance, or support."
+        },
+        {
+          "value": "NSPrivacyCollectedDataTypePurposeOther",
+          "summary": "Any purpose not listed."
         }
       ]
     },
@@ -1945,6 +3268,265 @@
         "video_player_avfoundation",
         "wakelock",
         "webview_flutter_wkwebview"
+      ]
+    },
+    "tracking-sdks": {
+      "verified": "2026-10-01",
+      "sdks": [
+        {
+          "name": "Google Mobile Ads",
+          "kind": "advertising",
+          "signals": [
+            "GoogleMobileAds",
+            "GADMobileAds",
+            "GADBannerView",
+            "react-native-google-mobile-ads",
+            "google_mobile_ads"
+          ]
+        },
+        {
+          "name": "Meta Audience Network",
+          "kind": "advertising",
+          "signals": [
+            "FBAudienceNetwork",
+            "FBAdView",
+            "FBInterstitialAd"
+          ]
+        },
+        {
+          "name": "AppLovin",
+          "kind": "advertising",
+          "signals": [
+            "AppLovinSDK",
+            "ALSdk",
+            "applovin_max",
+            "react-native-applovin-max"
+          ]
+        },
+        {
+          "name": "Unity Ads",
+          "kind": "advertising",
+          "signals": [
+            "UnityAds",
+            "unity_ads_plugin"
+          ]
+        },
+        {
+          "name": "ironSource LevelPlay",
+          "kind": "advertising",
+          "signals": [
+            "IronSource",
+            "IronSourceSDK",
+            "ironsource_mediation"
+          ]
+        },
+        {
+          "name": "Liftoff Vungle",
+          "kind": "advertising",
+          "signals": [
+            "VungleSDK",
+            "VungleAdsSDK"
+          ]
+        },
+        {
+          "name": "Chartboost",
+          "kind": "advertising",
+          "signals": [
+            "ChartboostSDK"
+          ]
+        },
+        {
+          "name": "InMobi",
+          "kind": "advertising",
+          "signals": [
+            "InMobiSDK"
+          ]
+        },
+        {
+          "name": "Mintegral",
+          "kind": "advertising",
+          "signals": [
+            "MTGSDK",
+            "MintegralAdSDK"
+          ]
+        },
+        {
+          "name": "Pangle",
+          "kind": "advertising",
+          "signals": [
+            "PAGAdSDK",
+            "BUAdSDK"
+          ]
+        },
+        {
+          "name": "Amazon Publisher Services",
+          "kind": "advertising",
+          "signals": [
+            "DTBiOSSDK"
+          ]
+        },
+        {
+          "name": "AppsFlyer",
+          "kind": "attribution",
+          "signals": [
+            "AppsFlyerLib",
+            "react-native-appsflyer",
+            "appsflyer_sdk"
+          ]
+        },
+        {
+          "name": "Adjust",
+          "kind": "attribution",
+          "signals": [
+            "AdjustSdk",
+            "ADJConfig",
+            "react-native-adjust",
+            "adjust_sdk"
+          ]
+        },
+        {
+          "name": "Branch",
+          "kind": "attribution",
+          "signals": [
+            "BranchSDK",
+            "Branch.getInstance",
+            "react-native-branch",
+            "flutter_branch_sdk"
+          ]
+        },
+        {
+          "name": "Kochava",
+          "kind": "attribution",
+          "signals": [
+            "KochavaTracker",
+            "KochavaNetworking"
+          ]
+        },
+        {
+          "name": "Singular",
+          "kind": "attribution",
+          "signals": [
+            "SingularConfig",
+            "singular-react-native"
+          ]
+        },
+        {
+          "name": "Tenjin",
+          "kind": "attribution",
+          "signals": [
+            "TenjinSDK"
+          ]
+        },
+        {
+          "name": "Meta SDK app events",
+          "kind": "attribution",
+          "signals": [
+            "FBSDKCoreKit",
+            "FBSDKAppEvents",
+            "react-native-fbsdk-next",
+            "facebook_app_events"
+          ]
+        },
+        {
+          "name": "Firebase Analytics",
+          "kind": "analytics",
+          "signals": [
+            "FirebaseAnalytics",
+            "@react-native-firebase/analytics",
+            "firebase_analytics"
+          ]
+        },
+        {
+          "name": "Amplitude",
+          "kind": "analytics",
+          "signals": [
+            "AmplitudeSwift",
+            "Amplitude.instance",
+            "@amplitude/analytics-react-native",
+            "amplitude_flutter"
+          ]
+        },
+        {
+          "name": "Mixpanel",
+          "kind": "analytics",
+          "signals": [
+            "Mixpanel.initialize",
+            "Mixpanel.mainInstance",
+            "mixpanel-react-native",
+            "mixpanel_flutter"
+          ]
+        },
+        {
+          "name": "Segment",
+          "kind": "analytics",
+          "signals": [
+            "import Segment",
+            "SEGAnalytics",
+            "@segment/analytics-react-native"
+          ]
+        },
+        {
+          "name": "PostHog",
+          "kind": "analytics",
+          "signals": [
+            "PostHogSDK",
+            "posthog-react-native",
+            "posthog_flutter"
+          ]
+        },
+        {
+          "name": "Datadog RUM",
+          "kind": "analytics",
+          "signals": [
+            "DatadogRUM",
+            "@datadog/mobile-react-native"
+          ]
+        },
+        {
+          "name": "Firebase Crashlytics",
+          "kind": "crash-reporting",
+          "signals": [
+            "FirebaseCrashlytics",
+            "@react-native-firebase/crashlytics",
+            "firebase_crashlytics"
+          ]
+        },
+        {
+          "name": "Sentry",
+          "kind": "crash-reporting",
+          "signals": [
+            "SentrySDK",
+            "@sentry/react-native",
+            "sentry_flutter"
+          ]
+        },
+        {
+          "name": "Bugsnag",
+          "kind": "crash-reporting",
+          "signals": [
+            "BugsnagPerformance",
+            "Bugsnag.start",
+            "@bugsnag/react-native"
+          ]
+        },
+        {
+          "name": "OneSignal",
+          "kind": "engagement",
+          "signals": [
+            "OneSignalFramework",
+            "react-native-onesignal",
+            "onesignal_flutter"
+          ]
+        },
+        {
+          "name": "Braze",
+          "kind": "engagement",
+          "signals": [
+            "BrazeKit",
+            "@braze/react-native-sdk",
+            "braze_plugin"
+          ]
+        }
       ]
     },
     "traits": {

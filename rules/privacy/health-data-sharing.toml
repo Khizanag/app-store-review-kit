@@ -1,0 +1,30 @@
+id = "privacy.health-data-sharing"
+title = "Health data can reach advertising or analytics SDKs"
+severity = "error"
+evidence = ["source", "binary", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.3", "5.1.2"]
+applies_when = ["health"]
+summary = """
+The app reads HealthKit, clinical health records, or Motion and Fitness data and also links advertising, attribution, or analytics SDKs. Guidelines 5.1.3(i) and 5.1.2(vi) forbid using or disclosing health and fitness data for advertising, marketing, or use-based data mining, and HealthKit terms bar sharing it with a third party that does not provide a health or fitness service to the person.
+"""
+fix = """
+Keep health data out of every analytics event, ad request, and attribution payload. Share it with a third party only with explicit permission and only for health management or research. Provide a privacy policy, required for any app that uses HealthKit, and disclose in it the specific health data the app collects.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.3",
+  "https://developer.apple.com/documentation/healthkit/protecting-user-privacy",
+]
+
+[check]
+id = "sensitive-data-with-sdks"
+confidence = "low"
+catalog = "tracking-sdks"
+signals = ["HKHealthStore", "HKClinicalRecord", "com.apple.developer.healthkit", "CMPedometer", "CMMotionActivityManager"]
+
+[review]
+questions = [
+  "Does any HealthKit or fitness value, or anything derived from it, go into analytics events, ad targeting, or attribution?",
+  "Does the privacy policy name the specific health data the app collects?",
+  "If the app gives a benefit based on health data, such as an insurance discount, is it submitted by the entity giving the benefit, with no third-party sharing?",
+]

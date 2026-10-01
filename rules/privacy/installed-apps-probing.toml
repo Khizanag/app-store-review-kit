@@ -1,0 +1,28 @@
+id = "privacy.installed-apps-probing"
+title = "App probes which other apps are installed"
+severity = "warning"
+evidence = ["plist", "source", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.2"]
+summary = """
+Guideline 5.1.2(iv) forbids collecting which other apps are installed on a device for analytics, advertising, or marketing. A long `LSApplicationQueriesSchemes` list with `canOpenURL` checks for apps unrelated to the app's own features, such as competitors or social apps, reads as that kind of probing. The system caps the list at 50 entries, and at 25 for apps linked on iOS 27 or later.
+"""
+fix = """
+Query only the schemes of apps the feature hands off to, such as a maps or payment app, and keep the result on the device. Remove scheme lists that ad or attribution SDKs ask you to add.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.2",
+  "https://developer.apple.com/documentation/uikit/uiapplication/canopenurl(_:)",
+]
+
+[check]
+id = "url-scheme-queries"
+confidence = "low"
+plist_key = "LSApplicationQueriesSchemes"
+max_entries = 15
+signals = ["canOpenURL"]
+
+[review]
+questions = [
+  "Does each queried URL scheme belong to an app the feature actually opens, and does the result stay on the device?",
+]

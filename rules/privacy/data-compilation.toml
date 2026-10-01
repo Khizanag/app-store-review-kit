@@ -1,0 +1,21 @@
+id = "privacy.data-compilation"
+title = "App compiles personal information people did not provide"
+severity = "error"
+evidence = ["human"]
+enforced_by = "app-review"
+guidelines = ["5.1.1"]
+summary = """
+Guideline 5.1.1(viii) bans apps that compile personal information from any source other than the person, or without their explicit consent, even from public databases. People-search, background-check, reverse-lookup, and scraped-profile apps are rejected outright.
+"""
+fix = """
+Show only data the person entered about themselves, or data a subject explicitly agreed to share through the app. Drop scraped, purchased, or public-record datasets about third parties.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.1",
+]
+
+[review]
+questions = [
+  "Does the app show or search personal information about people who never used it or agreed to it?",
+  "Does any data come from scraping, data brokers, or public records rather than from the person it describes?",
+]

@@ -1,0 +1,28 @@
+id = "privacy.health-icloud-storage"
+title = "Health data may be stored in iCloud or written inaccurately"
+severity = "error"
+evidence = ["source", "entitlements", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.3"]
+applies_when = ["health"]
+summary = """
+Guideline 5.1.3(ii) forbids storing personal health information in iCloud and writing false or inaccurate data into HealthKit or other health apps. An app that has both HealthKit and iCloud, CloudKit, or key-value store entitlements can sync health records to iCloud without anyone deciding to.
+"""
+fix = """
+Keep health data in HealthKit and on-device storage, or in your own secured backend with the person's consent. Exclude health models from CloudKit-backed stores and `NSUbiquitousKeyValueStore`. Write samples to HealthKit only from real measurements or explicit entries by the person.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.3",
+]
+
+[check]
+id = "health-with-icloud"
+confidence = "low"
+health_signals = ["HKHealthStore", "HKClinicalRecord", "com.apple.developer.healthkit"]
+icloud_signals = ["com.apple.developer.icloud-services", "com.apple.developer.ubiquity-kvstore-identifier", "CKContainer", "NSPersistentCloudKitContainer", "cloudKitDatabase", "NSUbiquitousKeyValueStore"]
+
+[review]
+questions = [
+  "Does any health value, or a record derived from one, sync to iCloud through CloudKit, iCloud Drive, a CloudKit-backed store, or the key-value store?",
+  "Does the app write to HealthKit only values that were measured or entered by the person?",
+]

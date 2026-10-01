@@ -1,0 +1,26 @@
+id = "privacy.collected-data-undeclared"
+title = "Data-collecting SDKs present but no collected data declared"
+severity = "warning"
+evidence = ["source", "binary", "manifest", "human"]
+enforced_by = "app-store-connect"
+guidelines = ["5.1.1", "5.1.2"]
+summary = """
+The app links analytics, crash-reporting, advertising, attribution, or engagement SDKs, yet no privacy manifest in the bundle declares `NSPrivacyCollectedDataTypes`. App Privacy details must cover data that third-party partners collect through your app, and Xcode's privacy report, the starting point for those answers, shows nothing for the app's own collection.
+"""
+fix = """
+List what each SDK collects, from the vendor's privacy documentation and its own manifest, and declare it in App Store Connect App Privacy and in the app's manifest with the right linked, tracking, and purpose values. Update SDKs whose releases ship no manifest.
+"""
+references = [
+  "https://developer.apple.com/app-store/app-privacy-details/",
+  "https://developer.apple.com/documentation/bundleresources/describing-data-use-in-privacy-manifests",
+]
+
+[check]
+id = "collected-data-declared"
+confidence = "medium"
+catalog = "tracking-sdks"
+
+[review]
+questions = [
+  "Do the App Privacy answers in App Store Connect include every data type each SDK collects, marked linked or tracking where it is?",
+]

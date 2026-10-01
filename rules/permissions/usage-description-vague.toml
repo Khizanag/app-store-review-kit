@@ -5,22 +5,44 @@ evidence = ["plist", "human"]
 enforced_by = "app-review"
 guidelines = ["5.1.1"]
 summary = """
-Guideline 5.1.1(ii) requires purpose strings that "clearly and completely describe your use of the data". Strings like "This app needs camera access" or a bare product name are among the most common 5.1.1 rejections.
+Guideline 5.1.1(ii) requires purpose strings that "clearly and completely describe your use of the data". Strings like "This app needs camera access", an untouched Expo config plugin default such as "Allow $(PRODUCT_NAME) to access your camera", or a bare product name are among the most common 5.1.1 rejections.
 """
 fix = """
-Say what feature uses the data and what the person gets, with an example: "Scan receipts with the camera to add expenses automatically."
+Say what feature uses the data and what the person gets, in a complete active sentence: "Scan receipts with the camera to add expenses automatically." Localize every purpose string.
 """
 references = [
   "https://developer.apple.com/app-store/review/guidelines/#5.1.1",
+  "https://developer.apple.com/design/human-interface-guidelines/privacy",
 ]
 
 [check]
 id = "usage-description-quality"
 confidence = "low"
 min_length = 25
-placeholders = ["TODO", "TBD", "lorem", "placeholder", "test", "description", "needs access", "requires access", "would like to access"]
+# Whole value, trimmed and lowercased, equals one of these.
+placeholders = ["todo", "tbd", "test", "description", "usage", "reason", "permission", "placeholder", "lorem ipsum", "n/a", "na", "x", "xxx", "required", "needed"]
+# Value contains one of these, case-insensitive.
+vague_phrases = [
+  "allow $(product_name)",
+  "this app needs",
+  "this app requires",
+  "this app uses",
+  "app needs access",
+  "app requires access",
+  "needs access to",
+  "requires access to",
+  "would like to access",
+  "we need",
+  "for better experience",
+  "for a better experience",
+  "for the app to work",
+  "to function properly",
+  "for app functionality",
+  "lorem ipsum",
+]
 
 [review]
 questions = [
   "Does each purpose string name the feature that uses the data and what the person gets from it?",
+  "Is every purpose string translated in each language the app supports?",
 ]

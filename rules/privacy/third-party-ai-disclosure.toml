@@ -1,16 +1,16 @@
 id = "privacy.third-party-ai-disclosure"
 title = "Personal data may be sent to a third-party AI service"
 severity = "warning"
-evidence = ["source", "human"]
+evidence = ["source", "runtime", "human"]
 enforced_by = "app-review"
 guidelines = ["5.1.2"]
 applies_when = ["ai"]
 since = "2025-11-13"
 summary = """
-The app calls a hosted AI model, such as OpenAI, Anthropic, or Google Gemini. Guideline 5.1.2(i) requires clear disclosure of where personal data goes, including to third-party AI, and explicit permission before sharing it.
+The app calls a hosted AI model, such as OpenAI, Anthropic, or Google Gemini. Guideline 5.1.2(i) requires clear disclosure of where personal data goes, including to third-party AI, and explicit permission before sharing it. A consent screen still falls short when it never names the provider, or when a seen or first-launch flag gates it, so the screen can be dismissed or skipped without an answer and requests go out anyway.
 """
 fix = """
-Before the first request, show what data goes to which provider and why, and get explicit consent. Mirror it in the privacy policy and the App Privacy details. Prefer on-device models where they do the job.
+Before the first request, show what data goes to which named provider and why, and get explicit consent. Gate every request on the stored consent value alone, never on a seen or onboarding flag, and keep the app usable when the person declines. Mirror it in the privacy policy and the App Privacy details. Prefer on-device models where they do the job.
 """
 references = [
   "https://developer.apple.com/app-store/review/guidelines/#5.1.2",
@@ -21,17 +21,29 @@ id = "third-party-ai-endpoints"
 confidence = "medium"
 hosts = [
   "api.openai.com",
+  "openai.azure.com",
   "api.anthropic.com",
   "generativelanguage.googleapis.com",
+  "aiplatform.googleapis.com",
+  "bedrock-runtime",
+  "api.x.ai",
   "api.mistral.ai",
+  "api.cohere.com",
+  "api.cohere.ai",
+  "api.deepseek.com",
+  "api.perplexity.ai",
   "api.groq.com",
   "api.together.xyz",
   "openrouter.ai",
 ]
-packages = ["OpenAI", "SwiftOpenAI", "AnthropicSwiftSDK", "GoogleGenerativeAI", "FirebaseVertexAI", "FirebaseAI"]
+packages = ["OpenAI", "SwiftOpenAI", "AnthropicSwiftSDK", "SwiftAnthropic", "GoogleGenerativeAI", "FirebaseVertexAI", "FirebaseAI"]
+vendor_names = ["OpenAI", "ChatGPT", "Anthropic", "Claude", "Gemini", "Google AI", "Mistral", "Cohere", "DeepSeek", "Perplexity", "xAI", "Grok", "Groq", "Together AI", "OpenRouter", "Amazon Bedrock", "Azure OpenAI"]
+consent_signals = ["aiConsent", "hasConsented", "dataSharingConsent", "ConsentView"]
+seen_flag_signals = ["hasSeen", "didShow", "alreadyShown", "onboardingComplete", "isFirstLaunch"]
 
 [review]
 questions = [
-  "Does the app tell the person which data goes to which AI provider before the first request?",
+  "Does the app name each AI provider and the data it receives before the first request?",
+  "Does the consent screen keep appearing until the person answers, with no request sent before they agree?",
   "Does the person give explicit permission, and does the app keep working when they decline?",
 ]

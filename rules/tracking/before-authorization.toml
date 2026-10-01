@@ -1,0 +1,30 @@
+id = "tracking.before-authorization"
+title = "Tracking starts before the person answers the tracking prompt"
+severity = "warning"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.2"]
+applies_when = ["advertising"]
+summary = """
+An ad or attribution SDK starts, or code reads the advertising identifier, at launch, while the App Tracking Transparency request comes later or only on some paths. Data sent before the answer is tracking without permission, which guideline 5.1.2(i) forbids. If the app tracks from launch, the system prompt must come before any tracking data is collected.
+"""
+fix = """
+Start tracking SDKs, or enable their tracking features, only in the completion of `requestTrackingAuthorization` and only when the status is `.authorized`. Read `advertisingIdentifier` only after authorization; before it, the identifier is all zeros anyway.
+"""
+references = [
+  "https://developer.apple.com/documentation/apptrackingtransparency",
+  "https://developer.apple.com/design/human-interface-guidelines/privacy",
+]
+
+[check]
+id = "tracking-init-order"
+confidence = "low"
+catalog = "tracking-sdks"
+kinds = ["advertising", "attribution"]
+early_contexts = ["didFinishLaunchingWithOptions", "willFinishLaunchingWithOptions", "App.init", "@main"]
+gate_signals = ["trackingAuthorizationStatus", "requestTrackingAuthorization", ".authorized"]
+
+[review]
+questions = [
+  "With tracking denied, does any SDK still send the advertising identifier or cross-app identifiers?",
+]

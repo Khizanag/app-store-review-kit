@@ -1,0 +1,26 @@
+id = "privacy.sensitive-api-data-ads"
+title = "Home, classroom, or face and depth data can reach ad or analytics SDKs"
+severity = "error"
+evidence = ["source", "binary", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.2"]
+summary = """
+Guideline 5.1.2(vi) bars using data from HomeKit, HealthKit, Clinical Health Records, MovementDisorder APIs, ClassKit, or depth and facial mapping tools such as ARKit face tracking and camera depth data for marketing, advertising, or use-based data mining, including by third parties. An app that reads these sources and also links ad or analytics SDKs needs to show the data never flows to them.
+"""
+fix = """
+Keep values from these frameworks, and anything derived from them, out of analytics events, ad requests, and attribution payloads. Process face and depth data on the device and discard it after the feature uses it.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.2",
+]
+
+[check]
+id = "sensitive-data-with-sdks"
+confidence = "low"
+catalog = "tracking-sdks"
+signals = ["HMHomeManager", "CLSDataStore", "ARFaceTrackingConfiguration", "ARFaceAnchor", "AVDepthData", "isDepthDataDeliveryEnabled", "sceneDepth"]
+
+[review]
+questions = [
+  "Does any HomeKit, ClassKit, face, or depth value, or anything derived from it, reach analytics, advertising, or a data broker?",
+]

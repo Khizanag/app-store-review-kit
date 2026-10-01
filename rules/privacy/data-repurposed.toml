@@ -1,0 +1,21 @@
+id = "privacy.data-repurposed"
+title = "Data collected for one purpose reused for another"
+severity = "warning"
+evidence = ["human"]
+enforced_by = "app-review"
+guidelines = ["5.1.2"]
+summary = """
+Guideline 5.1.2(ii) forbids repurposing data collected for one purpose without further consent, unless the law explicitly permits it. Using a delivery phone number for marketing texts, or photos uploaded for one feature to train models or target ads, are typical cases. Guideline 5.1.2(i) also limits sharing app data with third parties to improving the app or serving ads.
+"""
+fix = """
+Use each data type only for the purpose shown when it was collected and stated in the privacy policy. Ask again, with a clear explanation, before any new use, and keep the original feature working if the person says no.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.2",
+]
+
+[review]
+questions = [
+  "Is any data used for a purpose beyond the one the person was told about when it was collected?",
+  "Is data shared with third parties for anything other than improving the app or serving ads?",
+]
