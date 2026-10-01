@@ -9,7 +9,14 @@ INDEX = {
     "last_updated": "2026-06-08",
     "sections": [
         {"slug": "5", "number": "5", "title": "Legal", "parent": None, "omitted": False},
-        {"slug": "5.1", "number": "5.1", "title": "Privacy", "parent": "5", "omitted": False},
+        {
+            "slug": "5.1",
+            "number": "5.1",
+            "title": "Privacy",
+            "parent": "5",
+            "omitted": False,
+            "children": ["5.1.1"],
+        },
         {"slug": "5.1.1", "number": "5.1.1", "title": "Data", "parent": "5.1", "omitted": False},
         {"slug": "2.5.7", "number": "2.5.7", "title": "", "parent": "2.5", "omitted": True},
     ],

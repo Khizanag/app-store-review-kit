@@ -15,13 +15,14 @@ class Row:
     label: str
     rules: tuple[Rule, ...]
     omitted: bool
+    covered_by_subsections: bool = False
 
     @property
     def level(self) -> str:
         if self.omitted:
             return "n/a"
         if not self.rules:
-            return "uncovered"
+            return "subsections" if self.covered_by_subsections else "uncovered"
         return min((rule.automation for rule in self.rules), key=LEVEL_ORDER.index).value
 
 
@@ -30,14 +31,21 @@ def rows(rulebook: Rulebook) -> list[Row]:
     for rule in rulebook.rules:
         for section in rule.guidelines:
             by_section[section].append(rule)
+    sections = rulebook.guideline_sections
+
+    def has_rules_below(slug: str) -> bool:
+        children = sections.get(slug, {}).get("children", [])
+        return any(by_section[child] or has_rules_below(child) for child in children)
+
     return [
         Row(
             slug=slug,
             label=_label(section),
             rules=tuple(sorted(by_section[slug], key=lambda r: r.id)),
             omitted=section.get("omitted", False),
+            covered_by_subsections=has_rules_below(slug),
         )
-        for slug, section in rulebook.guideline_sections.items()
+        for slug, section in sections.items()
         if "." in (section.get("number") or "")
     ]
 
@@ -60,14 +68,16 @@ def render(rulebook: Rulebook) -> str:
         "",
         "A section's level is the strongest automation among its rules: "
         "**automated** needs no human, **assisted** finds evidence and asks a human to judge it, "
-        "**manual** is a review question only, **uncovered** has no rule yet.",
+        "**manual** is a review question only, "
+        "**subsections** is a heading whose subsections hold the rules, "
+        "**uncovered** has no rule yet.",
         "",
         "## Summary",
         "",
         "| Level | Sections | Rules |",
         "| --- | --- | --- |",
     ]
-    for level in ("automated", "assisted", "manual", "uncovered", "n/a"):
+    for level in ("automated", "assisted", "manual", "subsections", "uncovered", "n/a"):
         rule_count = str(rule_counts[level]) if level in rule_counts else "-"
         lines.append(f"| {level} | {counts[level]} | {rule_count} |")
     lines += [

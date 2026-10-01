@@ -27,7 +27,7 @@ def test_compiles_rules_and_catalogs(repo: Path, write_rule: WriteRule) -> None:
 def test_coverage_levels(repo: Path, write_rule: WriteRule) -> None:
     write_rule("privacy/example.toml", VALID_RULE)
     levels = {row.slug: row.level for row in coverage.rows(load(repo))}
-    assert levels == {"5.1": "uncovered", "5.1.1": "automated", "2.5.7": "n/a"}
+    assert levels == {"5.1": "subsections", "5.1.1": "automated", "2.5.7": "n/a"}
     assert "| [5.1.1 Data](guidelines/5.1.1.md) | automated | `privacy.example` |" in (
         coverage.render(load(repo))
     )
