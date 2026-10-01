@@ -1,0 +1,24 @@
+id = "legal.age-rating"
+title = "Age rating questionnaire incomplete or inaccurate"
+severity = "error"
+evidence = ["metadata", "human"]
+enforced_by = "app-store-connect"
+guidelines = ["2.3.6"]
+since = "2026-01-31"
+summary = """
+App Store ratings now include 13+, 16+, and 18+, with new required questions on in-app controls, capabilities, medical or wellness topics, and violent themes. Updates cannot be submitted until the new questionnaire is answered, and inaccurate answers draw 2.3.6 rejections.
+"""
+fix = """
+Answer the updated age rating questionnaire in App Store Connect honestly, covering user-generated content, web access, and AI chat features.
+"""
+references = [
+  "https://developer.apple.com/news/?id=ks775ehf",
+]
+
+[check]
+id = "asc-age-rating"
+
+[review]
+questions = [
+  "Do the answers account for user-generated content, unrestricted web access, and AI-generated content?",
+]

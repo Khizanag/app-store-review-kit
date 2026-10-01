@@ -1,0 +1,18 @@
+id = "privacy.tracking-domains-missing"
+title = "Manifest declares tracking without listing tracking domains"
+severity = "warning"
+evidence = ["manifest"]
+enforced_by = "app-review"
+guidelines = ["5.1.2"]
+summary = """
+`NSPrivacyTracking` is true but `NSPrivacyTrackingDomains` is empty. The system blocks connections to tracking domains until the person grants permission, so undeclared domains keep receiving traffic the person never agreed to.
+"""
+fix = """
+List every domain that receives tracking data in `NSPrivacyTrackingDomains`, and request App Tracking Transparency permission before contacting them.
+"""
+references = [
+  "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacytrackingdomains",
+]
+
+[check]
+id = "manifest-tracking-domains"

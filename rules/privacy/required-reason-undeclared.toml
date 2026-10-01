@@ -1,0 +1,21 @@
+id = "privacy.required-reason-undeclared"
+title = "Required reason API used without a declared reason"
+severity = "error"
+evidence = ["source", "binary", "manifest"]
+enforced_by = "upload"
+guidelines = ["5.1.1"]
+since = "2024-05-01"
+itms = ["ITMS-91053"]
+summary = """
+Code in the bundle calls an API from a required reason category, such as `UserDefaults`, file timestamps, system boot time, disk space, or active keyboards, and the bundle's privacy manifest does not declare that category. App Store Connect rejects the upload.
+"""
+fix = """
+Add an `NSPrivacyAccessedAPITypes` entry for the category with the approved reason codes that match the real use. Each framework that calls the API needs the declaration in its own manifest; the app's manifest does not cover an SDK.
+"""
+references = [
+  "https://developer.apple.com/documentation/bundleresources/describing-use-of-required-reason-api",
+]
+
+[check]
+id = "required-reason-apis"
+catalog = "required-reason-apis"

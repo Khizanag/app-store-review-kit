@@ -1,0 +1,17 @@
+id = "legal.accessibility-labels"
+title = "Accessibility Nutrition Labels not declared"
+severity = "note"
+evidence = ["metadata", "runtime"]
+enforced_by = "app-store-connect"
+summary = """
+Accessibility Nutrition Labels show on the product page which features, such as VoiceOver, Larger Text, or Sufficient Contrast, the app supports for its common tasks. Declaring them is voluntary today, and Apple has said it will become required over time.
+"""
+fix = """
+Test the common tasks with each feature, then declare the supported ones per device in App Store Connect under Accessibility.
+"""
+references = [
+  "https://developer.apple.com/help/app-store-connect/manage-app-accessibility/overview-of-accessibility-nutrition-labels",
+]
+
+[check]
+id = "asc-accessibility-labels"

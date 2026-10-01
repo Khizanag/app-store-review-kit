@@ -1,0 +1,19 @@
+id = "permissions.location-always-pair"
+title = "Always-location purpose string without the when-in-use string"
+severity = "error"
+evidence = ["plist"]
+enforced_by = "upload"
+guidelines = ["5.1.1"]
+summary = """
+`NSLocationAlwaysAndWhenInUseUsageDescription` is set but `NSLocationWhenInUseUsageDescription` is missing. The system needs both to show the upgrade prompt, and the upload is flagged.
+"""
+fix = """
+Add `NSLocationWhenInUseUsageDescription`. Ask for when-in-use first and request always access only when a feature needs background location.
+"""
+references = [
+  "https://developer.apple.com/documentation/corelocation/requesting-authorization-to-use-location-services",
+]
+
+[check]
+id = "plist-key-pairs"
+requires = { NSLocationAlwaysAndWhenInUseUsageDescription = "NSLocationWhenInUseUsageDescription" }

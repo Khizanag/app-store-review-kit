@@ -1,0 +1,21 @@
+id = "privacy.sdk-manifest-missing"
+title = "Listed third-party SDK ships without a privacy manifest or signature"
+severity = "error"
+evidence = ["binary", "project"]
+enforced_by = "upload"
+guidelines = ["5.1.2"]
+since = "2025-02-12"
+itms = ["ITMS-91061"]
+summary = """
+The app embeds an SDK from Apple's list of commonly used third-party SDKs, and that copy has no privacy manifest or, as a binary dependency, no valid signature. Uploads of new apps and of updates that add the SDK are rejected.
+"""
+fix = """
+Update the SDK to a release that includes `PrivacyInfo.xcprivacy` and, for XCFrameworks, a signature. If no such release exists, replace the SDK.
+"""
+references = [
+  "https://developer.apple.com/support/third-party-SDK-requirements/",
+]
+
+[check]
+id = "sdk-privacy-manifests"
+catalog = "third-party-sdks"

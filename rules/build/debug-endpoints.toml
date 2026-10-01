@@ -1,0 +1,16 @@
+id = "build.debug-endpoints"
+title = "Development endpoints shipped in the release build"
+severity = "warning"
+evidence = ["source", "binary"]
+enforced_by = "app-review"
+guidelines = ["2.1"]
+summary = """
+URLs pointing at localhost, private network addresses, tunnels, or staging hosts in the release build usually mean a feature that fails for the reviewer, which is a 2.1 completeness rejection.
+"""
+fix = """
+Move environment URLs behind build configurations and make sure the Release configuration points at production.
+"""
+
+[check]
+id = "debug-hosts"
+patterns = ["localhost", "127.0.0.1", "0.0.0.0", "192.168.", "10.0.2.2", ".ngrok", ".local:", "staging.", "dev."]

@@ -1,0 +1,18 @@
+id = "network.ipv4-literals"
+title = "Hard-coded IPv4 addresses"
+severity = "warning"
+evidence = ["source"]
+enforced_by = "app-review"
+guidelines = ["2.5.5"]
+summary = """
+Apps must work on IPv6-only networks, which App Review uses. Connecting to IPv4 literals or using IPv4-only socket APIs fails there.
+"""
+fix = """
+Connect by hostname with `URLSession` or `Network.framework`, which handle NAT64 automatically.
+"""
+references = [
+  "https://developer.apple.com/support/ipv6/",
+]
+
+[check]
+id = "ipv4-literals"

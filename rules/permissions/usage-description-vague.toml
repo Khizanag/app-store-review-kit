@@ -1,0 +1,25 @@
+id = "permissions.usage-description-vague"
+title = "Purpose string is empty, a placeholder, or too vague"
+severity = "warning"
+evidence = ["plist", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.1"]
+summary = """
+Guideline 5.1.1(ii) requires purpose strings that "clearly and completely describe your use of the data". Strings like "This app needs camera access" or a bare product name are among the most common 5.1.1 rejections.
+"""
+fix = """
+Say what feature uses the data and what the person gets, with an example: "Scan receipts with the camera to add expenses automatically."
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.1",
+]
+
+[check]
+id = "usage-description-quality"
+min_length = 25
+placeholders = ["TODO", "TBD", "lorem", "placeholder", "test", "description", "needs access", "requires access", "would like to access"]
+
+[review]
+questions = [
+  "Does each purpose string name the feature that uses the data and what the person gets from it?",
+]

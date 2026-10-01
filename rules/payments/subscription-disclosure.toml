@@ -1,0 +1,26 @@
+id = "payments.subscription-disclosure"
+title = "Subscription terms not clearly disclosed"
+severity = "warning"
+evidence = ["metadata", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.2"]
+summary = """
+Auto-renewable subscriptions must provide ongoing value, last at least seven days, and state clearly what the person gets, the price, and the billing period before purchase. The app and its metadata must link the Terms of Use (EULA) and the privacy policy.
+"""
+fix = """
+Show price, period, and what is included on the paywall, with the billed amount as the most prominent price. Link Terms of Use and Privacy Policy on the paywall and in the App Store description or the EULA field.
+"""
+references = [
+  "https://developer.apple.com/app-store/subscriptions/",
+]
+
+[check]
+id = "subscription-links"
+signals = ["SubscriptionStoreView", "subscription", "Product.SubscriptionInfo"]
+
+[review]
+questions = [
+  "Is the billed amount the most prominent price on the paywall, with any per-week breakdown secondary?",
+  "Does the paywall show the trial length and what happens when it ends?",
+  "Are Terms of Use and Privacy Policy linked from the paywall?",
+]

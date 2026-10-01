@@ -1,0 +1,19 @@
+id = "metadata.field-lengths"
+title = "Store text exceeds App Store Connect limits"
+severity = "error"
+evidence = ["metadata"]
+enforced_by = "app-store-connect"
+summary = """
+App Store Connect caps the subtitle at 30 characters, keywords at 100 bytes, promotional text at 170 characters, and the description and What's New text at 4,000 characters each, per localization.
+"""
+fix = """
+Trim the field. Keywords count bytes, so non-Latin scripts fit fewer characters; separate them with commas and no spaces.
+"""
+references = [
+  "https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information",
+]
+
+[check]
+id = "metadata-length"
+limits = { subtitle = 30, promotional_text = 170, description = 4000, release_notes = 4000 }
+byte_limits = { keywords = 100 }

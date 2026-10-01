@@ -1,0 +1,22 @@
+id = "account.demo-account"
+title = "Login-gated app without demo credentials for App Review"
+severity = "error"
+evidence = ["metadata", "source"]
+enforced_by = "app-review"
+guidelines = ["2.1"]
+summary = """
+Guideline 2.1 asks for demo account details when the app has a login, with the backend running during review. A missing or broken demo account is one of the most common 2.1 rejections.
+"""
+fix = """
+Fill in Sign-in Information under App Review Information in App Store Connect with a working account that exposes every feature, including paid ones. If login needs a code or hardware, explain how to get past it in the review notes or provide a demo mode.
+"""
+
+[check]
+id = "demo-account"
+login_signals = ["ASAuthorizationAppleIDProvider", "GoogleSignIn", "SecureField", "signIn(", "login("]
+
+[review]
+questions = [
+  "Does the demo account work right now, and will it still work in two weeks?",
+  "Does it unlock every feature the reviewer needs to see, including subscriptions?",
+]

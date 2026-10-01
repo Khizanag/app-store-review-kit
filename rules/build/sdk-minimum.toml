@@ -1,0 +1,19 @@
+id = "build.sdk-minimum"
+title = "Built with an SDK older than App Store Connect accepts"
+severity = "error"
+evidence = ["binary", "project"]
+enforced_by = "upload"
+since = "2026-04-28"
+summary = """
+Since April 28, 2026, new apps and updates must be built with the iOS 26, iPadOS 26, tvOS 26, visionOS 26, or watchOS 26 SDK, which means Xcode 26 or later. Older builds are rejected at upload.
+"""
+fix = """
+Build and archive with Xcode 26 or later. The deployment target can stay lower; only the SDK must be current.
+"""
+references = [
+  "https://developer.apple.com/news/upcoming-requirements/",
+]
+
+[check]
+id = "sdk-version"
+minimum = { iphoneos = "26.0", appletvos = "26.0", xros = "26.0", watchos = "26.0", macosx = "26.0" }

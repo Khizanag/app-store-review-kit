@@ -1,0 +1,22 @@
+id = "metadata.review-notes"
+title = "Review notes do not explain non-obvious features"
+severity = "warning"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["2.3.1", "2.1"]
+summary = """
+Guideline 2.3.1 forbids hidden, dormant, or undocumented features, and asks for every new feature and in-app purchase to be described with specificity in the Notes for Review. Remote feature flags, region-locked features, hardware dependencies, and special configuration all need explaining.
+"""
+fix = """
+List each feature that is not obvious from the first launch, how to reach it, and any account, location, or hardware it needs. Mention remote configuration and what it can change.
+"""
+
+[check]
+id = "review-notes"
+flag_signals = ["RemoteConfig", "FirebaseRemoteConfig", "LaunchDarkly", "Statsig", "Optimizely", "ConfigCat"]
+
+[review]
+questions = [
+  "Is every feature that needs an account, a location, a device, or a flag described in the notes?",
+  "Can remote configuration turn on anything the reviewer did not see?",
+]

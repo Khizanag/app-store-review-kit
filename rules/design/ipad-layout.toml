@@ -1,0 +1,20 @@
+id = "design.ipad-layout"
+title = "iPhone app does not hold up on iPad"
+severity = "note"
+evidence = ["project", "runtime"]
+enforced_by = "app-review"
+guidelines = ["2.4.1"]
+summary = """
+iPhone apps should run on iPad whenever possible, and App Review tests iPhone-only apps on iPad too. Clipped layouts or crashes there count against the submission.
+"""
+fix = """
+Support iPad in the target, or at least test the iPhone app in compatibility mode on an iPad simulator before submitting.
+"""
+
+[check]
+id = "device-family"
+
+[review]
+questions = [
+  "Does every screen lay out and work on the smallest and largest iPad?",
+]

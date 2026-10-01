@@ -1,0 +1,20 @@
+id = "privacy.required-reason-invalid"
+title = "Privacy manifest declares an unknown or misplaced reason code"
+severity = "error"
+evidence = ["manifest"]
+enforced_by = "upload"
+guidelines = ["5.1.1"]
+since = "2024-05-01"
+summary = """
+A reason code in `NSPrivacyAccessedAPITypeReasons` is not one Apple lists for that category, or is an SDK-only reason (`0A2A.1`, `C56D.1`) declared by the app itself.
+"""
+fix = """
+Use only the reason codes Apple lists for each category, and only the ones that describe the real use. Remove SDK-wrapper reasons from the app target's manifest.
+"""
+references = [
+  "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitype",
+]
+
+[check]
+id = "required-reason-codes"
+catalog = "required-reason-apis"

@@ -1,0 +1,21 @@
+id = "build.executable-code"
+title = "Code downloaded or loaded at runtime"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["2.5.2"]
+summary = """
+Apps must be self-contained and may not download, install, or execute code that adds or changes features. `dlopen` on a downloaded path, loading bundles from the Documents folder, or evaluating remote scripts that drive native features are red flags. Interpreted code that runs in WebKit or JavaScriptCore is allowed when it does not change the app's primary purpose.
+"""
+fix = """
+Ship features in the binary and gate them with local flags. Keep remote content to data, not code.
+"""
+
+[check]
+id = "dynamic-code"
+patterns = ["dlopen(", "Bundle(path:", "NSBundle bundleWithPath", "evaluateScript("]
+
+[review]
+questions = [
+  "Does any downloaded content add features or change what the app does, beyond data and web content?",
+]

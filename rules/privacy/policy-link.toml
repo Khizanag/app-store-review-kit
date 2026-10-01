@@ -1,0 +1,21 @@
+id = "privacy.policy-link"
+title = "Privacy policy missing from metadata or the app"
+severity = "error"
+evidence = ["metadata", "source", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.1"]
+summary = """
+Every app needs a privacy policy linked both in the App Store Connect metadata and inside the app, easy to find. The policy must say what data is collected and how, who it is shared with, how long it is kept, and how to revoke consent or request deletion.
+"""
+fix = """
+Set the Privacy Policy URL in App Store Connect, link the same page from the app's settings or about screen, and make sure the policy covers collection, sharing, retention, deletion, and consent withdrawal.
+"""
+
+[check]
+id = "privacy-policy-url"
+
+[review]
+questions = [
+  "Is the privacy policy reachable from inside the app without signing in?",
+  "Does it cover collection, third-party sharing, retention, deletion, and consent withdrawal?",
+]

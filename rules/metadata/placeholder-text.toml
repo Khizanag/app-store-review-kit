@@ -1,0 +1,16 @@
+id = "metadata.placeholder-text"
+title = "Placeholder or test content in the app or its metadata"
+severity = "error"
+evidence = ["source", "metadata"]
+enforced_by = "app-review"
+guidelines = ["2.1", "2.3.1"]
+summary = """
+Submissions must be final: placeholder text, empty web pages, and temporary content must be gone. Lorem ipsum, TODO strings, or "test" entries in String Catalogs or store text are rejected under 2.1.
+"""
+fix = """
+Replace every placeholder with final copy in each shipped localization, and check that every URL in the metadata opens a real page.
+"""
+
+[check]
+id = "placeholder-strings"
+terms = ["lorem ipsum", "TODO", "FIXME", "TBD", "placeholder", "sample text", "test test", "coming soon"]

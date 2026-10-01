@@ -1,0 +1,20 @@
+id = "permissions.usage-description-missing"
+title = "Protected resource requested without a purpose string"
+severity = "error"
+evidence = ["source", "plist"]
+enforced_by = "upload"
+guidelines = ["5.1.1"]
+itms = ["ITMS-90683"]
+summary = """
+The app calls an API that requests access to a protected resource, such as the camera, photos, location, or contacts, but its Info.plist lacks the matching purpose string. Upload is rejected, and at runtime the app crashes when it asks.
+"""
+fix = """
+Add the purpose string key for the resource to Info.plist, or the target's Info tab, with a specific sentence on why the app needs it. Localize it like the rest of the UI.
+"""
+references = [
+  "https://developer.apple.com/documentation/uikit/requesting-access-to-protected-resources",
+]
+
+[check]
+id = "usage-descriptions"
+catalog = "usage-descriptions"

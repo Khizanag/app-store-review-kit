@@ -1,0 +1,21 @@
+id = "design.web-wrapper"
+title = "App is mostly a wrapped website"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["4.2", "4.2.2"]
+summary = """
+Apps must offer features, content, and UI beyond a repackaged website. An app whose main screen is a `WKWebView` loading the developer's site, with little native functionality, is rejected for minimum functionality.
+"""
+fix = """
+Build the core flows natively and use platform capabilities the website cannot, such as offline use, widgets, notifications, or system integrations.
+"""
+
+[check]
+id = "web-wrapper"
+signals = ["WKWebView", "WebView(", "SFSafariViewController", "WebPage("]
+
+[review]
+questions = [
+  "Is there meaningful native functionality beyond the web content?",
+]

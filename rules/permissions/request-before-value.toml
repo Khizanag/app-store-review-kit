@@ -1,0 +1,19 @@
+id = "permissions.request-before-value"
+title = "Permissions requested before the person sees why"
+severity = "warning"
+evidence = ["runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.1"]
+summary = """
+Guideline 5.1.1(iv) forbids manipulating or forcing consent, and expects alternatives when the person declines. Requesting several permissions at launch, re-prompting after a denial, or blocking the app until access is granted all draw rejections.
+"""
+fix = """
+Request each permission at the moment the feature needs it. Keep the app usable after a denial: offer a manual alternative, such as typing an address instead of sharing location, and a link to Settings.
+"""
+
+[review]
+questions = [
+  "Does the app ask for any permission before the person starts the feature that needs it?",
+  "Does every feature still work, or offer an alternative, after the person declines?",
+  "Does any pre-permission screen use only a neutral Continue button, with no dark patterns?",
+]

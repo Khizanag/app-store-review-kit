@@ -1,0 +1,18 @@
+id = "build.app-icon"
+title = "App Store icon missing or has transparency"
+severity = "error"
+evidence = ["project", "binary"]
+enforced_by = "upload"
+itms = ["ITMS-90717"]
+summary = """
+The app needs a 1024 by 1024 App Store icon in its asset catalog, without an alpha channel. A missing or transparent marketing icon fails upload validation.
+"""
+fix = """
+Add a 1024 by 1024 opaque PNG to the AppIcon set, or design it in Icon Composer, and archive again.
+"""
+references = [
+  "https://developer.apple.com/design/human-interface-guidelines/app-icons",
+]
+
+[check]
+id = "app-icon"

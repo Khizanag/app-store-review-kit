@@ -1,0 +1,35 @@
+id = "privacy.third-party-ai-disclosure"
+title = "Personal data may be sent to a third-party AI service"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.2"]
+since = "2025-11-13"
+summary = """
+The app calls a hosted AI model, such as OpenAI, Anthropic, or Google Gemini. Guideline 5.1.2(i) requires clear disclosure of where personal data goes, including to third-party AI, and explicit permission before sharing it.
+"""
+fix = """
+Before the first request, show what data goes to which provider and why, and get explicit consent. Mirror it in the privacy policy and the App Privacy details. Prefer on-device models where they do the job.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.1.2",
+]
+
+[check]
+id = "third-party-ai-endpoints"
+hosts = [
+  "api.openai.com",
+  "api.anthropic.com",
+  "generativelanguage.googleapis.com",
+  "api.mistral.ai",
+  "api.groq.com",
+  "api.together.xyz",
+  "openrouter.ai",
+]
+packages = ["OpenAI", "SwiftOpenAI", "AnthropicSwiftSDK", "GoogleGenerativeAI", "FirebaseVertexAI", "FirebaseAI"]
+
+[review]
+questions = [
+  "Does the app tell the person which data goes to which AI provider before the first request?",
+  "Does the person give explicit permission, and does the app keep working when they decline?",
+]

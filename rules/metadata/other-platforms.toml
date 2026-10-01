@@ -1,0 +1,17 @@
+id = "metadata.other-platforms"
+title = "Store text mentions other platforms"
+severity = "warning"
+evidence = ["metadata"]
+enforced_by = "app-review"
+guidelines = ["2.3.10"]
+summary = """
+Metadata must focus on the Apple platforms the app supports and not mention other mobile platforms or their stores.
+"""
+fix = """
+Remove references to other platforms and stores, unless the app's core function is interoperating with them.
+"""
+
+[check]
+id = "metadata-terms"
+fields = ["name", "subtitle", "description", "keywords", "promotional_text", "release_notes"]
+terms = ["Android", "Google Play", "Play Store", "Windows Phone", "BlackBerry", "Huawei AppGallery", "Galaxy Store"]

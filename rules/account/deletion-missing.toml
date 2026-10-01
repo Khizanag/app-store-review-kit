@@ -1,0 +1,28 @@
+id = "account.deletion-missing"
+title = "Account creation without in-app account deletion"
+severity = "error"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.1"]
+since = "2022-06-30"
+summary = """
+Apps that support account creation must let people start deleting the account from inside the app, not only by email or a website hidden behind support. Apps using Sign in with Apple must also revoke the user's tokens when the account is deleted.
+"""
+fix = """
+Add a clearly labeled delete-account action in account settings. Confirm, then delete the account and its data, or explain the timeline if regulations require retention. For Sign in with Apple, call the REST API to revoke tokens.
+"""
+references = [
+  "https://developer.apple.com/support/offering-account-deletion-in-your-app/",
+]
+
+[check]
+id = "account-deletion"
+creation_signals = ["createUser", "signUp", "register(", "ASAuthorizationAppleIDProvider", "Auth.auth().createUser"]
+deletion_signals = ["deleteAccount", "delete account", "deleteUser", "user.delete", "revokeToken", "/auth/revoke"]
+
+[review]
+questions = [
+  "Can a signed-in person reach account deletion from the app's settings in a few taps?",
+  "Does deletion remove the account and its data, not just sign out or deactivate?",
+  "Are Sign in with Apple tokens revoked on deletion?",
+]

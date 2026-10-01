@@ -1,0 +1,27 @@
+id = "account.login-service-equivalent"
+title = "Third-party login without a privacy-preserving alternative"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["4.8"]
+summary = """
+Apps that use a third-party or social login service, such as Google or Facebook, to set up the primary account must also offer an equivalent login that limits collection to name and email, lets people keep their email private, and does not track without consent. Sign in with Apple meets all three.
+"""
+fix = """
+Add Sign in with Apple, or another service with the same privacy properties, alongside the existing social logins, with equal prominence.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#4.8",
+  "https://developer.apple.com/design/human-interface-guidelines/sign-in-with-apple",
+]
+
+[check]
+id = "login-services"
+third_party = ["GoogleSignIn", "FBSDKLoginKit", "LineSDK", "TwitterKit", "MSAL", "KakaoSDKAuth"]
+privacy_preserving = ["ASAuthorizationAppleIDProvider", "SignInWithAppleButton"]
+
+[review]
+questions = [
+  "Does the equivalent login appear with the same prominence as the social logins?",
+  "Is the app exempt, for example a client for the developer's own account system or an enterprise or education app?",
+]

@@ -1,0 +1,17 @@
+id = "metadata.name-length"
+title = "App name longer than 30 characters"
+severity = "error"
+evidence = ["metadata"]
+enforced_by = "app-store-connect"
+guidelines = ["2.3.7"]
+summary = """
+App names are limited to 30 characters. App Store Connect refuses longer names for every localization.
+"""
+fix = """
+Shorten the name and move descriptive words to the subtitle or keywords.
+"""
+
+[check]
+id = "metadata-length"
+field = "name"
+max = 30

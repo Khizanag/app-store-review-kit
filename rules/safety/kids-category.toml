@@ -1,0 +1,21 @@
+id = "safety.kids-category"
+title = "Kids Category app includes third-party analytics or advertising"
+severity = "error"
+evidence = ["metadata", "binary", "human"]
+enforced_by = "app-review"
+guidelines = ["1.3", "5.1.4"]
+summary = """
+Kids Category apps may not include third-party analytics or advertising, with narrow exceptions, may not send personal information or device data to third parties, and must put links out of the app and purchases behind a parental gate.
+"""
+fix = """
+Remove third-party analytics and ad SDKs, or move the app out of the Kids Category. Add a parental gate before external links and purchases.
+"""
+
+[check]
+id = "kids-sdks"
+sdks = ["FirebaseAnalytics", "GoogleMobileAds", "FBSDKCoreKit", "AppsFlyerLib", "Adjust", "Amplitude", "Mixpanel", "Segment", "UnityAds", "AppLovinSDK"]
+
+[review]
+questions = [
+  "Is there a parental gate before every external link, purchase, and permission request?",
+]

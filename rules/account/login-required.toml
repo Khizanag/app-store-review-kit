@@ -1,0 +1,18 @@
+id = "account.login-required"
+title = "Login required for features that do not need an account"
+severity = "warning"
+evidence = ["runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.1"]
+summary = """
+Guideline 5.1.1(v): if the app lacks significant account-based features, people must be able to use it without logging in. Requiring personal data that the core function does not need is also not allowed.
+"""
+fix = """
+Let people browse and use non-account features before signing in. Ask for sign-in only at the feature that needs it.
+"""
+
+[review]
+questions = [
+  "Can a new person do anything useful before creating an account?",
+  "Does every required sign-up field serve a core feature or a legal requirement?",
+]

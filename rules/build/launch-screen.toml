@@ -1,0 +1,17 @@
+id = "build.launch-screen"
+title = "No launch screen configured"
+severity = "error"
+evidence = ["plist"]
+enforced_by = "upload"
+summary = """
+iPhone and iPad apps must provide a launch screen through `UILaunchScreen` or `UILaunchStoryboardName`. Without one the app runs letterboxed on modern devices and the upload is rejected.
+"""
+fix = """
+Add a `UILaunchScreen` dictionary to Info.plist, or the Launch Screen section in the target's Info tab.
+"""
+references = [
+  "https://developer.apple.com/documentation/bundleresources/information-property-list/uilaunchscreen",
+]
+
+[check]
+id = "launch-screen"

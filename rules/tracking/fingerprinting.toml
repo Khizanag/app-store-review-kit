@@ -1,0 +1,20 @@
+id = "tracking.fingerprinting"
+title = "Device signals collected in a way that looks like fingerprinting"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["5.1.2"]
+summary = """
+Fingerprinting is not allowed, with or without tracking permission. Combining signals such as boot time, disk size, keyboard list, screen metrics, or locale into an identifier, or sending required reason API data off-device, breaks both the guideline and the declared reasons.
+"""
+fix = """
+Use required reason APIs only for their declared reasons, keep derived values on-device unless the reason allows otherwise, and never combine device signals into an identifier.
+"""
+references = [
+  "https://developer.apple.com/app-store/user-privacy-and-data-use/",
+]
+
+[review]
+questions = [
+  "Does any code or SDK combine device properties into an identifier or send them to a server?",
+]

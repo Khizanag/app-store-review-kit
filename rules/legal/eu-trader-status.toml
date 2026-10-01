@@ -1,0 +1,18 @@
+id = "legal.eu-trader-status"
+title = "EU trader status not provided"
+severity = "error"
+evidence = ["metadata"]
+enforced_by = "app-store-connect"
+since = "2025-02-17"
+summary = """
+Under the EU Digital Services Act, every developer must declare whether they are a trader to distribute in the European Union. Traders must also verify an address, phone number, and email, which appear on the product page. Apps without a declaration are removed from EU storefronts.
+"""
+fix = """
+Set the trader status under Business in App Store Connect and complete verification if you are a trader.
+"""
+references = [
+  "https://developer.apple.com/help/app-store-connect/manage-compliance-information/manage-european-union-digital-services-act-trader-requirements",
+]
+
+[check]
+id = "asc-trader-status"

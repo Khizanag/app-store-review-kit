@@ -1,0 +1,25 @@
+id = "metadata.apple-trademarks"
+title = "Apple trademarks used in the app name or icon"
+severity = "warning"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["5.2.5", "2.3.7"]
+summary = """
+Apps may not look confusingly similar to Apple products or imply Apple endorsement. Using Apple trademarks such as iPhone, iPad, Apple Watch, Siri, or App Store as part of the app name, or Apple product images in the icon, is a common rejection.
+"""
+fix = """
+Use Apple trademarks only referentially in the description, for example "for iPhone". Keep them out of the name and icon.
+"""
+references = [
+  "https://www.apple.com/legal/intellectual-property/guidelinesfor3rdparties.html",
+]
+
+[check]
+id = "metadata-terms"
+fields = ["name", "subtitle"]
+terms = ["iPhone", "iPad", "iOS", "Apple", "Mac", "Siri", "App Store", "Apple Watch", "AirPods", "FaceTime", "iCloud"]
+
+[review]
+questions = [
+  "Does the icon use an Apple product image or an Apple glyph?",
+]

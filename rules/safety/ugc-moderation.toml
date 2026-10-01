@@ -1,0 +1,23 @@
+id = "safety.ugc-moderation"
+title = "User-generated content without moderation tools"
+severity = "error"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["1.2"]
+summary = """
+Apps with user-generated content or social features must filter objectionable material, let people report offensive content with timely responses, let people block abusive users, and publish contact information. Random or anonymous chat apps fall under the same rule.
+"""
+fix = """
+Ship report and block actions on every piece of user content and every profile, a filtering step, published contact details, and terms that forbid objectionable content.
+"""
+
+[check]
+id = "ugc-signals"
+signals = ["comment", "post", "upload", "chat", "message", "feed", "follow"]
+
+[review]
+questions = [
+  "Can a person report any post, comment, or message from where they see it?",
+  "Can a person block another user, and does blocking hide that user's content?",
+  "Is there a filter for objectionable content, and contact details in the app?",
+]

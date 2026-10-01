@@ -1,0 +1,21 @@
+id = "metadata.whats-new-generic"
+title = "What's New text does not describe the changes"
+severity = "note"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["2.3.12"]
+summary = """
+What's New must describe new features and product changes. Generic text is fine only for bug fixes, security updates, and performance improvements.
+"""
+fix = """
+List the user-visible changes in the release notes for each localization.
+"""
+
+[check]
+id = "release-notes-generic"
+phrases = ["bug fixes and performance improvements", "bug fixes and improvements", "minor improvements", "various fixes"]
+
+[review]
+questions = [
+  "Does this release add or change a feature the release notes do not mention?",
+]

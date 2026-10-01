@@ -1,0 +1,19 @@
+id = "design.spam"
+title = "App duplicates the developer's other apps or a saturated category"
+severity = "warning"
+evidence = ["human"]
+enforced_by = "app-review"
+guidelines = ["4.3"]
+summary = """
+Guideline 4.3 rejects multiple bundle IDs for the same app, apps indistinguishable from what is widely available, and template-based apps. Since June 2026, existing apps that are not updated, improved, or attracting customers may also be removed.
+"""
+fix = """
+Merge variants into one app with in-app choices. In the review notes, state what is distinctive about the app compared with the category.
+"""
+
+[review]
+questions = [
+  "Does the developer account have another app with the same core function?",
+  "What does this app do that the top apps in its category do not?",
+  "Is it built from a commercial template or app generator?",
+]

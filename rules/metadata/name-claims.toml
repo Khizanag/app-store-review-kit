@@ -1,0 +1,17 @@
+id = "metadata.name-claims"
+title = "Name or subtitle carries prices, rankings, or unverifiable claims"
+severity = "warning"
+evidence = ["metadata"]
+enforced_by = "app-review"
+guidelines = ["2.3.7"]
+summary = """
+Names, subtitles, screenshots, and previews may not include prices, terms that do not describe the app, or unverifiable claims such as "best" or "#1", and may not pack popular app names or trademarks.
+"""
+fix = """
+Describe what the app does in plain words. Move prices and offers to promotional text.
+"""
+
+[check]
+id = "metadata-terms"
+fields = ["name", "subtitle"]
+terms = ["free", "$", "€", "% off", "sale", "best", "#1", "number one", "top rated", "no. 1", "discount"]

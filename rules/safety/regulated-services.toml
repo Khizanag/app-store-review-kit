@@ -1,0 +1,18 @@
+id = "safety.regulated-services"
+title = "Regulated service submitted by an individual developer"
+severity = "warning"
+evidence = ["human"]
+enforced_by = "app-review"
+guidelines = ["5.1.1", "1.4.1"]
+summary = """
+Apps in highly regulated fields, such as banking, healthcare, gambling, cannabis, air travel, or crypto exchanges, or apps that need sensitive data, should be submitted by the legal entity that provides the service. Medical apps that could cause harm get extra scrutiny.
+"""
+fix = """
+Submit from the organization's developer account, and include licenses or regulatory approvals in the review notes.
+"""
+
+[review]
+questions = [
+  "Does the app provide a regulated service, and is the account holder the licensed entity?",
+  "For medical features, does the app disclose its data and methods, and are any regulatory clearances available?",
+]

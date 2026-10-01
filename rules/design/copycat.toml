@@ -1,0 +1,18 @@
+id = "design.copycat"
+title = "Name, icon, or UI copies another app or an Apple product"
+severity = "warning"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["4.1", "5.2.5"]
+summary = """
+Apps may not copy another developer's name, icon, brand, or UI, and may not look confusingly similar to Apple products, interfaces, or apps.
+"""
+fix = """
+Use an original name and icon, and check them against the App Store and a trademark search before submitting.
+"""
+
+[review]
+questions = [
+  "Does a search for the app name show another app with the same or a confusable name or icon?",
+  "Does any screen imitate an Apple app or system UI closely enough to be mistaken for it?",
+]

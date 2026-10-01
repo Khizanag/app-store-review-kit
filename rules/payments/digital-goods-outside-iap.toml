@@ -1,0 +1,26 @@
+id = "payments.digital-goods-outside-iap"
+title = "Digital content may be sold outside in-app purchase"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.1", "3.1.3"]
+summary = """
+The app links a general payment SDK, such as Stripe or PayPal, or opens checkout URLs. Unlocking features, content, or subscriptions inside the app must use in-app purchase unless an exception in 3.1.3 applies, such as physical goods and services consumed outside the app, reader apps, or storefront-specific entitlements.
+"""
+fix = """
+Route digital unlocks through StoreKit. Keep the external processor only for physical goods, real-world services, or a storefront where you hold the matching entitlement, and say which exception applies in the review notes.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.1",
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.3",
+]
+
+[check]
+id = "external-payments"
+signals = ["StripePaymentSheet", "Stripe", "PayPalCheckout", "Braintree", "checkout.stripe.com", "paypal.com/checkoutnow"]
+
+[review]
+questions = [
+  "Does anything bought outside in-app purchase unlock content or features inside the app?",
+  "If yes, which 3.1.3 exception or storefront entitlement covers it?",
+]

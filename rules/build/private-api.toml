@@ -1,0 +1,16 @@
+id = "build.private-api"
+title = "Non-public API or private framework in use"
+severity = "error"
+evidence = ["source", "binary"]
+enforced_by = "app-review"
+guidelines = ["2.5.1"]
+summary = """
+Apps may use public APIs only. Linking a private framework, calling underscore-prefixed or undocumented selectors, or reaching private classes through `NSClassFromString` or `perform(_:)` leads to rejection, often by automated binary scanning.
+"""
+fix = """
+Replace the call with a public API. If a dependency does it, update or replace the dependency.
+"""
+
+[check]
+id = "private-symbols"
+patterns = ["/PrivateFrameworks/", "LSApplicationWorkspace", "_UIApplication", "UIStatusBarManager().performSelector", "NSClassFromString(\"_", "Selector((\"_"]

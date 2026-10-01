@@ -1,0 +1,18 @@
+id = "legal.export-compliance"
+title = "Encryption export compliance not declared"
+severity = "note"
+evidence = ["plist"]
+enforced_by = "app-store-connect"
+summary = """
+Without `ITSAppUsesNonExemptEncryption` in Info.plist, App Store Connect asks the export compliance questions for every build, and the build waits until someone answers.
+"""
+fix = """
+Set `ITSAppUsesNonExemptEncryption` to `false` if the app uses only exempt encryption, such as HTTPS and Apple's system APIs. Otherwise answer the questions and upload the documentation.
+"""
+references = [
+  "https://developer.apple.com/documentation/security/complying-with-encryption-export-regulations",
+]
+
+[check]
+id = "plist-key-present"
+key = "ITSAppUsesNonExemptEncryption"

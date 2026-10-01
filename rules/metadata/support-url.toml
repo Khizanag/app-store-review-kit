@@ -1,0 +1,21 @@
+id = "metadata.support-url"
+title = "Support URL missing, broken, or without contact details"
+severity = "warning"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["1.5"]
+summary = """
+The Support URL must load and give people an easy way to reach the developer. Broken pages and pages with no contact path draw 1.5 and 2.1 rejections.
+"""
+fix = """
+Point the Support URL at a live page with an email address or contact form, and keep it reachable without signing in.
+"""
+
+[check]
+id = "url-reachable"
+fields = ["support_url", "marketing_url", "privacy_policy_url"]
+
+[review]
+questions = [
+  "Does the support page show an email address or a contact form?",
+]

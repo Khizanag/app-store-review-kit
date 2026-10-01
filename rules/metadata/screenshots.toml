@@ -1,0 +1,24 @@
+id = "metadata.screenshots"
+title = "Screenshots missing, mis-sized, or not showing the app in use"
+severity = "warning"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["2.3.3"]
+summary = """
+App Store Connect needs at least one screenshot in an accepted size for each supported device family. Screenshots must show the app in use, not just title art, a login page, or a splash screen, and must not show features the build lacks.
+"""
+fix = """
+Capture real screens from the submitted build for every supported device family, such as iPhone and iPad, and keep marketing text to a caption.
+"""
+references = [
+  "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications",
+]
+
+[check]
+id = "screenshot-sets"
+
+[review]
+questions = [
+  "Does every screenshot show a screen that exists in this build?",
+  "Is any screenshot only a splash, login, or title-art frame?",
+]

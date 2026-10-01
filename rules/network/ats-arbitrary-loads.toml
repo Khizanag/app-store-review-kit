@@ -1,0 +1,23 @@
+id = "network.ats-arbitrary-loads"
+title = "App Transport Security disabled globally"
+severity = "warning"
+evidence = ["plist", "human"]
+enforced_by = "app-review"
+guidelines = ["1.6"]
+summary = """
+`NSAllowsArbitraryLoads` turns off App Transport Security for every connection. App Review asks for a justification, and plain HTTP exposes user data.
+"""
+fix = """
+Remove the global exception. Use HTTPS, or add a narrow `NSExceptionDomains` entry for the specific host that cannot, and explain it in the review notes.
+"""
+references = [
+  "https://developer.apple.com/documentation/bundleresources/information-property-list/nsapptransportsecurity",
+]
+
+[check]
+id = "ats-exceptions"
+
+[review]
+questions = [
+  "Which hosts cannot use HTTPS, and is the exception limited to them?",
+]

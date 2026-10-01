@@ -1,0 +1,19 @@
+id = "privacy.manifest-missing"
+title = "App target has no privacy manifest"
+severity = "warning"
+evidence = ["project", "binary"]
+enforced_by = "upload"
+guidelines = ["5.1.1", "5.1.2"]
+since = "2024-05-01"
+summary = """
+The app bundle ships without a `PrivacyInfo.xcprivacy`. Any use of a required reason API, including `UserDefaults`, then fails upload validation, and the App Store privacy report has nothing to aggregate from the app's own code.
+"""
+fix = """
+Add a `PrivacyInfo.xcprivacy` to the app target (File > New > File > App Privacy). Declare tracking, collected data types, and every required reason API category the app's own code uses.
+"""
+references = [
+  "https://developer.apple.com/documentation/bundleresources/privacy-manifest-files",
+]
+
+[check]
+id = "privacy-manifest-present"

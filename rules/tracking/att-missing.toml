@@ -1,0 +1,19 @@
+id = "tracking.att-missing"
+title = "Advertising identifier read without App Tracking Transparency"
+severity = "error"
+evidence = ["source", "plist"]
+enforced_by = "app-review"
+guidelines = ["5.1.2"]
+summary = """
+The app or an SDK reads the advertising identifier (`ASIdentifierManager.advertisingIdentifier`) or links an ad or attribution SDK, but never requests tracking permission with `ATTrackingManager`, or has no `NSUserTrackingUsageDescription`.
+"""
+fix = """
+Request permission with `ATTrackingManager.requestTrackingAuthorization` before any tracking, add the purpose string, and declare tracking in the privacy manifest and App Privacy details. If the app does not track, remove the identifier access.
+"""
+references = [
+  "https://developer.apple.com/documentation/apptrackingtransparency",
+]
+
+[check]
+id = "att-usage"
+signals = ["ASIdentifierManager", "advertisingIdentifier", "AppsFlyerLib", "Adjust", "FBAudienceNetwork", "GoogleMobileAds"]
