@@ -15,6 +15,7 @@ APPLE_ORIGIN = "https://developer.apple.com"
 SECTION_NUMBER = re.compile(r"^\d+(\.\d+)*$")
 LEADING_NUMBER = re.compile(r"^\s*\d+(\.\d+)*\.?\s*")
 EXCERPT_WORDS = 10
+OMITTED = "Intentionally omitted."
 PSEUDO_HEADING = re.compile(r"^\*\*([^*]+)\*\*$", re.MULTILINE)
 LAST_UPDATED = re.compile(r"Last Updated:\s*<a[^>]*>\s*([A-Z][a-z]+ \d{1,2}, \d{4})")
 
@@ -76,6 +77,7 @@ def write(snapshot: Snapshot, out: Path) -> None:
         "last_updated": snapshot.last_updated,
         "sections": [
             {key: value for key, value in asdict(section).items() if key != "body"}
+            | {"omitted": section.body == OMITTED}
             for section in snapshot.sections
         ],
     }

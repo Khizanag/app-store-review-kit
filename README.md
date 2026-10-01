@@ -16,6 +16,10 @@ Static App Store scanners exist; each one encodes Apple's rules privately and cl
 | Path | Contents |
 | --- | --- |
 | [`guidelines/`](guidelines/README.md) | Mirror of the App Review Guidelines, plus `index.json` with the section tree |
+| `rules/<area>/<name>.toml` | One rule per file; the id is `<area>.<name>` |
+| `catalogs/` | Reference data rules share: required reason APIs, SDKs that need privacy manifests, purpose strings |
+| [`rulebook.json`](rulebook.json) | Every rule and catalog compiled into one file for tools to consume |
+| [`COVERAGE.md`](COVERAGE.md) | Every guideline against the rules that cover it |
 | `tools/` | `rulebook` Python CLI: mirror, validate, and compile the rulebook |
 
 ## Mirror the guidelines
@@ -27,6 +31,38 @@ uv run rulebook mirror
 ```
 
 `mirror` fetches the live page, writes one Markdown file per section, and removes sections Apple deleted. Review the diff, then commit it with the date Apple published.
+
+## Rule format
+
+```toml
+id = "privacy.required-reason-undeclared"
+title = "Required reason API used without a declared reason"
+severity = "error"                       # error, warning, or note
+evidence = ["source", "binary", "manifest"]
+enforced_by = "upload"                   # upload, app-store-connect, or app-review
+guidelines = ["5.1.1"]
+since = "2024-05-01"
+itms = ["ITMS-91053"]
+summary = "What goes wrong and why Apple cares."
+fix = "What to change."
+references = ["https://developer.apple.com/..."]
+
+[check]                                  # what a machine can verify
+id = "required-reason-apis"
+catalog = "required-reason-apis"
+
+[review]                                 # what a person must judge
+questions = ["..."]
+```
+
+`evidence` is one or more of `source`, `plist`, `entitlements`, `manifest`, `project`, `binary`, `metadata`, `runtime`, and `human`. A rule with only `[check]` is **automated**, with both is **assisted**, and with only `[review]` is **manual**. `enforced_by` says when the problem surfaces: at upload, in an App Store Connect form, or in App Review.
+
+After editing rules, regenerate the outputs:
+
+```bash
+cd tools
+uv run rulebook validate && uv run rulebook build && uv run rulebook coverage
+```
 
 ## Develop
 
