@@ -1,0 +1,28 @@
+id = "capabilities.matter"
+title = "Matter pairing without Apple's framework"
+severity = "error"
+evidence = ["source", "binary", "human"]
+enforced_by = "app-review"
+guidelines = ["2.5.17"]
+summary = """
+Apps that support Matter must start pairing through Apple's MatterSupport framework. Any Matter software component other than Apple's Matter SDK must be certified by the Connectivity Standards Alliance for the platform it runs on.
+"""
+fix = """
+Start commissioning with `MatterAddDeviceRequest` and handle setup in a `MatterAddDeviceExtensionRequestHandler` extension. Replace uncertified Matter stacks with Apple's SDK or a CSA-certified build.
+"""
+references = [
+  "https://developer.apple.com/documentation/mattersupport",
+]
+
+[check]
+id = "source-patterns"
+confidence = "low"
+code_only = true
+patterns = ['\bMTRDeviceController\b', '\bMTRBaseDevice\b', '\bCHIPDeviceController\b', '\bimport Matter\b', '\bconnectedhomeip\b']
+satisfied_by = ['\bMatterAddDeviceRequest\b', '\bMatterAddDeviceExtensionRequestHandler\b']
+
+[review]
+questions = [
+  "Does pairing start from MatterAddDeviceRequest?",
+  "Is every non-Apple Matter component in the app CSA-certified for the platform it runs on?",
+]

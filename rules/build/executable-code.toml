@@ -1,22 +1,36 @@
+# Hot-patching SDK names adapted from berkayturk/appstore-precheck and ElxMaj/app-store-review-skill (both MIT).
 id = "build.executable-code"
 title = "Code downloaded or loaded at runtime"
 severity = "warning"
-evidence = ["source", "human"]
+evidence = ["source", "binary", "human"]
 enforced_by = "app-review"
 guidelines = ["2.5.2"]
 summary = """
-Apps must be self-contained and may not download, install, or execute code that adds or changes features. `dlopen` on a downloaded path, loading bundles from the Documents folder, or evaluating remote scripts that drive native features are red flags. Interpreted code that runs in WebKit or JavaScriptCore is allowed when it does not change the app's primary purpose.
+Apps must be self-contained and may not download, install, or execute code that adds or changes features. `dlopen` on a downloaded path, loading bundles from the Documents folder, native hot-patching frameworks such as JSPatch or Rollout, or evaluating remote scripts that drive native features are red flags. Interpreted code that runs in WebKit or JavaScriptCore is allowed when it does not change the app's primary purpose.
 """
 fix = """
-Ship features in the binary and gate them with local flags. Keep remote content to data, not code.
+Ship features in the binary and gate them with local flags. Keep remote content to data, not code. Remove native hot-patching SDKs.
 """
 
 [check]
 id = "dynamic-code"
 confidence = "low"
-patterns = ["dlopen(", "Bundle(path:", "NSBundle bundleWithPath", "evaluateScript("]
+patterns = [
+  "dlopen(",
+  "Bundle(path:",
+  "Bundle(url:",
+  "NSBundle bundleWithPath",
+  "evaluateScript(",
+  "JSPatch",
+  "JPEngine",
+  "rollout.io",
+  "import Rollout",
+  "DynamicCocoa",
+  "import SwiftPatch",
+]
 
 [review]
 questions = [
   "Does any downloaded content add features or change what the app does, beyond data and web content?",
+  "Does a loaded bundle or script come from the app's own signed bundle, or from a path the app wrote at runtime?",
 ]

@@ -217,6 +217,63 @@
       ]
     },
     {
+      "id": "build.ai-assistant-files-in-bundle",
+      "title": "AI assistant instruction files shipped in the app bundle",
+      "severity": "note",
+      "evidence": [
+        "binary",
+        "project"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "2.1"
+      ],
+      "applies_when": [],
+      "summary": "Files such as `CLAUDE.md`, `AGENTS.md`, `.cursorrules`, or a `.claude/` folder end up in the `.app` when a synchronized folder or a Copy Bundle Resources phase picks them up. Anyone who unzips the IPA can read them, and they often hold internal paths, hosts, and workflow notes. Submissions should be final builds without development artifacts.",
+      "fix": "Exclude the files from every target: move them out of synchronized folders or add a membership exception, and remove them from Copy Bundle Resources. Check the archived `.app` for them before upload.",
+      "check": {
+        "id": "bundle-files",
+        "confidence": "high",
+        "names": [
+          "CLAUDE.md",
+          "AGENTS.md",
+          "GEMINI.md",
+          ".cursorrules",
+          ".windsurfrules",
+          ".clinerules",
+          "copilot-instructions.md"
+        ],
+        "directories": [
+          ".claude",
+          ".cursor",
+          ".windsurf",
+          ".aider",
+          ".continue"
+        ]
+      }
+    },
+    {
+      "id": "build.alternate-home-screen",
+      "title": "App recreates the home screen or desktop",
+      "severity": "error",
+      "evidence": [
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "2.5",
+        "2.5.8"
+      ],
+      "applies_when": [],
+      "summary": "Apps that create alternate desktop or home screen environments are rejected. Launcher grids that mimic the home screen, app drawers that open other apps, and full-screen shells meant to replace the system UI fall here.",
+      "fix": "Present the feature as content inside the app, not as a replacement for the home screen. Offer glanceable information through WidgetKit instead.",
+      "review": [
+        "Does the app present itself as a home screen or desktop, with a grid of other apps to launch?"
+      ]
+    },
+    {
       "id": "build.app-icon",
       "title": "App Store icon missing or has transparency",
       "severity": "error",
@@ -255,11 +312,12 @@
         "2.1"
       ],
       "applies_when": [],
-      "summary": "URLs pointing at localhost, private network addresses, tunnels, or staging hosts in the release build usually mean a feature that fails for the reviewer, which is a 2.1 completeness rejection.",
+      "summary": "URLs pointing at localhost, private network addresses, tunnels, or staging hosts in the release build usually mean a feature that fails for the reviewer, which is a 2.1 completeness rejection. What matters is the value the Release configuration resolves to; a URL inside `#if DEBUG` is fine.",
       "fix": "Move environment URLs behind build configurations and make sure the Release configuration points at production.",
       "check": {
         "id": "debug-hosts",
         "confidence": "low",
+        "skip_debug_blocks": true,
         "patterns": [
           "localhost",
           "127.0.0.1",
@@ -267,9 +325,52 @@
           "192.168.",
           "10.0.2.2",
           ".ngrok",
+          "ngrok-free.app",
+          "trycloudflare.com",
+          "loca.lt",
           ".local:",
+          ".local/",
           "staging.",
-          "dev."
+          "dev.",
+          "dev-api.",
+          "test-api."
+        ],
+        "regex": [
+          "https?://(localhost|127\\.0\\.0\\.1|10\\.\\d+\\.\\d+\\.\\d+|192\\.168\\.\\d+\\.\\d+|172\\.(1[6-9]|2\\d|3[01])\\.\\d+\\.\\d+)(:\\d+)?",
+          "https?://[^\\s\"']*\\b(staging|dev|test)\\."
+        ]
+      }
+    },
+    {
+      "id": "build.debug-logging",
+      "title": "Debug logging left in the release build",
+      "severity": "note",
+      "evidence": [
+        "source"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "1.6"
+      ],
+      "applies_when": [],
+      "summary": "`print`, `debugPrint`, `dump`, `NSLog`, and `console.log` all run in release builds. `NSLog` writes to the unified log without redaction, where anyone with the device and a Mac can read it. Volume alone is not a rejection; logging user data is a 1.6 data security problem, covered by `security.secrets-in-logs`.",
+      "fix": "Log through `Logger` from the `os` framework, which redacts dynamic strings unless marked `.public`. Wrap remaining debug output in `#if DEBUG`, and strip `console.log` in the JavaScript release bundle.",
+      "references": [
+        "https://developer.apple.com/documentation/os/generating-log-messages-from-your-code"
+      ],
+      "check": {
+        "id": "source-patterns",
+        "confidence": "low",
+        "code_only": true,
+        "skip_debug_blocks": true,
+        "count_threshold": 5,
+        "patterns": [
+          "\\bprint\\(",
+          "\\bdebugPrint\\(",
+          "\\bdump\\(",
+          "\\bNSLog\\(",
+          "\\bconsole\\.(log|debug|warn|error)\\s*\\("
         ]
       }
     },
@@ -305,6 +406,7 @@
       "severity": "warning",
       "evidence": [
         "source",
+        "binary",
         "human"
       ],
       "enforced_by": "app-review",
@@ -313,20 +415,62 @@
         "2.5.2"
       ],
       "applies_when": [],
-      "summary": "Apps must be self-contained and may not download, install, or execute code that adds or changes features. `dlopen` on a downloaded path, loading bundles from the Documents folder, or evaluating remote scripts that drive native features are red flags. Interpreted code that runs in WebKit or JavaScriptCore is allowed when it does not change the app's primary purpose.",
-      "fix": "Ship features in the binary and gate them with local flags. Keep remote content to data, not code.",
+      "summary": "Apps must be self-contained and may not download, install, or execute code that adds or changes features. `dlopen` on a downloaded path, loading bundles from the Documents folder, native hot-patching frameworks such as JSPatch or Rollout, or evaluating remote scripts that drive native features are red flags. Interpreted code that runs in WebKit or JavaScriptCore is allowed when it does not change the app's primary purpose.",
+      "fix": "Ship features in the binary and gate them with local flags. Keep remote content to data, not code. Remove native hot-patching SDKs.",
       "check": {
         "id": "dynamic-code",
         "confidence": "low",
         "patterns": [
           "dlopen(",
           "Bundle(path:",
+          "Bundle(url:",
           "NSBundle bundleWithPath",
-          "evaluateScript("
+          "evaluateScript(",
+          "JSPatch",
+          "JPEngine",
+          "rollout.io",
+          "import Rollout",
+          "DynamicCocoa",
+          "import SwiftPatch"
         ]
       },
       "review": [
-        "Does any downloaded content add features or change what the app does, beyond data and web content?"
+        "Does any downloaded content add features or change what the app does, beyond data and web content?",
+        "Does a loaded bundle or script come from the app's own signed bundle, or from a path the app wrote at runtime?"
+      ]
+    },
+    {
+      "id": "build.hardware-switches",
+      "title": "App repurposes hardware buttons or blocks standard behavior",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.5.9"
+      ],
+      "applies_when": [],
+      "summary": "Apps may not alter or disable standard switches, such as the volume buttons or the Ring/Silent switch, or other native behaviors, and may not block links out to other apps. Observing `outputVolume` to turn volume presses into app actions, or refusing to open external links, are the common cases.",
+      "fix": "For a camera shutter on the hardware buttons, use `AVCaptureEventInteraction` in UIKit or `onCameraCaptureEvent` in SwiftUI, which the system supports. Let links to other apps open normally.",
+      "references": [
+        "https://developer.apple.com/documentation/avkit/avcaptureeventinteraction"
+      ],
+      "check": {
+        "id": "source-patterns",
+        "confidence": "low",
+        "code_only": true,
+        "patterns": [
+          "\"outputVolume\"",
+          "\\.outputVolume\\b",
+          "SystemVolumeDidChange"
+        ]
+      },
+      "review": [
+        "Do volume buttons, the Action button, or the Ring/Silent switch do anything other than their system function outside a capture session?",
+        "Does the app block or intercept links that should open another app?"
       ]
     },
     {
@@ -351,6 +495,259 @@
       }
     },
     {
+      "id": "build.macos-auto-launch",
+      "title": "Mac app launches at login or keeps running without consent",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.4.5"
+      ],
+      "applies_when": [
+        "macos"
+      ],
+      "summary": "Mac App Store apps may not run code at startup or login without consent, spawn processes that keep running after the person quits, or add themselves to the Dock or desktop. Registering a login item on first launch, or a helper that outlives the app, is rejected under 2.4.5(iii).",
+      "fix": "Register login items with `SMAppService` only after the person turns the option on in the app's settings, and unregister when they turn it off. Stop helpers when the app quits.",
+      "references": [
+        "https://developer.apple.com/documentation/servicemanagement/smappservice"
+      ],
+      "check": {
+        "id": "source-patterns",
+        "confidence": "low",
+        "code_only": true,
+        "patterns": [
+          "SMAppService\\b[^\\n]*\\.register\\(",
+          "SMLoginItemSetEnabled",
+          "LSSharedFileListInsertItemURL",
+          "kLSSharedFileListSessionLoginItems",
+          "SMJobSubmit",
+          "LaunchAgents/"
+        ]
+      },
+      "review": [
+        "Is launch at login off until the person turns it on?",
+        "Does any helper process keep running after the person quits the app?",
+        "Does the app add itself to the Dock or put shortcuts on the desktop?"
+      ]
+    },
+    {
+      "id": "build.macos-bundle-contents",
+      "title": "Mac app bundles installers, kernel extensions, or Java",
+      "severity": "error",
+      "evidence": [
+        "binary",
+        "source"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.4.5"
+      ],
+      "applies_when": [
+        "macos"
+      ],
+      "summary": "Mac App Store apps must be a single self-contained bundle built with Xcode. They may not ship third-party installers, install kexts or code into shared locations, download standalone apps or code that changes features, or depend on deprecated or optionally installed runtimes such as Java. This covers 2.4.5(ii), (iv), and (viii).",
+      "fix": "Remove embedded `.pkg`, `.mpkg`, `.dmg`, `.kext`, and `.jar` payloads from the Mac App Store build. Bundle any runtime the app needs inside the app, or drop it.",
+      "check": {
+        "id": "bundle-files",
+        "confidence": "high",
+        "extensions": [
+          ".pkg",
+          ".mpkg",
+          ".dmg",
+          ".kext",
+          ".jar"
+        ],
+        "patterns": [
+          "JavaVM\\.framework",
+          "/Library/Extensions/",
+          "/Library/Application Support/[^\"]*/[^\"]*\\.(app|dylib|bundle)",
+          "installer -pkg"
+        ]
+      },
+      "review": [
+        "Does the app write code or resources outside its container, such as into /Library or another app's folder?",
+        "Does the app download other apps, plug-ins, or code that change what it does after review?"
+      ]
+    },
+    {
+      "id": "build.macos-file-access",
+      "title": "Mac app reaches outside its sandbox or into other apps' data",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "entitlements",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.4.5",
+        "2.5.2"
+      ],
+      "applies_when": [
+        "macos"
+      ],
+      "summary": "Mac App Store apps must follow the file system rules for sandboxed apps, change other apps' data, such as bookmarks, contacts, or calendars, only through the matching framework, and keep every localization in the one app bundle, under 2.4.5(i) and (ix). Hard-coded paths into other apps' Library folders and temporary-exception entitlements are the usual signals.",
+      "fix": "Read and write user files through open and save panels or security-scoped bookmarks. Use Contacts, EventKit, and similar frameworks for other apps' data. Replace temporary exceptions with a supported entitlement. Ship every localization in the app bundle.",
+      "references": [
+        "https://developer.apple.com/documentation/security/app-sandbox"
+      ],
+      "check": {
+        "id": "source-patterns",
+        "confidence": "low",
+        "patterns": [
+          "Library/(Safari|Mail|Messages|Containers|Group Containers)/",
+          "com\\.apple\\.security\\.temporary-exception\\."
+        ]
+      },
+      "review": [
+        "Does the app read or change another app's data without that data's framework?",
+        "Is each temporary-exception entitlement still needed?",
+        "Are all languages and localizations inside the single app bundle, with none downloaded later?"
+      ]
+    },
+    {
+      "id": "build.macos-license-keys",
+      "title": "Mac app asks for a license key or adds copy protection",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.4.5",
+        "3.1.1"
+      ],
+      "applies_when": [
+        "macos"
+      ],
+      "summary": "Mac App Store apps may not show a license screen at launch, require license keys, or implement their own copy protection, under 2.4.5(vi). Unlocking paid features with a key also bypasses In-App Purchase.",
+      "fix": "Remove license entry and activation from the Mac App Store build. Sell upgrades with In-App Purchase and verify entitlement with StoreKit.",
+      "check": {
+        "id": "source-patterns",
+        "confidence": "low",
+        "strings_only": true,
+        "patterns": [
+          "(?i)\\blicen[cs]e[ _]?key\\b",
+          "(?i)\\bserial[ _]?(number|key)\\b",
+          "(?i)\\bactivation[ _]?code\\b",
+          "(?i)\\benter (your )?licen[cs]e\\b"
+        ]
+      },
+      "review": [
+        "Does the Mac App Store build show a license or activation screen, or check a key before features work?"
+      ]
+    },
+    {
+      "id": "build.macos-privilege-escalation",
+      "title": "Mac app requests root privileges",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "binary"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "2.4.5"
+      ],
+      "applies_when": [
+        "macos"
+      ],
+      "summary": "Mac App Store apps may not request escalation to root or use setuid attributes, under 2.4.5(v). Privileged helpers, authorization-based execution, and shelling out to `sudo` or `osascript ... with administrator privileges` all count.",
+      "fix": "Do the work inside the sandbox with the matching entitlement or a user-selected file. Move features that truly need root to a Developer ID build.",
+      "check": {
+        "id": "source-patterns",
+        "confidence": "high",
+        "patterns": [
+          "\\bAuthorizationExecuteWithPrivileges\\b",
+          "\\bSMJobBless\\b",
+          "SMAppService\\.daemon\\(",
+          "\\bsetuid\\(",
+          "\\bseteuid\\(",
+          "with administrator privileges",
+          "\"/usr/bin/sudo\""
+        ]
+      }
+    },
+    {
+      "id": "build.macos-self-updater",
+      "title": "Mac app ships its own update mechanism",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "binary"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "2.4.5"
+      ],
+      "applies_when": [
+        "macos"
+      ],
+      "summary": "Mac App Store apps must get updates through the Mac App Store. An embedded updater such as Sparkle, or code that downloads and installs a newer build, is rejected under 2.4.5(vii).",
+      "fix": "Remove the updater framework and its feed URL from the Mac App Store build. Keep it only in a separate Developer ID build configuration.",
+      "check": {
+        "id": "source-patterns",
+        "confidence": "high",
+        "patterns": [
+          "\\bSparkle\\.framework\\b",
+          "\\bimport Sparkle\\b",
+          "\\bSPUStandardUpdaterController\\b",
+          "\\bSPUUpdater\\b",
+          "\\bSUUpdater\\b",
+          "\\bSUFeedURL\\b"
+        ]
+      }
+    },
+    {
+      "id": "build.power-usage",
+      "title": "Excessive power use or background mining",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.4",
+        "2.4.2"
+      ],
+      "applies_when": [],
+      "summary": "Apps must not drain the battery, overheat the device, or strain its resources, and may not run unrelated background work such as cryptocurrency mining, including inside third-party ads. Disabling the idle timer everywhere, polling with sub-second timers, continuous best-accuracy location, or mining pool connections are the usual signals.",
+      "fix": "Disable the idle timer only while a feature needs the screen on, and restore it after. Use `BGTaskScheduler`, push, and significant-change location instead of polling. Remove mining code and any SDK that mines.",
+      "check": {
+        "id": "source-patterns",
+        "confidence": "low",
+        "code_only": true,
+        "patterns": [
+          "isIdleTimerDisabled\\s*=\\s*true",
+          "idleTimerDisabled\\s*=\\s*YES",
+          "kCLLocationAccuracyBestForNavigation",
+          "distanceFilter\\s*=\\s*(0|kCLDistanceFilterNone)\\b",
+          "stratum\\+tcp",
+          "(?i)\\b(crypto|coin)\\s*miner\\b",
+          "(?i)\\bmining\\s*pool\\b",
+          "(?i)\\bcoinhive\\b"
+        ]
+      },
+      "review": [
+        "Does the app keep the screen on, the GPS at full accuracy, or the CPU busy longer than the feature in use needs?",
+        "Does the app or any ad SDK in it run work unrelated to the app in the background?",
+        "Does the app ask people to use the device in a way that risks damage, such as under a pillow while charging?"
+      ]
+    },
+    {
       "id": "build.private-api",
       "title": "Non-public API or private framework in use",
       "severity": "error",
@@ -361,11 +758,15 @@
       "enforced_by": "app-review",
       "automation": "automated",
       "guidelines": [
+        "2.5",
         "2.5.1"
       ],
       "applies_when": [],
-      "summary": "Apps may use public APIs only. Linking a private framework, calling underscore-prefixed or undocumented selectors, or reaching private classes through `NSClassFromString` or `perform(_:)` leads to rejection, often by automated binary scanning.",
-      "fix": "Replace the call with a public API. If a dependency does it, update or replace the dependency.",
+      "summary": "Apps may use public APIs only. Linking a private framework, calling underscore-prefixed or undocumented selectors, reading private ivars through key-value coding, opening the private `App-Prefs:` or `prefs:root` URL schemes, or reaching private classes through `NSClassFromString` or `perform(_:)` leads to rejection, often by automated binary scanning. Deprecated APIs such as `UIAlertView`, `UIActionSheet`, and `NSURLConnection` are public, as are `dlopen`, `dlsym`, and `performSelector` with a public selector; they are not private API.",
+      "fix": "Replace the call with a public API: `UIApplication.openSettingsURLString` instead of `App-Prefs:`, public properties instead of `value(forKey: \"_…\")`. If a dependency does it, update or replace the dependency.",
+      "references": [
+        "https://developer.apple.com/documentation/uikit/uiapplication/opensettingsurlstring"
+      ],
       "check": {
         "id": "private-symbols",
         "confidence": "medium",
@@ -375,7 +776,30 @@
           "_UIApplication",
           "UIStatusBarManager().performSelector",
           "NSClassFromString(\"_",
-          "Selector((\"_"
+          "NSClassFromString(@\"_",
+          "NSSelectorFromString(\"_",
+          "NSSelectorFromString(@\"_",
+          "Selector((\"_",
+          "@selector(_",
+          "value(forKey: \"_",
+          "valueForKey:@\"_",
+          "forKeyPath: \"_",
+          "App-Prefs:",
+          "prefs:root",
+          "MGCopyAnswer",
+          "AVSystemController",
+          "UIGetScreenImage",
+          "SBSLaunchApplication"
+        ],
+        "not_private": [
+          "dlopen",
+          "dlsym",
+          "UIAlertView",
+          "UIActionSheet",
+          "NSURLConnection",
+          "performSelector",
+          "objc_msgSend",
+          "setSelectionIndicatorImage"
         ]
       }
     },
@@ -433,6 +857,154 @@
           "macosx": "26.0"
         }
       }
+    },
+    {
+      "id": "build.system-settings-prompts",
+      "title": "App asks people to restart the device or change unrelated settings",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.4",
+        "2.4.4"
+      ],
+      "applies_when": [],
+      "summary": "Apps should never suggest or require a device restart or changes to system settings unrelated to their core function, such as turning off Wi-Fi or disabling security features. Deep links into Settings through the private `App-Prefs:` scheme are also a 2.5.1 problem.",
+      "fix": "Remove the instruction. To send people to the app's own settings, open `UIApplication.openSettingsURLString`.",
+      "references": [
+        "https://developer.apple.com/documentation/uikit/uiapplication/opensettingsurlstring"
+      ],
+      "check": {
+        "id": "source-patterns",
+        "confidence": "low",
+        "strings_only": true,
+        "patterns": [
+          "(?i)\\brestart (your|the) (device|iphone|ipad|phone)\\b",
+          "(?i)\\breboot (your|the) (device|iphone|ipad|phone)\\b",
+          "(?i)\\bturn off (wi-?fi|bluetooth|cellular|mobile data|face id|touch id|passcode)\\b",
+          "(?i)\\bdisable (wi-?fi|face id|touch id|passcode|find my|low power mode)\\b",
+          "App-Prefs:",
+          "prefs:root"
+        ]
+      },
+      "review": [
+        "Does any onboarding, help, or error screen tell people to restart the device or change a system setting the app's core feature does not need?"
+      ]
+    },
+    {
+      "id": "build.tvos-input",
+      "title": "Apple TV app needs hardware beyond the Siri Remote",
+      "severity": "warning",
+      "evidence": [
+        "plist",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.4.3"
+      ],
+      "applies_when": [],
+      "summary": "Apple TV apps must work with the Siri Remote or a third-party game controller alone. A game that requires a controller must say so in its metadata so customers know they need the extra hardware.",
+      "fix": "Support the Siri Remote for every flow, including menus. If gameplay requires a controller, set `GCRequiresControllerUserInteraction` for tvOS and state the requirement in the description.",
+      "references": [
+        "https://developer.apple.com/documentation/bundleresources/information-property-list/gcsupportscontrolleruserinteraction"
+      ],
+      "check": {
+        "id": "plist-key-used",
+        "confidence": "low",
+        "keys": [
+          "GCRequiresControllerUserInteraction"
+        ],
+        "platforms": [
+          "appletvos"
+        ]
+      },
+      "review": [
+        "Can every screen of the tvOS app be used with only the Siri Remote?",
+        "If a game controller is required, does the description say so?"
+      ]
+    },
+    {
+      "id": "build.uiwebview",
+      "title": "UIWebView in the app or a dependency",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "binary"
+      ],
+      "enforced_by": "upload",
+      "automation": "automated",
+      "guidelines": [
+        "2.5.1"
+      ],
+      "applies_when": [],
+      "summary": "`UIWebView` has been deprecated since iOS 12, and App Store Connect no longer accepts new apps or updates that reference it. The upload fails with ITMS-90809, often because an old SDK still links the class even when the app's own code does not.",
+      "fix": "Replace `UIWebView` with `WKWebView`. Find a dependency that still references it with `grep -r UIWebView` on the built `.app` or `nm` on each framework binary, then update or remove that dependency.",
+      "itms": [
+        "ITMS-90809"
+      ],
+      "references": [
+        "https://developer.apple.com/documentation/uikit/uiwebview",
+        "https://developer.apple.com/news/?id=12232019b"
+      ],
+      "check": {
+        "id": "uiwebview",
+        "confidence": "high",
+        "code_only": true,
+        "patterns": [
+          "\\bUIWebView\\s*[(*]",
+          "\\bUIWebViewDelegate\\b",
+          "[:\\[]\\s*UIWebView\\b",
+          "\\bUIWebView\\."
+        ],
+        "binary_symbols": [
+          "_OBJC_CLASS_$_UIWebView",
+          "UIWebViewDelegate"
+        ]
+      }
+    },
+    {
+      "id": "build.web-browser-engine",
+      "title": "Web browsing without WebKit",
+      "severity": "error",
+      "evidence": [
+        "binary",
+        "entitlements",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.5.6"
+      ],
+      "applies_when": [],
+      "summary": "Apps that browse the web must use WebKit and WebKit JavaScript. An alternative browser engine needs Apple's browser engine entitlement, which is available only for the EU and Japan. A default-browser app also needs the default browser entitlement, may not use `UIWebView`, and must open http and https links directly.",
+      "fix": "Render web pages with `WKWebView`, `WebView`, or `SFSafariViewController`. To ship another engine, request the alternative browser engine entitlement for the eligible region and limit distribution to it.",
+      "references": [
+        "https://developer.apple.com/support/alternative-browser-engines/",
+        "https://developer.apple.com/documentation/xcode/preparing-your-app-to-be-the-default-browser"
+      ],
+      "check": {
+        "id": "entitlement-signals",
+        "confidence": "medium",
+        "catalog": "entitlements",
+        "keys": [
+          "com.apple.developer.web-browser",
+          "com.apple.developer.web-browser-engine.host"
+        ],
+        "engine_symbols": [
+          "BrowserEngineKit"
+        ]
+      },
+      "review": [
+        "Does the app render general web pages with anything other than WebKit, and if so, does it hold the alternative engine entitlement for every storefront it ships in?"
+      ]
     },
     {
       "id": "business.ad-manipulation",
@@ -1025,6 +1597,938 @@
       },
       "review": [
         "Does every Wallet pass the app issues serve a payment, an offer, a ticket, or identification?"
+      ]
+    },
+    {
+      "id": "capabilities.ads-placement",
+      "title": "Ads outside the main app or without required controls",
+      "severity": "error",
+      "evidence": [
+        "binary",
+        "project",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.5.18",
+        "2.5.16",
+        "4.4"
+      ],
+      "applies_when": [
+        "advertising"
+      ],
+      "summary": "Display ads belong only in the main app binary, not in extensions, App Clips, widgets, notifications, keyboards, or watchOS apps. Ads must fit the age rating, let people see the data used to target them without leaving the app, and never target on sensitive data such as health, classroom, or kids' data. Interstitials must be clearly labeled, must not trick people into tapping, and need a close or skip button large enough to use. People must be able to report inappropriate ads.",
+      "fix": "Link ad SDKs only into the main app target. Configure the SDK for the app's age rating, turn off targeting on sensitive data, and add an ad-info and report-ad control to each ad placement.",
+      "check": {
+        "id": "extension-point",
+        "confidence": "medium",
+        "list_all": true,
+        "include_app_clips": true,
+        "include_watch_apps": true,
+        "forbids": [
+          "\\bGoogleMobileAds\\b",
+          "\\bGADMobileAds\\b",
+          "\\bAppLovinSDK\\b",
+          "\\bUnityAds\\b",
+          "\\bFBAudienceNetwork\\b",
+          "\\bIronSource\\b",
+          "\\bVungleAds\\b",
+          "\\bInMobiSDK\\b"
+        ]
+      },
+      "review": [
+        "Can people see why an ad was shown to them without leaving the app?",
+        "Can people report an inappropriate ad?",
+        "Does every interstitial have a visible, easy-to-hit close or skip button and a clear ad label?",
+        "Is any ad targeting based on health, classroom, or kids' data?"
+      ]
+    },
+    {
+      "id": "capabilities.background-modes-unused",
+      "title": "Background mode declared without code that uses it",
+      "severity": "warning",
+      "evidence": [
+        "plist",
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.5",
+        "2.5.4"
+      ],
+      "applies_when": [],
+      "summary": "Background services may be used only for their intended purpose: audio playback, location, VoIP, task completion, and so on. Each `UIBackgroundModes` value with no matching API in the app, such as `audio` without an audio session or `location` without background location updates, is a common 2.5.4 rejection. Playing silent audio to stay awake is rejected too.",
+      "fix": "Turn off every Background Modes checkbox the app does not need. For each remaining mode, be ready to show the reviewer the feature that uses it, and say where to find it in the review notes.",
+      "references": [
+        "https://developer.apple.com/documentation/bundleresources/information-property-list/uibackgroundmodes",
+        "https://developer.apple.com/documentation/xcode/configuring-background-execution-modes"
+      ],
+      "check": {
+        "id": "background-mode-signals",
+        "confidence": "medium",
+        "signals": {
+          "audio": [
+            "AVAudioSession",
+            "AVPlayer",
+            "AVAudioPlayer",
+            "AVQueuePlayer",
+            "AVAudioEngine",
+            "AVPlayerViewController",
+            "VideoPlayer",
+            "MPNowPlayingInfoCenter",
+            "MPRemoteCommandCenter"
+          ],
+          "location": [
+            "allowsBackgroundLocationUpdates",
+            "CLBackgroundActivitySession",
+            "startMonitoringSignificantLocationChanges",
+            "CLLocationUpdate.liveUpdates",
+            "startMonitoringVisits"
+          ],
+          "voip": [
+            "PKPushRegistry",
+            "CXProvider"
+          ],
+          "fetch": [
+            "BGAppRefreshTask",
+            "BGAppRefreshTaskRequest",
+            "setMinimumBackgroundFetchInterval",
+            "performFetchWithCompletionHandler",
+            ".backgroundTask(.appRefresh"
+          ],
+          "processing": [
+            "BGProcessingTask",
+            "BGProcessingTaskRequest"
+          ],
+          "remote-notification": [
+            "didReceiveRemoteNotification",
+            "fetchCompletionHandler"
+          ],
+          "bluetooth-central": [
+            "CBCentralManager"
+          ],
+          "bluetooth-peripheral": [
+            "CBPeripheralManager"
+          ],
+          "external-accessory": [
+            "EAAccessoryManager",
+            "EASession"
+          ],
+          "nearby-interaction": [
+            "NISession"
+          ],
+          "push-to-talk": [
+            "PTChannelManager"
+          ],
+          "network-authentication": [
+            "NEHotspotHelper"
+          ],
+          "screen-capture": [
+            "SCStream",
+            "RPScreenRecorder",
+            "RPBroadcastSampleHandler"
+          ]
+        }
+      },
+      "review": [
+        "For each background mode, which feature needs it, and can the reviewer reach that feature?",
+        "Does the app play audio in the background only when people are listening to it?"
+      ]
+    },
+    {
+      "id": "capabilities.call-blocking",
+      "title": "Call, SMS, or spam blocking without disclosed criteria",
+      "severity": "warning",
+      "evidence": [
+        "project",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.5.12"
+      ],
+      "applies_when": [],
+      "summary": "Apps using CallKit or an SMS filter extension should block only numbers confirmed as spam. Apps with call, SMS, or MMS blocking or spam identification must name the feature in the marketing text and explain the criteria for their block and spam lists. Data from these extensions may be used only to run or improve the app, never for tracking, profiling, or sale.",
+      "fix": "Describe the blocking feature and the list criteria in the description. Keep call and message data inside the extension's purpose, and remove any analytics or ad SDK from the extension.",
+      "check": {
+        "id": "extension-point",
+        "confidence": "high",
+        "extension_point": [
+          "com.apple.callkit.call-directory",
+          "com.apple.identitylookup.message-filter",
+          "com.apple.identitylookup.classification-ui"
+        ]
+      },
+      "review": [
+        "Does the description name the blocking or spam feature and explain how numbers get on the lists?",
+        "Does call or message data leave the device for anything other than running the filter?"
+      ]
+    },
+    {
+      "id": "capabilities.entitlement-approval",
+      "title": "Managed entitlement without Apple's approval",
+      "severity": "error",
+      "evidence": [
+        "entitlements",
+        "project"
+      ],
+      "enforced_by": "upload",
+      "automation": "automated",
+      "guidelines": [],
+      "applies_when": [],
+      "summary": "Managed capabilities, such as Critical Alerts, Family Controls, Multicast Networking, CarPlay, the default browser and mail entitlements, StoreKit External Purchase, and contact notes, need Apple to assign the entitlement to the account first. Without it the distribution profile cannot carry the entitlement, so the App Store build cannot be signed or uploaded with it. Family Controls has a development variant that works locally and fails at distribution.",
+      "fix": "Have the Account Holder request the capability under Certificates, Identifiers & Profiles > Identifiers > Capability Requests, and wait for approval before building the feature into a release. Remove the entitlement from the release build until then.",
+      "references": [
+        "https://developer.apple.com/help/account/capabilities/capability-requests/"
+      ],
+      "check": {
+        "id": "entitlement-signals",
+        "confidence": "high",
+        "catalog": "entitlements",
+        "approval": true
+      }
+    },
+    {
+      "id": "capabilities.entitlement-unused",
+      "title": "Entitlement with no code that uses it",
+      "severity": "warning",
+      "evidence": [
+        "entitlements",
+        "source",
+        "binary",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.5.1"
+      ],
+      "applies_when": [],
+      "summary": "Each capability in the signed entitlements tells App Review to look for the feature behind it. HealthKit, HomeKit, iCloud, Siri, Network Extensions, or sandbox exceptions with no code that uses them lead to questions or a rejection, because APIs must be used for their intended purpose and the description must mention the integration. Templates, Expo plugins, and SDK setup often add capabilities the app never uses.",
+      "fix": "Remove the capability from the target's Signing & Capabilities tab, or from the Expo config plugin that adds it. Keep only entitlements the release build uses, and describe each one's feature in the app description or review notes.",
+      "references": [
+        "https://developer.apple.com/documentation/bundleresources/entitlements"
+      ],
+      "check": {
+        "id": "entitlement-signals",
+        "confidence": "medium",
+        "catalog": "entitlements"
+      },
+      "review": [
+        "For each entitlement, which feature uses it, and does the description or review note mention that feature?"
+      ]
+    },
+    {
+      "id": "capabilities.extension-scope",
+      "title": "Extensions, widgets, or App Clip outside the app's purpose",
+      "severity": "warning",
+      "evidence": [
+        "project",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "4.4",
+        "2.5.16"
+      ],
+      "applies_when": [],
+      "summary": "Widgets, extensions, and notifications must relate to the app's content and function. Every extension must be disclosed in the marketing text, include some function such as help or settings where possible, and contain no marketing, advertising, or in-app purchases. Every App Clip feature must also exist in the main app.",
+      "fix": "Name each extension in the description, remove promotional or purchase flows from extensions, and make sure every App Clip flow is reachable in the full app.",
+      "references": [
+        "https://developer.apple.com/documentation/bundleresources/information-property-list/nsextension/nsextensionpointidentifier"
+      ],
+      "check": {
+        "id": "extension-point",
+        "confidence": "low",
+        "list_all": true,
+        "forbids": [
+          "\\bimport StoreKit\\b",
+          "\\bProduct\\.products\\b",
+          "\\bSKPaymentQueue\\b",
+          "\\bSubscriptionStoreView\\b"
+        ]
+      },
+      "review": [
+        "Does each widget, extension, and notification relate to what the app does?",
+        "Does the description mention every extension the app offers?",
+        "Is every App Clip feature also in the full app?"
+      ]
+    },
+    {
+      "id": "capabilities.face-authentication",
+      "title": "Custom facial recognition used to sign in",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.5.13"
+      ],
+      "applies_when": [],
+      "summary": "Apps that use facial recognition for account authentication must use LocalAuthentication, not ARKit or other face recognition, where possible, and must offer another sign-in method for users under 13.",
+      "fix": "Authenticate with `LAContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, ...)` so Face ID does the matching. Keep a password or passkey path for everyone, including users under 13.",
+      "references": [
+        "https://developer.apple.com/documentation/localauthentication"
+      ],
+      "check": {
+        "id": "source-patterns",
+        "confidence": "low",
+        "code_only": true,
+        "patterns": [
+          "\\bARFaceTrackingConfiguration\\b",
+          "\\bVNDetectFaceLandmarksRequest\\b",
+          "\\bVNDetectFaceCaptureQualityRequest\\b",
+          "\\bARFaceAnchor\\b"
+        ],
+        "near": [
+          "(?i)\\b(login|log in|sign ?in|authenticat|unlock|verify)"
+        ]
+      },
+      "review": [
+        "Does any sign-in or unlock flow match faces with ARKit, Vision, or a third-party SDK instead of LocalAuthentication?",
+        "Can users under 13 sign in another way?"
+      ]
+    },
+    {
+      "id": "capabilities.file-picker",
+      "title": "File picker that leaves out Files and iCloud Drive",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.5.15"
+      ],
+      "applies_when": [],
+      "summary": "Apps that let people view and select files should include items from the Files app and the user's iCloud documents. A custom browser over the app's own sandbox, with no way to reach Files or iCloud Drive, falls short.",
+      "fix": "Offer the system picker with `fileImporter` in SwiftUI, `UIDocumentPickerViewController`, or a `DocumentGroup` or `UIDocumentBrowserViewController` document browser.",
+      "references": [
+        "https://developer.apple.com/documentation/uikit/uidocumentpickerviewcontroller"
+      ],
+      "check": {
+        "id": "source-patterns",
+        "confidence": "low",
+        "code_only": true,
+        "patterns": [
+          "contentsOfDirectory\\(at:",
+          "contentsOfDirectory\\(atPath:",
+          "enumerator\\(at:"
+        ],
+        "satisfied_by": [
+          "\\bfileImporter\\(",
+          "\\bUIDocumentPickerViewController\\b",
+          "\\bUIDocumentBrowserViewController\\b",
+          "\\bDocumentGroup\\b",
+          "\\bNSOpenPanel\\b"
+        ]
+      },
+      "review": [
+        "Where the app lets people pick a file, can they reach the Files app and iCloud Drive?"
+      ]
+    },
+    {
+      "id": "capabilities.healthkit",
+      "title": "HealthKit capability without a health feature",
+      "severity": "warning",
+      "evidence": [
+        "entitlements",
+        "source",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.5.1"
+      ],
+      "applies_when": [
+        "health"
+      ],
+      "summary": "HealthKit must be used for health and fitness, integrate with the Health app, and be named in the app description. The HealthKit entitlement with no `HKHealthStore` use, clinical-records access the app does not read, or Health data used for an unrelated feature gets rejected. Data handling for health information is covered by the privacy rules.",
+      "fix": "Remove the HealthKit capability if no feature reads or writes Health data. Otherwise request only the types the feature uses, mention the Health integration in the description, and show the reviewer where it appears.",
+      "references": [
+        "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.healthkit",
+        "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.healthkit.access"
+      ],
+      "check": {
+        "id": "entitlement-signals",
+        "confidence": "high",
+        "catalog": "entitlements",
+        "keys": [
+          "com.apple.developer.healthkit",
+          "com.apple.developer.healthkit.access",
+          "com.apple.developer.healthkit.background-delivery"
+        ]
+      },
+      "review": [
+        "Which feature reads or writes Health data, and does the description mention the Health integration?"
+      ]
+    },
+    {
+      "id": "capabilities.icloud",
+      "title": "iCloud capability unused or not allowed for the target",
+      "severity": "warning",
+      "evidence": [
+        "entitlements",
+        "source"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "2.5.1"
+      ],
+      "applies_when": [],
+      "summary": "The iCloud capability declares CloudKit, iCloud Documents, or key-value storage. With no `CKContainer`, ubiquity container, or `NSUbiquitousKeyValueStore` use behind it, it is an unused entitlement App Review can ask about. App Clips may use only `CloudKit-Anonymous`; `CloudDocuments` or `CloudKit` in an App Clip target is invalid. What the app stores in iCloud, such as health data, is covered by the privacy rules.",
+      "fix": "Remove iCloud services the app does not call. In App Clip targets, keep only `CloudKit-Anonymous` and share data with the full app through an app group.",
+      "references": [
+        "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.icloud-services"
+      ],
+      "check": {
+        "id": "entitlement-signals",
+        "confidence": "medium",
+        "catalog": "entitlements",
+        "keys": [
+          "com.apple.developer.icloud-services",
+          "com.apple.developer.icloud-container-identifiers",
+          "com.apple.developer.ubiquity-kvstore-identifier"
+        ],
+        "app_clip_allowed_values": [
+          "CloudKit-Anonymous"
+        ]
+      }
+    },
+    {
+      "id": "capabilities.keyboard-behavior",
+      "title": "Keyboard extension missing the next-keyboard key or launching apps",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "4.4.1"
+      ],
+      "applies_when": [],
+      "summary": "Keyboard extensions must provide typed input, offer a way to switch to the next keyboard, follow the sticker rules for images and emoji, launch no app other than Settings, and keep every key doing what it shows.",
+      "fix": "Show a globe key when `needsInputModeSwitchKey` is true and call `advanceToNextInputMode()` or `handleInputModeList(from:with:)` from it. Remove any key or gesture that opens another app or repurposes a standard key.",
+      "references": [
+        "https://developer.apple.com/documentation/uikit/configuring-open-access-for-a-custom-keyboard"
+      ],
+      "check": {
+        "id": "extension-point",
+        "confidence": "medium",
+        "extension_point": "com.apple.keyboard-service",
+        "requires_any": [
+          "advanceToNextInputMode",
+          "handleInputModeList"
+        ],
+        "forbids": [
+          "\\bopenURL\\b",
+          "\\.open\\(\\s*URL",
+          "openURL\\("
+        ]
+      },
+      "review": [
+        "Is there a visible way to switch to the next keyboard?",
+        "Does any key or long press open another app or do something other than what it shows?"
+      ]
+    },
+    {
+      "id": "capabilities.keyboard-full-access",
+      "title": "Keyboard extension depends on Full Access",
+      "severity": "warning",
+      "evidence": [
+        "plist",
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "4.4",
+        "4.4.1"
+      ],
+      "applies_when": [],
+      "summary": "A keyboard extension that sets `RequestsOpenAccess` asks people for Full Access, which grants network access and a shared container. Keyboards must stay functional without network access and without Full Access, and may collect activity only to improve the keyboard itself. A keyboard that blanks, nags, or locks keys until Full Access is on is rejected.",
+      "fix": "Make typing work with `hasFullAccess` false, and gate only the extra features on it. Keep keystrokes on the device unless the person opts in to a networked feature.",
+      "references": [
+        "https://developer.apple.com/documentation/uikit/configuring-open-access-for-a-custom-keyboard"
+      ],
+      "check": {
+        "id": "extension-point",
+        "confidence": "high",
+        "extension_point": "com.apple.keyboard-service",
+        "plist_keys": [
+          "NSExtension.NSExtensionAttributes.RequestsOpenAccess"
+        ]
+      },
+      "review": [
+        "Does the keyboard type normally with Full Access off and with no network?",
+        "Does the keyboard collect or send keystrokes for any purpose other than improving itself?"
+      ]
+    },
+    {
+      "id": "capabilities.macos-app-group-prefix",
+      "title": "Mac app group not prefixed with the Team ID",
+      "severity": "note",
+      "evidence": [
+        "entitlements"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "2.4.5"
+      ],
+      "applies_when": [
+        "macos"
+      ],
+      "summary": "On macOS 15 and later, a sandboxed app that opens an app group container it cannot prove it owns triggers a \"would like to access data from other apps\" alert. The group is trusted when the app comes from the Mac App Store, when the group ID starts with the Team ID, or when the embedded provisioning profile authorizes it. Builds installed any other way, such as local or Developer ID builds, show the alert.",
+      "fix": "Name macOS app groups `$(TeamIdentifierPrefix)<name>`, or register the `group.` identifier and make sure the provisioning profile embedded in the app lists it. Use the same identifier in `containerURL(forSecurityApplicationGroupIdentifier:)`.",
+      "references": [
+        "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.security.application-groups",
+        "https://developer.apple.com/forums/thread/721701"
+      ],
+      "check": {
+        "id": "entitlement-signals",
+        "confidence": "medium",
+        "catalog": "entitlements",
+        "keys": [
+          "com.apple.security.application-groups"
+        ],
+        "value_pattern": "^[A-Z0-9]{10}\\."
+      }
+    },
+    {
+      "id": "capabilities.macos-sandbox",
+      "title": "Mac App Store executable without App Sandbox",
+      "severity": "error",
+      "evidence": [
+        "entitlements",
+        "binary"
+      ],
+      "enforced_by": "upload",
+      "automation": "automated",
+      "guidelines": [
+        "2.4.5"
+      ],
+      "applies_when": [
+        "macos"
+      ],
+      "summary": "Every executable in a Mac App Store app, including helpers, XPC services, and login items inside the bundle, must be signed with `com.apple.security.app-sandbox` set to true. A missing sandbox fails upload with ITMS-90296. The entitlements file in the project does not count; only the entitlements in the signature do.",
+      "fix": "Enable App Sandbox in Signing & Capabilities for the app and every embedded executable target, archive again, and confirm with `codesign --display --entitlements - <path>` on each executable.",
+      "itms": [
+        "ITMS-90296"
+      ],
+      "references": [
+        "https://developer.apple.com/documentation/security/app-sandbox"
+      ],
+      "check": {
+        "id": "entitlement-signals",
+        "confidence": "high",
+        "catalog": "entitlements",
+        "keys": [
+          "com.apple.security.app-sandbox"
+        ],
+        "direction": "missing",
+        "every_executable": true
+      }
+    },
+    {
+      "id": "capabilities.matter",
+      "title": "Matter pairing without Apple's framework",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "binary",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.5.17"
+      ],
+      "applies_when": [],
+      "summary": "Apps that support Matter must start pairing through Apple's MatterSupport framework. Any Matter software component other than Apple's Matter SDK must be certified by the Connectivity Standards Alliance for the platform it runs on.",
+      "fix": "Start commissioning with `MatterAddDeviceRequest` and handle setup in a `MatterAddDeviceExtensionRequestHandler` extension. Replace uncertified Matter stacks with Apple's SDK or a CSA-certified build.",
+      "references": [
+        "https://developer.apple.com/documentation/mattersupport"
+      ],
+      "check": {
+        "id": "source-patterns",
+        "confidence": "low",
+        "code_only": true,
+        "patterns": [
+          "\\bMTRDeviceController\\b",
+          "\\bMTRBaseDevice\\b",
+          "\\bCHIPDeviceController\\b",
+          "\\bimport Matter\\b",
+          "\\bconnectedhomeip\\b"
+        ],
+        "satisfied_by": [
+          "\\bMatterAddDeviceRequest\\b",
+          "\\bMatterAddDeviceExtensionRequestHandler\\b"
+        ]
+      },
+      "review": [
+        "Does pairing start from MatterAddDeviceRequest?",
+        "Is every non-Apple Matter component in the app CSA-certified for the platform it runs on?"
+      ]
+    },
+    {
+      "id": "capabilities.mdm",
+      "title": "Mobile device management or configuration profile app",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.5"
+      ],
+      "applies_when": [],
+      "summary": "Apps that offer Mobile Device Management must request the capability from Apple and may only come from commercial enterprises, educational institutions, government agencies, or, in limited cases, parental-control and device-security companies. Before any purchase or use, an app screen must declare what data is collected and how it is used. The app may not sell, use, or disclose data to third parties, and the privacy policy must say so; analytics may cover only the MDM app's own performance. Apps that install configuration profiles follow the same rules.",
+      "fix": "Request the MDM capability from Apple, submit from the organization's account, add the data-use screen before sign-up, and limit analytics to the app's own performance.",
+      "references": [
+        "https://developer.apple.com/documentation/devicemanagement"
+      ],
+      "check": {
+        "id": "source-patterns",
+        "confidence": "low",
+        "patterns": [
+          "\\.mobileconfig\\b",
+          "application/x-apple-aspen-config",
+          "\\bcom\\.apple\\.mdm\\b",
+          "PayloadType</key>"
+        ]
+      },
+      "review": [
+        "Does the app enroll devices in MDM or install configuration profiles, and has Apple granted the MDM capability?",
+        "Is the developer an enterprise, school, government agency, or approved parental-control or security provider?",
+        "Does a screen declare data collection and use before any purchase or enrollment?",
+        "Do analytics collect only data about the app's own performance?"
+      ]
+    },
+    {
+      "id": "capabilities.mini-app-native-bridge",
+      "title": "Hosted software reaches native APIs or user data",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "4.7.2",
+        "4.7.3"
+      ],
+      "applies_when": [],
+      "summary": "A host app may not extend or expose native platform APIs or technologies to mini apps, games, or plug-ins without Apple's prior permission, and may not share data or privacy permissions with any individual piece of that software without the person's explicit consent each time. JavaScript bridges that pass location, contacts, camera, or account data to hosted code are where this shows up.",
+      "fix": "Limit the bridge to what the hosted software needs, ask for consent in the host UI each time data or a permission is shared with a specific mini app, and get Apple's permission before exposing native APIs.",
+      "check": {
+        "id": "source-patterns",
+        "confidence": "low",
+        "code_only": true,
+        "patterns": [
+          "\\bWKScriptMessageHandler\\b",
+          "\\bWKScriptMessageHandlerWithReply\\b",
+          "addScriptMessageHandler",
+          "\\bJSExport\\b",
+          "setObject\\([^\\n]*forKeyedSubscript"
+        ]
+      },
+      "review": [
+        "Which native APIs, data, or permissions can hosted software reach through the bridge, and did Apple approve exposing them?",
+        "Does the app ask for consent each time it shares data or a permission with a specific mini app?"
+      ]
+    },
+    {
+      "id": "capabilities.mini-apps",
+      "title": "Mini apps, games, chatbots, plug-ins, or emulator content",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "4.7",
+        "4.7.1",
+        "4.7.4",
+        "4.7.5"
+      ],
+      "applies_when": [],
+      "summary": "Apps may offer HTML5 and JavaScript mini apps and games, streaming games, chatbots, plug-ins, and retro console or PC emulator games that are not in the binary, but the host developer is responsible for all of it. That software must follow the privacy rules, have filtering, reporting, and blocking for objectionable content, and sell digital goods through In-App Purchase. The host must publish an index of the software with universal links to each item, flag software above the app's age rating, and restrict it by verified or declared age.",
+      "fix": "Add a browsable index with a universal link per mini app or game, content reporting and user blocking, IAP for digital goods, and an age gate based on the Declared Age Range API or verified age. Hosts of third-party mini apps can look at the Mini Apps Partner Program.",
+      "references": [
+        "https://developer.apple.com/programs/mini-apps-partner/",
+        "https://developer.apple.com/documentation/declaredagerange"
+      ],
+      "check": {
+        "id": "source-patterns",
+        "confidence": "low",
+        "code_only": true,
+        "patterns": [
+          "(?i)\\bminiapp",
+          "(?i)\\bmini[_-]?program",
+          "(?i)\\bmini[_-]?game",
+          "(?i)\\blibretro\\b",
+          "(?i)\\bretroarch\\b",
+          "\\.(nes|sfc|smc|gba|gbc|n64|z64|iso|chd)\""
+        ]
+      },
+      "review": [
+        "Does the app offer software not in its binary, such as mini apps, mini games, streaming games, chatbots, plug-ins, or emulator games?",
+        "Is there an index of that software with a universal link to each item?",
+        "Can people filter and report objectionable content and block abusive users within it?",
+        "Is software above the app's age rating flagged and restricted by verified or declared age?",
+        "Are digital goods sold inside it through In-App Purchase?"
+      ]
+    },
+    {
+      "id": "capabilities.push-entitlement-missing",
+      "title": "Remote notification code without the push entitlement",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "binary",
+        "entitlements"
+      ],
+      "enforced_by": "upload",
+      "automation": "automated",
+      "guidelines": [],
+      "applies_when": [],
+      "summary": "The app implements `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)`, but its signed entitlements lack `aps-environment`. Upload succeeds with an ITMS-90078 warning, and push registration fails on customers' devices. A third-party SDK that implements the delegate method triggers the same warning.",
+      "fix": "Enable the Push Notifications capability so Xcode adds `aps-environment`, and sign with a distribution profile from an App ID that has push enabled. If the app does not use push, remove or update the SDK that implements the delegate method.",
+      "itms": [
+        "ITMS-90078"
+      ],
+      "references": [
+        "https://developer.apple.com/documentation/bundleresources/entitlements/aps-environment"
+      ],
+      "check": {
+        "id": "entitlement-signals",
+        "confidence": "high",
+        "catalog": "entitlements",
+        "keys": [
+          "aps-environment"
+        ],
+        "direction": "missing"
+      }
+    },
+    {
+      "id": "capabilities.push-without-use",
+      "title": "Push entitlement with no remote notification code",
+      "severity": "note",
+      "evidence": [
+        "entitlements",
+        "source"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "2.5.1",
+        "4.5.4"
+      ],
+      "applies_when": [],
+      "summary": "`aps-environment` is set but nothing registers for remote notifications. Templates, `expo-notifications`, and analytics SDKs add it even when the app only schedules local notifications. It is a capability App Review can ask about, and it implies a push feature the app does not have.",
+      "fix": "Remove the Push Notifications capability if the app does not receive remote pushes. Local notifications through `UNUserNotificationCenter` need no entitlement.",
+      "references": [
+        "https://developer.apple.com/documentation/bundleresources/entitlements/aps-environment"
+      ],
+      "check": {
+        "id": "entitlement-signals",
+        "confidence": "medium",
+        "catalog": "entitlements",
+        "keys": [
+          "aps-environment",
+          "com.apple.developer.aps-environment"
+        ]
+      }
+    },
+    {
+      "id": "capabilities.recording-consent",
+      "title": "Recording or activity logging without consent and an indicator",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.5.14"
+      ],
+      "applies_when": [],
+      "summary": "Apps must get explicit consent and show a clear visual or audible indication whenever they record or log user activity, including camera, microphone, screen recording, and other user input. Recording that starts silently, or capturing keystrokes or screen content without an indicator, breaks this rule.",
+      "fix": "Start recording only from a deliberate action, show a persistent recording indicator for as long as it runs, and give an obvious stop control. Log keystrokes or other input only with explicit opt-in.",
+      "check": {
+        "id": "source-patterns",
+        "confidence": "low",
+        "code_only": true,
+        "patterns": [
+          "\\bRPScreenRecorder\\b",
+          "\\bRPSystemBroadcastPickerView\\b",
+          "\\bSCStream\\b",
+          "\\bAVAudioRecorder\\b",
+          "\\bAVCaptureMovieFileOutput\\b",
+          "\\bAVAssetWriter\\b",
+          "\\bCGEvent\\.tapCreate\\b",
+          "\\bCGEventTapCreate\\b",
+          "addGlobalMonitorForEvents"
+        ]
+      },
+      "review": [
+        "Does every recording or activity log start from an explicit action, with a visible or audible indicator while it runs?",
+        "Does the app record anyone other than the user, such as call participants, and get their consent?"
+      ]
+    },
+    {
+      "id": "capabilities.safari-extension",
+      "title": "Safari extension claims broad website access",
+      "severity": "warning",
+      "evidence": [
+        "plist",
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "4.4",
+        "4.4.2"
+      ],
+      "applies_when": [],
+      "summary": "Safari extensions should claim access to no more websites than they need, must run on the current Safari, may not interfere with system or Safari UI, and must never include malicious or misleading code; violations lead to removal from the Apple Developer Program. `<all_urls>`, `*://*/*`, or wildcard content-script matches are the first thing to justify.",
+      "fix": "Request `activeTab`, specific host patterns, or `optional_permissions` instead of `<all_urls>`. Test the extension on the current Safari release before submitting.",
+      "references": [
+        "https://developer.apple.com/documentation/safariservices/managing-safari-web-extension-permissions"
+      ],
+      "check": {
+        "id": "extension-point",
+        "confidence": "medium",
+        "extension_point": [
+          "com.apple.Safari.web-extension",
+          "com.apple.Safari.extension",
+          "com.apple.Safari.content-blocker"
+        ],
+        "manifest_patterns": [
+          "\"<all_urls>\"",
+          "\"\\*://\\*/\\*\"",
+          "\"https?://\\*/\\*\""
+        ]
+      },
+      "review": [
+        "Does the extension need every website it asks for?",
+        "Does the extension change Safari or system UI, or inject anything people would not expect?"
+      ]
+    },
+    {
+      "id": "capabilities.siri-intents",
+      "title": "Siri intents or Shortcuts outside the app's function",
+      "severity": "warning",
+      "evidence": [
+        "plist",
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "2.5.11"
+      ],
+      "applies_when": [],
+      "summary": "Apps should register only for SiriKit intents and Shortcuts they can handle without another app and that people would expect from the app. Vocabulary, phrases, and aliases must relate to the app or company and not be generic terms or third-party names. Requests must resolve directly, with no ads or marketing before fulfillment and disambiguation only when the task needs it.",
+      "fix": "Drop intents the app cannot complete on its own, rename generic or third-party phrases and aliases, and remove anything shown between the request and its result.",
+      "check": {
+        "id": "extension-point",
+        "confidence": "low",
+        "extension_point": [
+          "com.apple.intents-service",
+          "com.apple.intents-ui-service"
+        ],
+        "plist_keys": [
+          "NSExtension.NSExtensionAttributes.IntentsSupported"
+        ],
+        "files": [
+          "AppIntentVocabulary.plist"
+        ],
+        "symbols": [
+          "AppShortcutsProvider",
+          "AppShortcut("
+        ]
+      },
+      "review": [
+        "Can the app fulfill every registered intent and App Shortcut by itself, and would people expect it from this app?",
+        "Do phrases, vocabulary, and aliases name only the app, the company, or the app's own content?",
+        "Does anything, such as an ad or upsell, appear between the request and its result?"
+      ]
+    },
+    {
+      "id": "capabilities.vpn",
+      "title": "VPN app requirements",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "entitlements",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.4"
+      ],
+      "applies_when": [
+        "vpn"
+      ],
+      "summary": "Apps offering VPN services must use the `NEVPNManager` API and may only be offered by developers enrolled as an organization. Before any purchase or use, an app screen must declare what user data is collected and how it is used. The app may not sell, use, or disclose data to third parties, and the privacy policy must commit to that. In territories that require a VPN license, the license goes in the App Review notes. Parental control, content blocking, and security apps from approved providers may also use these APIs. Violations lead to removal and can end the developer account.",
+      "fix": "Submit from an organization account. Add a data-use screen before the paywall or connect button, state the no-sharing commitment in the privacy policy, and put license details in the review notes for each territory that needs one.",
+      "references": [
+        "https://developer.apple.com/documentation/networkextension/nevpnmanager",
+        "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.networking.vpn.api"
+      ],
+      "check": {
+        "id": "entitlement-signals",
+        "confidence": "high",
+        "catalog": "entitlements",
+        "keys": [
+          "com.apple.developer.networking.vpn.api",
+          "com.apple.developer.networking.networkextension"
+        ],
+        "symbols": [
+          "NEVPNManager",
+          "NETunnelProviderManager",
+          "NEPacketTunnelProvider",
+          "NEVPNProtocol"
+        ]
+      },
+      "review": [
+        "Is the developer account enrolled as an organization?",
+        "Does a screen declare data collection and use before any purchase or connection?",
+        "Does the privacy policy commit to not selling, using, or disclosing data to third parties?",
+        "For territories that require a VPN license, is the license in the review notes?"
       ]
     },
     {
@@ -2900,40 +4404,127 @@
         "1.6"
       ],
       "applies_when": [],
-      "summary": "`NSAllowsArbitraryLoads` turns off App Transport Security for every connection. App Review asks for a justification, and plain HTTP exposes user data.",
-      "fix": "Remove the global exception. Use HTTPS, or add a narrow `NSExceptionDomains` entry for the specific host that cannot, and explain it in the review notes.",
+      "summary": "`NSAllowsArbitraryLoads` turns off App Transport Security for every connection, and `NSAllowsArbitraryLoadsForMedia` and `NSAllowsArbitraryLoadsInWebContent` do the same for media and web views. Apple says these exceptions need a justification and may trigger additional App Review, and plain HTTP exposes user data.",
+      "fix": "Remove the global exception. Use HTTPS, or add a narrow `NSExceptionDomains` entry for the specific host that cannot, and explain it in the review notes. `NSAllowsLocalNetworking` covers local-network devices without a global exception.",
       "references": [
-        "https://developer.apple.com/documentation/bundleresources/information-property-list/nsapptransportsecurity"
+        "https://developer.apple.com/documentation/bundleresources/information-property-list/nsapptransportsecurity",
+        "https://developer.apple.com/documentation/security/preventing-insecure-network-connections"
       ],
       "check": {
         "id": "ats-exceptions",
-        "confidence": "high"
+        "confidence": "high",
+        "keys": [
+          "NSAllowsArbitraryLoads",
+          "NSAllowsArbitraryLoadsForMedia",
+          "NSAllowsArbitraryLoadsInWebContent"
+        ]
       },
       "review": [
         "Which hosts cannot use HTTPS, and is the exception limited to them?"
       ]
     },
     {
-      "id": "network.ipv4-literals",
-      "title": "Hard-coded IPv4 addresses",
+      "id": "network.ats-exception-domains",
+      "title": "Per-domain App Transport Security exceptions",
+      "severity": "note",
+      "evidence": [
+        "plist",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "1.6"
+      ],
+      "applies_when": [],
+      "summary": "`NSExceptionAllowsInsecureHTTPLoads` and a lowered `NSExceptionMinimumTLSVersion` under `NSExceptionDomains` weaken transport security for one host. Apple lists both among the exceptions that need a justification and may trigger additional App Review. An exception for a host the app no longer calls is dead weight that still draws questions.",
+      "fix": "Move the host to HTTPS with TLS 1.2 or later and delete the exception. Keep only exceptions for hosts the app still calls, and state the reason for each in the review notes.",
+      "references": [
+        "https://developer.apple.com/documentation/security/preventing-insecure-network-connections"
+      ],
+      "check": {
+        "id": "ats-exceptions",
+        "confidence": "high",
+        "domain_keys": [
+          "NSExceptionAllowsInsecureHTTPLoads",
+          "NSExceptionMinimumTLSVersion"
+        ]
+      },
+      "review": [
+        "Does the app still call each excepted host, and why can it not use HTTPS with current TLS?"
+      ]
+    },
+    {
+      "id": "network.cleartext-urls",
+      "title": "Plain http:// URLs in the app",
       "severity": "warning",
       "evidence": [
-        "source"
+        "source",
+        "plist"
       ],
       "enforced_by": "app-review",
       "automation": "automated",
       "guidelines": [
+        "1.6"
+      ],
+      "applies_when": [],
+      "summary": "App Transport Security blocks cleartext `http://` loads by default, so a hard-coded `http://` URL either fails for the reviewer or works only because ATS was loosened, in which case user data travels unencrypted. XML namespaces, DTDs, and reserved example domains are identifiers, not connections, and are ignored; local hosts are covered by `build.debug-endpoints`.",
+      "fix": "Switch the URL to `https://`. If the server cannot do TLS, add a narrow `NSExceptionDomains` entry for that host and explain it in the review notes.",
+      "references": [
+        "https://developer.apple.com/documentation/security/preventing-insecure-network-connections"
+      ],
+      "check": {
+        "id": "source-patterns",
+        "confidence": "medium",
+        "strings_only": true,
+        "patterns": [
+          "\"http://[^\"\\s]+\"",
+          "'http://[^'\\s]+'"
+        ],
+        "ignore": [
+          "(?i)http://(localhost|127\\.0\\.0\\.1|0\\.0\\.0\\.0|\\[::1\\])",
+          "(?i)http://([a-z0-9-]+\\.)*(example\\.(com|org|net)|test|invalid)\\b",
+          "(?i)(xmlns|w3\\.org|DTD|doctype|purl\\.org|schemas\\.(xmlsoap|microsoft|openxmlformats)\\.|ns\\.adobe\\.com|apple\\.com/DTDs)"
+        ]
+      }
+    },
+    {
+      "id": "network.ipv4-literals",
+      "title": "Hard-coded IPv4 addresses or IPv4-only socket APIs",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "plist"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "2.5",
         "2.5.5"
       ],
       "applies_when": [],
-      "summary": "Apps must work on IPv6-only networks, which App Review uses. Connecting to IPv4 literals or using IPv4-only socket APIs fails there.",
-      "fix": "Connect by hostname with `URLSession` or `Network.framework`, which handle NAT64 automatically.",
+      "summary": "Apps must work on IPv6-only networks, which App Review uses. Connecting to IPv4 literals, or resolving and connecting with IPv4-specific APIs such as `inet_addr`, `inet_aton`, `gethostbyname`, or `sockaddr_in`, fails there.",
+      "fix": "Connect by hostname with `URLSession` or `Network.framework`, which handle NAT64 automatically. In BSD socket code, use `getaddrinfo` and `sockaddr_storage` instead of IPv4-only calls.",
       "references": [
         "https://developer.apple.com/support/ipv6/"
       ],
       "check": {
         "id": "ipv4-literals",
-        "confidence": "low"
+        "confidence": "low",
+        "literal": "(?<![\\w.])(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(\\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}(?![\\w.]|/\\d)",
+        "ignore": [
+          "(?i)version",
+          "\\b0\\.0\\.0\\.0\\b",
+          "\\b127\\.0\\.0\\.1\\b",
+          "\\b255\\.255\\."
+        ],
+        "socket_apis": [
+          "\\binet_addr\\b",
+          "\\binet_aton\\b",
+          "\\bgethostbyname\\b",
+          "\\bsockaddr_in\\b",
+          "\\bAF_INET\\b"
+        ]
       }
     },
     {
@@ -6192,6 +7783,201 @@
       ]
     },
     {
+      "id": "security.hardcoded-secrets",
+      "title": "Server secrets or private keys compiled into the app",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "binary"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "1.6"
+      ],
+      "applies_when": [],
+      "summary": "Anything in the app bundle can be extracted with `strings` on the binary. A cloud access key, a payment secret key, a source-control token, or a private key in the app lets anyone act as the developer's server, which breaks 1.6's requirement to prevent unauthorized access to user data. Publishable client keys, such as a Stripe `pk_live_` key or a Firebase API key, are meant to ship and are not flagged.",
+      "fix": "Revoke and rotate the exposed secret first; removing it from the next build does not undo the leak. Move the call that needs it to your server, and give the app a short-lived, per-user token instead.",
+      "references": [
+        "https://developer.apple.com/documentation/security/keychain-services"
+      ],
+      "check": {
+        "id": "secret-patterns",
+        "confidence": "medium",
+        "skip_paths": [
+          "Tests/",
+          "UITests/",
+          "Fixtures/",
+          "Preview Content/"
+        ],
+        "patterns": [
+          "\\bAKIA[0-9A-Z]{16}\\b",
+          "\\bgh[pousr]_[A-Za-z0-9]{36}\\b",
+          "\\b(sk|rk)_live_[0-9A-Za-z]{20,}",
+          "\\bsk-(proj-|ant-)?[A-Za-z0-9_-]{24,}",
+          "\\bxox[abprs]-[0-9A-Za-z-]{10,}",
+          "-----BEGIN ([A-Z]+ )?PRIVATE KEY-----",
+          "(?i)\\b(api[_-]?secret|secret[_-]?key|client[_-]?secret|private[_-]?key)\\s*[:=]\\s*[\"'][A-Za-z0-9+/_=-]{20,}[\"']"
+        ]
+      }
+    },
+    {
+      "id": "security.malware",
+      "title": "App transmits harmful code or abuses system services",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "binary",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "2.5.3"
+      ],
+      "applies_when": [],
+      "summary": "Apps that transmit viruses, files, or code that can harm or disrupt the operating system or hardware features, including Push Notifications and Game Center, are rejected, and egregious or repeat cases lead to removal from the Apple Developer Program. Push floods, Game Center score or achievement spam, and payloads that crash other apps fall here.",
+      "fix": "Remove the behavior and any SDK that causes it. Rate-limit pushes and submit only real scores and achievements.",
+      "review": [
+        "Can the app send files, links, or code to other people or devices that could harm or disrupt them?",
+        "Does the app send push notifications or Game Center data at a volume or in a form that disrupts the service?",
+        "Has every bundled SDK and binary come from a known, current source?"
+      ]
+    },
+    {
+      "id": "security.secret-files-in-bundle",
+      "title": "Signing keys or service credentials copied into the app bundle",
+      "severity": "error",
+      "evidence": [
+        "binary",
+        "project"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "1.6"
+      ],
+      "applies_when": [],
+      "summary": "App Store Connect API keys (`.p8`), certificate bundles (`.p12`), PEM private keys, Android keystores, service-account JSON files, and `.env` files sometimes land in Copy Bundle Resources or a synchronized folder. Anyone who unzips the IPA gets them. `embedded.mobileprovision` and `GoogleService-Info.plist` are expected in the bundle and are not flagged.",
+      "fix": "Remove the file from every target's membership and from the repository, then revoke and reissue the credential. Keep signing material in the keychain or CI secrets.",
+      "check": {
+        "id": "bundle-files",
+        "confidence": "high",
+        "extensions": [
+          ".p8",
+          ".p12",
+          ".pfx",
+          ".keystore",
+          ".jks"
+        ],
+        "names": [
+          ".env",
+          ".env.production",
+          "service-account.json",
+          "google-service-account.json"
+        ],
+        "content_patterns": [
+          "-----BEGIN ([A-Z]+ )?PRIVATE KEY-----"
+        ],
+        "allow": [
+          "embedded.mobileprovision",
+          "GoogleService-Info.plist"
+        ]
+      }
+    },
+    {
+      "id": "security.secrets-in-logs",
+      "title": "Passwords or tokens written to logs",
+      "severity": "warning",
+      "evidence": [
+        "source"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "1.6"
+      ],
+      "applies_when": [],
+      "summary": "Logging a password, token, or API key puts it in the device log, crash reports, and any analytics breadcrumbs. `NSLog`, `print`, and `os_log` or `Logger` interpolations marked `.public` are readable by anyone with the device and a Mac. `Logger` redacts dynamic strings by default, so a `.private` or `.sensitive` interpolation is fine.",
+      "fix": "Remove the value from the message, or log it through `Logger` with `privacy: .private` or a `.hash` mask when correlation is needed.",
+      "references": [
+        "https://developer.apple.com/documentation/os/generating-log-messages-from-your-code"
+      ],
+      "check": {
+        "id": "source-patterns",
+        "confidence": "medium",
+        "code_only": true,
+        "patterns": [
+          "(?i)\\b(print|debugPrint|NSLog|os_log|console\\.(log|debug|info|warn|error))\\s*\\([^\\n]*\\b(password|passwd|token|api_?key|secret|bearer|authorization)\\b",
+          "(?i)\\blogger\\.\\w+\\([^\\n]*\\b(password|passwd|token|api_?key|secret|bearer|authorization)\\b[^\\n]*privacy:\\s*\\.public"
+        ],
+        "ignore": [
+          "privacy:\\s*\\.(private|sensitive)",
+          "%\\{private\\}",
+          "%\\{sensitive\\}"
+        ]
+      }
+    },
+    {
+      "id": "security.test-keys-in-release",
+      "title": "Payment test keys in the release build",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "binary"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "2.1"
+      ],
+      "applies_when": [],
+      "summary": "Stripe `sk_test_`, `pk_test_`, and `rk_test_` keys, or a Braintree `sandbox_` tokenization key, in the release build mean checkout runs in test mode: the reviewer sees a payment succeed that charges nothing, and real customers cannot pay. A test secret key in the binary also exposes the test account.",
+      "fix": "Select keys per build configuration so Release uses live publishable keys, and keep secret keys on the server. Gate any test key behind `#if DEBUG`.",
+      "check": {
+        "id": "secret-patterns",
+        "confidence": "high",
+        "skip_debug_blocks": true,
+        "patterns": [
+          "\\b(sk|pk|rk)_test_[0-9A-Za-z]{10,}",
+          "\\bsandbox_[a-z0-9]{8}_[a-z0-9]{16}\\b"
+        ]
+      }
+    },
+    {
+      "id": "security.tokens-in-userdefaults",
+      "title": "Credentials stored in UserDefaults or AsyncStorage",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "1.6"
+      ],
+      "applies_when": [],
+      "summary": "`UserDefaults`, `@AppStorage`, and React Native `AsyncStorage` write unencrypted plists or files that land in device backups and are readable on a compromised device. Session tokens, refresh tokens, passwords, and API keys stored there break 1.6's requirement to protect user information from unauthorized access.",
+      "fix": "Store secrets in the keychain with an accessibility class such as `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`; in React Native use a keychain-backed module. Keep only non-sensitive preferences in `UserDefaults`.",
+      "references": [
+        "https://developer.apple.com/documentation/security/keychain-services"
+      ],
+      "check": {
+        "id": "source-patterns",
+        "confidence": "medium",
+        "patterns": [
+          "(?i)@AppStorage\\(\\s*\"[^\"]*(token|password|passwd|secret|api_?key|jwt|session)[^\"]*\"",
+          "(?i)UserDefaults[^\\n]*\\.set\\([^\\n]*forKey:\\s*\"[^\"]*(token|password|passwd|secret|api_?key|jwt|session)",
+          "(?i)\\[\\[NSUserDefaults standardUserDefaults\\] setObject:[^\\n]*forKey:@\"[^\"]*(token|password|secret|apikey|jwt)",
+          "(?i)AsyncStorage\\.setItem\\(\\s*[\"'`][^\"'`]*(token|password|secret|api_?key|jwt|session)"
+        ]
+      },
+      "review": [
+        "Where does the app keep session tokens, refresh tokens, and passwords, and is it the keychain?"
+      ]
+    },
+    {
       "id": "tracking.att-missing",
       "title": "Advertising identifier or tracking SDK without App Tracking Transparency",
       "severity": "error",
@@ -6554,6 +8340,685 @@
           "summary": "iOS and iPadOS apps uploaded to App Store Connect must target iOS 13 or later.",
           "source": "https://developer.apple.com/news/upcoming-requirements/?id=0992026a",
           "rule": "build.deployment-target"
+        }
+      ]
+    },
+    "entitlements": {
+      "source": "https://developer.apple.com/documentation/bundleresources/entitlements",
+      "requests": "https://developer.apple.com/help/account/capabilities/capability-requests/",
+      "verified": "2026-10-01",
+      "entitlements": [
+        {
+          "key": "aps-environment",
+          "capability": "Push Notifications",
+          "signals": [
+            "registerForRemoteNotifications",
+            "didRegisterForRemoteNotificationsWithDeviceToken",
+            "PKPushRegistry"
+          ],
+          "guidelines": [
+            "4.5.4"
+          ],
+          "approval": false,
+          "note": "Expo and several SDKs add it automatically. Remove it when the app only schedules local notifications."
+        },
+        {
+          "key": "com.apple.developer.aps-environment",
+          "capability": "Push Notifications (macOS)",
+          "signals": [
+            "registerForRemoteNotifications",
+            "didRegisterForRemoteNotificationsWithDeviceToken"
+          ],
+          "guidelines": [
+            "4.5.4"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.developer.usernotifications.critical-alerts",
+          "capability": "Critical Alerts",
+          "signals": [
+            ".criticalAlert",
+            "defaultCritical",
+            "criticalSoundNamed"
+          ],
+          "guidelines": [
+            "4.5.4"
+          ],
+          "approval": true,
+          "request": "https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/"
+        },
+        {
+          "key": "com.apple.developer.usernotifications.filtering",
+          "capability": "Notification filtering",
+          "signals": [
+            "UNNotificationServiceExtension"
+          ],
+          "guidelines": [
+            "4.5.4"
+          ],
+          "approval": true
+        },
+        {
+          "key": "com.apple.developer.healthkit",
+          "capability": "HealthKit",
+          "signals": [
+            "HKHealthStore"
+          ],
+          "guidelines": [
+            "2.5.1",
+            "5.1.3"
+          ],
+          "approval": false,
+          "note": "HealthKit must serve health and fitness and integrate with the Health app. Needs NSHealthShareUsageDescription or NSHealthUpdateUsageDescription."
+        },
+        {
+          "key": "com.apple.developer.healthkit.access",
+          "capability": "HealthKit clinical records",
+          "signals": [
+            "HKClinicalType",
+            "clinicalType(forIdentifier:"
+          ],
+          "guidelines": [
+            "5.1.3"
+          ],
+          "approval": false,
+          "note": "Value health-records. Add only the data types the app reads; App Review may reject unused ones."
+        },
+        {
+          "key": "com.apple.developer.healthkit.background-delivery",
+          "capability": "HealthKit background delivery",
+          "signals": [
+            "enableBackgroundDelivery"
+          ],
+          "guidelines": [
+            "2.5.4"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.developer.icloud-services",
+          "capability": "iCloud",
+          "signals": [
+            "CKContainer",
+            "CKDatabase",
+            "CKSyncEngine",
+            "cloudKitDatabase",
+            "NSPersistentCloudKitContainer",
+            "url(forUbiquityContainerIdentifier:",
+            "NSUbiquitousKeyValueStore"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": false,
+          "note": "Values CloudDocuments, CloudKit, CloudKit-Anonymous. Health data may not be stored in iCloud (5.1.3); the privacy rules cover that side."
+        },
+        {
+          "key": "com.apple.developer.icloud-container-identifiers",
+          "capability": "iCloud containers",
+          "signals": [
+            "CKContainer",
+            "cloudKitDatabase",
+            "NSPersistentCloudKitContainer",
+            "url(forUbiquityContainerIdentifier:"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.developer.ubiquity-kvstore-identifier",
+          "capability": "iCloud key-value storage",
+          "signals": [
+            "NSUbiquitousKeyValueStore"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.developer.homekit",
+          "capability": "HomeKit",
+          "signals": [
+            "HMHomeManager"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": false,
+          "note": "HomeKit must provide home automation, and the description must say so."
+        },
+        {
+          "key": "com.apple.developer.matter.allow-setup-payload",
+          "capability": "Matter setup payload",
+          "signals": [
+            "MatterAddDeviceRequest"
+          ],
+          "guidelines": [
+            "2.5.17"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.developer.siri",
+          "capability": "Siri",
+          "signals": [
+            "INExtension",
+            "INInteraction",
+            "INPreferences.requestSiriAuthorization",
+            "IntentsSupported"
+          ],
+          "guidelines": [
+            "2.5.11"
+          ],
+          "approval": false,
+          "note": "App Intents and App Shortcuts need no entitlement; this one is for SiriKit intents."
+        },
+        {
+          "key": "com.apple.developer.networking.vpn.api",
+          "capability": "Personal VPN",
+          "signals": [
+            "NEVPNManager"
+          ],
+          "guidelines": [
+            "5.4"
+          ],
+          "approval": false,
+          "note": "Guideline 5.4 limits VPN apps to organization accounts and requires a data-use declaration before purchase or use."
+        },
+        {
+          "key": "com.apple.developer.networking.networkextension",
+          "capability": "Network Extensions",
+          "signals": [
+            "NETunnelProviderManager",
+            "NEPacketTunnelProvider",
+            "NEAppProxyProvider",
+            "NEFilterDataProvider",
+            "NEFilterManager",
+            "NEDNSProxyProvider",
+            "NEDNSSettingsManager",
+            "NEAppPushProvider",
+            "NERelayManager",
+            "NEURLFilterManager"
+          ],
+          "guidelines": [
+            "5.4"
+          ],
+          "approval": false,
+          "note": "Tunnel, proxy, and filter providers fall under 5.4: organization account, data-use declaration, no data sale."
+        },
+        {
+          "key": "com.apple.developer.networking.multicast",
+          "capability": "Multicast networking",
+          "signals": [
+            "NWConnectionGroup",
+            "NWMulticastGroup",
+            "IP_ADD_MEMBERSHIP"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": true
+        },
+        {
+          "key": "com.apple.developer.networking.HotspotHelper",
+          "capability": "Hotspot Helper",
+          "signals": [
+            "NEHotspotHelper"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": true
+        },
+        {
+          "key": "com.apple.developer.networking.HotspotConfiguration",
+          "capability": "Hotspot Configuration",
+          "signals": [
+            "NEHotspotConfigurationManager"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.developer.networking.wifi-info",
+          "capability": "Access Wi-Fi Information",
+          "signals": [
+            "CNCopyCurrentNetworkInfo",
+            "fetchCurrent"
+          ],
+          "guidelines": [
+            "5.1.1"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.developer.family-controls",
+          "capability": "Family Controls",
+          "signals": [
+            "AuthorizationCenter.shared",
+            "ManagedSettingsStore",
+            "DeviceActivityCenter"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": true,
+          "note": "The development variant works without approval; request permission before submitting to the App Store."
+        },
+        {
+          "key": "com.apple.developer.contacts.notes",
+          "capability": "Contact notes",
+          "signals": [
+            "CNContactNoteKey"
+          ],
+          "guidelines": [
+            "5.1.1"
+          ],
+          "approval": true
+        },
+        {
+          "key": "com.apple.developer.exposure-notification",
+          "capability": "Exposure Notification",
+          "signals": [
+            "ENManager"
+          ],
+          "guidelines": [
+            "5.1.1"
+          ],
+          "approval": true,
+          "request": "https://developer.apple.com/contact/request/exposure-notification-entitlement"
+        },
+        {
+          "key": "com.apple.developer.sensorkit.reader.allow",
+          "capability": "SensorKit",
+          "signals": [
+            "SRSensorReader"
+          ],
+          "guidelines": [
+            "5.1.3"
+          ],
+          "approval": true,
+          "note": "Granted only for studies Apple approves."
+        },
+        {
+          "key": "com.apple.developer.automatic-assessment-configuration",
+          "capability": "Automatic Assessment Configuration",
+          "signals": [
+            "AEAssessmentSession"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": true
+        },
+        {
+          "key": "com.apple.developer.financekit",
+          "capability": "FinanceKit",
+          "signals": [
+            "FinanceStore"
+          ],
+          "guidelines": [
+            "5.1.1"
+          ],
+          "approval": true
+        },
+        {
+          "key": "com.apple.developer.nfc.hce",
+          "capability": "NFC host card emulation",
+          "signals": [
+            "CardSession"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": true
+        },
+        {
+          "key": "com.apple.developer.nfc.readersession.formats",
+          "capability": "NFC tag reading",
+          "signals": [
+            "NFCNDEFReaderSession",
+            "NFCTagReaderSession",
+            "NFCVASReaderSession"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": false,
+          "note": "Needs NFCReaderUsageDescription."
+        },
+        {
+          "key": "com.apple.developer.storekit.external-purchase",
+          "capability": "StoreKit External Purchase",
+          "signals": [
+            "ExternalPurchase"
+          ],
+          "guidelines": [
+            "3.1.1"
+          ],
+          "approval": true
+        },
+        {
+          "key": "com.apple.developer.storekit.external-purchase-link",
+          "capability": "StoreKit External Purchase Link",
+          "signals": [
+            "ExternalPurchaseLink"
+          ],
+          "guidelines": [
+            "3.1.1"
+          ],
+          "approval": false,
+          "note": "Apple assigns it to eligible accounts; confirm the account holds it before shipping."
+        },
+        {
+          "key": "com.apple.developer.storekit.external-link.account",
+          "capability": "External Link Account",
+          "signals": [
+            "ExternalLinkAccount"
+          ],
+          "guidelines": [
+            "3.1.3"
+          ],
+          "approval": false,
+          "note": "Reader apps only."
+        },
+        {
+          "key": "com.apple.developer.web-browser",
+          "capability": "Default web browser",
+          "signals": [
+            "WKWebView",
+            "WebPage("
+          ],
+          "guidelines": [
+            "2.5.6"
+          ],
+          "approval": true,
+          "request": "https://developer.apple.com/documentation/xcode/preparing-your-app-to-be-the-default-browser",
+          "note": "The app must open http and https URLs directly, offer a URL field, search, or bookmarks at launch, avoid UIWebView, and skip the purpose strings the page bans."
+        },
+        {
+          "key": "com.apple.developer.web-browser-engine.host",
+          "capability": "Alternative browser engine",
+          "signals": [
+            "BrowserEngineKit"
+          ],
+          "guidelines": [
+            "2.5.6"
+          ],
+          "approval": true,
+          "request": "https://developer.apple.com/support/alternative-browser-engines/",
+          "note": "EU and Japan only, requested per region."
+        },
+        {
+          "key": "com.apple.developer.mail-client",
+          "capability": "Default mail app",
+          "signals": [],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": true
+        },
+        {
+          "key": "com.apple.developer.marketplace.app-installation",
+          "capability": "Alternative app marketplace",
+          "signals": [
+            "MarketplaceKit"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": true
+        },
+        {
+          "key": "com.apple.developer.carplay-audio",
+          "capability": "CarPlay audio",
+          "signals": [
+            "CPTemplateApplicationSceneDelegate",
+            "CPInterfaceController"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": true,
+          "request": "https://developer.apple.com/carplay/",
+          "note": "Every com.apple.developer.carplay-* entitlement is requested from Apple."
+        },
+        {
+          "key": "com.apple.developer.carplay-maps",
+          "capability": "CarPlay navigation",
+          "signals": [
+            "CPMapTemplate"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": true,
+          "request": "https://developer.apple.com/carplay/"
+        },
+        {
+          "key": "com.apple.developer.carplay-communication",
+          "capability": "CarPlay communication",
+          "signals": [
+            "CPTemplateApplicationSceneDelegate"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": true,
+          "request": "https://developer.apple.com/carplay/"
+        },
+        {
+          "key": "com.apple.developer.applesignin",
+          "capability": "Sign in with Apple",
+          "signals": [
+            "ASAuthorizationAppleIDProvider",
+            "SignInWithAppleButton"
+          ],
+          "guidelines": [
+            "4.8"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.developer.associated-domains",
+          "capability": "Associated Domains",
+          "signals": [
+            "onContinueUserActivity",
+            "NSUserActivityTypeBrowsingWeb",
+            "onOpenURL",
+            "continue userActivity",
+            "ASAuthorizationPasswordProvider"
+          ],
+          "guidelines": [
+            "2.1"
+          ],
+          "approval": false,
+          "note": "Each applinks domain must serve apple-app-site-association over HTTPS, or links open in Safari for the reviewer."
+        },
+        {
+          "key": "com.apple.security.application-groups",
+          "capability": "App Groups",
+          "signals": [
+            "containerURL(forSecurityApplicationGroupIdentifier:",
+            "UserDefaults(suiteName:",
+            "groupContainer"
+          ],
+          "guidelines": [
+            "2.5.2"
+          ],
+          "approval": false,
+          "note": "On macOS, prefix the group with the Team ID or authorize it in the embedded provisioning profile; otherwise macOS 15 asks the user for access."
+        },
+        {
+          "key": "keychain-access-groups",
+          "capability": "Keychain Sharing",
+          "signals": [
+            "kSecAttrAccessGroup"
+          ],
+          "guidelines": [
+            "1.6"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.developer.in-app-payments",
+          "capability": "Apple Pay",
+          "signals": [
+            "PKPaymentRequest",
+            "PKPaymentAuthorizationController",
+            "PayWithApplePayButton",
+            "PKPaymentButton"
+          ],
+          "guidelines": [
+            "4.9"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.developer.pass-type-identifiers",
+          "capability": "Wallet",
+          "signals": [
+            "PKAddPassesViewController",
+            "PKPassLibrary",
+            "AddPassToWalletButton"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.developer.game-center",
+          "capability": "Game Center",
+          "signals": [
+            "GKLocalPlayer"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.developer.push-to-talk",
+          "capability": "Push to Talk",
+          "signals": [
+            "PTChannelManager"
+          ],
+          "guidelines": [
+            "2.5.4"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.developer.group-session",
+          "capability": "Group Activities",
+          "signals": [
+            "GroupActivity",
+            "GroupSession"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.developer.weatherkit",
+          "capability": "WeatherKit",
+          "signals": [
+            "WeatherService"
+          ],
+          "guidelines": [
+            "2.5.1"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.developer.kernel.increased-memory-limit",
+          "capability": "Increased Memory Limit",
+          "signals": [],
+          "guidelines": [
+            "2.4.2"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.security.app-sandbox",
+          "capability": "App Sandbox (macOS)",
+          "signals": [],
+          "guidelines": [
+            "2.4.5"
+          ],
+          "approval": false,
+          "note": "Required, set to true, on every executable in a Mac App Store app."
+        },
+        {
+          "key": "com.apple.security.network.server",
+          "capability": "Incoming network connections (macOS sandbox)",
+          "signals": [
+            "NWListener",
+            "CFSocketCreate",
+            "listen(",
+            "NetService(",
+            "GCDWebServer"
+          ],
+          "guidelines": [
+            "2.4.5"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.security.device.camera",
+          "capability": "Camera (macOS sandbox)",
+          "signals": [
+            "AVCaptureDevice",
+            "AVCaptureSession"
+          ],
+          "guidelines": [
+            "2.4.5"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.security.device.audio-input",
+          "capability": "Audio input (macOS sandbox)",
+          "signals": [
+            "AVAudioRecorder",
+            "AVAudioEngine",
+            "inputNode",
+            "AVCaptureDevice"
+          ],
+          "guidelines": [
+            "2.4.5"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.security.files.downloads.read-write",
+          "capability": "Downloads folder (macOS sandbox)",
+          "signals": [
+            "downloadsDirectory",
+            "NSDownloadsDirectory"
+          ],
+          "guidelines": [
+            "2.4.5"
+          ],
+          "approval": false
+        },
+        {
+          "key": "com.apple.security.temporary-exception",
+          "capability": "Sandbox temporary exceptions (macOS)",
+          "signals": [],
+          "guidelines": [
+            "2.4.5"
+          ],
+          "approval": false,
+          "note": "Prefix match for every com.apple.security.temporary-exception.* key. Each widens the sandbox; prefer a supported entitlement or user-selected file access."
         }
       ]
     },

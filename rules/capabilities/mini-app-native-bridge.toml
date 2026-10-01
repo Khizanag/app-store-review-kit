@@ -1,0 +1,24 @@
+id = "capabilities.mini-app-native-bridge"
+title = "Hosted software reaches native APIs or user data"
+severity = "error"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["4.7.2", "4.7.3"]
+summary = """
+A host app may not extend or expose native platform APIs or technologies to mini apps, games, or plug-ins without Apple's prior permission, and may not share data or privacy permissions with any individual piece of that software without the person's explicit consent each time. JavaScript bridges that pass location, contacts, camera, or account data to hosted code are where this shows up.
+"""
+fix = """
+Limit the bridge to what the hosted software needs, ask for consent in the host UI each time data or a permission is shared with a specific mini app, and get Apple's permission before exposing native APIs.
+"""
+
+[check]
+id = "source-patterns"
+confidence = "low"
+code_only = true
+patterns = ['\bWKScriptMessageHandler\b', '\bWKScriptMessageHandlerWithReply\b', 'addScriptMessageHandler', '\bJSExport\b', 'setObject\([^\n]*forKeyedSubscript']
+
+[review]
+questions = [
+  "Which native APIs, data, or permissions can hosted software reach through the bridge, and did Apple approve exposing them?",
+  "Does the app ask for consent each time it shares data or a permission with a specific mini app?",
+]

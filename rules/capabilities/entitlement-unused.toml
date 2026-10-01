@@ -1,0 +1,25 @@
+id = "capabilities.entitlement-unused"
+title = "Entitlement with no code that uses it"
+severity = "warning"
+evidence = ["entitlements", "source", "binary", "human"]
+enforced_by = "app-review"
+guidelines = ["2.5.1"]
+summary = """
+Each capability in the signed entitlements tells App Review to look for the feature behind it. HealthKit, HomeKit, iCloud, Siri, Network Extensions, or sandbox exceptions with no code that uses them lead to questions or a rejection, because APIs must be used for their intended purpose and the description must mention the integration. Templates, Expo plugins, and SDK setup often add capabilities the app never uses.
+"""
+fix = """
+Remove the capability from the target's Signing & Capabilities tab, or from the Expo config plugin that adds it. Keep only entitlements the release build uses, and describe each one's feature in the app description or review notes.
+"""
+references = [
+  "https://developer.apple.com/documentation/bundleresources/entitlements",
+]
+
+[check]
+id = "entitlement-signals"
+confidence = "medium"
+catalog = "entitlements"
+
+[review]
+questions = [
+  "For each entitlement, which feature uses it, and does the description or review note mention that feature?",
+]

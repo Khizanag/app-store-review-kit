@@ -1,0 +1,28 @@
+id = "capabilities.extension-scope"
+title = "Extensions, widgets, or App Clip outside the app's purpose"
+severity = "warning"
+evidence = ["project", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["4.4", "2.5.16"]
+summary = """
+Widgets, extensions, and notifications must relate to the app's content and function. Every extension must be disclosed in the marketing text, include some function such as help or settings where possible, and contain no marketing, advertising, or in-app purchases. Every App Clip feature must also exist in the main app.
+"""
+fix = """
+Name each extension in the description, remove promotional or purchase flows from extensions, and make sure every App Clip flow is reachable in the full app.
+"""
+references = [
+  "https://developer.apple.com/documentation/bundleresources/information-property-list/nsextension/nsextensionpointidentifier",
+]
+
+[check]
+id = "extension-point"
+confidence = "low"
+list_all = true
+forbids = ['\bimport StoreKit\b', '\bProduct\.products\b', '\bSKPaymentQueue\b', '\bSubscriptionStoreView\b']
+
+[review]
+questions = [
+  "Does each widget, extension, and notification relate to what the app does?",
+  "Does the description mention every extension the app offers?",
+  "Is every App Clip feature also in the full app?",
+]

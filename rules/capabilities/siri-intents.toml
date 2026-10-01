@@ -1,0 +1,27 @@
+id = "capabilities.siri-intents"
+title = "Siri intents or Shortcuts outside the app's function"
+severity = "warning"
+evidence = ["plist", "source", "human"]
+enforced_by = "app-review"
+guidelines = ["2.5.11"]
+summary = """
+Apps should register only for SiriKit intents and Shortcuts they can handle without another app and that people would expect from the app. Vocabulary, phrases, and aliases must relate to the app or company and not be generic terms or third-party names. Requests must resolve directly, with no ads or marketing before fulfillment and disambiguation only when the task needs it.
+"""
+fix = """
+Drop intents the app cannot complete on its own, rename generic or third-party phrases and aliases, and remove anything shown between the request and its result.
+"""
+
+[check]
+id = "extension-point"
+confidence = "low"
+extension_point = ["com.apple.intents-service", "com.apple.intents-ui-service"]
+plist_keys = ["NSExtension.NSExtensionAttributes.IntentsSupported"]
+files = ["AppIntentVocabulary.plist"]
+symbols = ["AppShortcutsProvider", "AppShortcut("]
+
+[review]
+questions = [
+  "Can the app fulfill every registered intent and App Shortcut by itself, and would people expect it from this app?",
+  "Do phrases, vocabulary, and aliases name only the app, the company, or the app's own content?",
+  "Does anything, such as an ad or upsell, appear between the request and its result?",
+]

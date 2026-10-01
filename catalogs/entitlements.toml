@@ -1,0 +1,415 @@
+# Entitlements App Review looks at: what each one needs in the app, the guideline it falls under,
+# and whether Apple must approve it before an App Store build can carry it.
+# `signals` are code symbols that show the capability is in use; an entitlement with none of them
+# is a candidate for capabilities.entitlement-unused. An empty list means the engine cannot tell.
+# `approval = true` only where Apple's page for the entitlement says to request it.
+# Key selection informed by Kofiloski/app-store-review-risk and setlog-app/expo-plist-audit (both MIT).
+
+source = "https://developer.apple.com/documentation/bundleresources/entitlements"
+requests = "https://developer.apple.com/help/account/capabilities/capability-requests/"
+verified = 2026-10-01
+
+[[entitlements]]
+key = "aps-environment"
+capability = "Push Notifications"
+signals = ["registerForRemoteNotifications", "didRegisterForRemoteNotificationsWithDeviceToken", "PKPushRegistry"]
+guidelines = ["4.5.4"]
+approval = false
+note = "Expo and several SDKs add it automatically. Remove it when the app only schedules local notifications."
+
+[[entitlements]]
+key = "com.apple.developer.aps-environment"
+capability = "Push Notifications (macOS)"
+signals = ["registerForRemoteNotifications", "didRegisterForRemoteNotificationsWithDeviceToken"]
+guidelines = ["4.5.4"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.developer.usernotifications.critical-alerts"
+capability = "Critical Alerts"
+signals = [".criticalAlert", "defaultCritical", "criticalSoundNamed"]
+guidelines = ["4.5.4"]
+approval = true
+request = "https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/"
+
+[[entitlements]]
+key = "com.apple.developer.usernotifications.filtering"
+capability = "Notification filtering"
+signals = ["UNNotificationServiceExtension"]
+guidelines = ["4.5.4"]
+approval = true
+
+[[entitlements]]
+key = "com.apple.developer.healthkit"
+capability = "HealthKit"
+signals = ["HKHealthStore"]
+guidelines = ["2.5.1", "5.1.3"]
+approval = false
+note = "HealthKit must serve health and fitness and integrate with the Health app. Needs NSHealthShareUsageDescription or NSHealthUpdateUsageDescription."
+
+[[entitlements]]
+key = "com.apple.developer.healthkit.access"
+capability = "HealthKit clinical records"
+signals = ["HKClinicalType", "clinicalType(forIdentifier:"]
+guidelines = ["5.1.3"]
+approval = false
+note = "Value health-records. Add only the data types the app reads; App Review may reject unused ones."
+
+[[entitlements]]
+key = "com.apple.developer.healthkit.background-delivery"
+capability = "HealthKit background delivery"
+signals = ["enableBackgroundDelivery"]
+guidelines = ["2.5.4"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.developer.icloud-services"
+capability = "iCloud"
+signals = ["CKContainer", "CKDatabase", "CKSyncEngine", "cloudKitDatabase", "NSPersistentCloudKitContainer", "url(forUbiquityContainerIdentifier:", "NSUbiquitousKeyValueStore"]
+guidelines = ["2.5.1"]
+approval = false
+note = "Values CloudDocuments, CloudKit, CloudKit-Anonymous. Health data may not be stored in iCloud (5.1.3); the privacy rules cover that side."
+
+[[entitlements]]
+key = "com.apple.developer.icloud-container-identifiers"
+capability = "iCloud containers"
+signals = ["CKContainer", "cloudKitDatabase", "NSPersistentCloudKitContainer", "url(forUbiquityContainerIdentifier:"]
+guidelines = ["2.5.1"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.developer.ubiquity-kvstore-identifier"
+capability = "iCloud key-value storage"
+signals = ["NSUbiquitousKeyValueStore"]
+guidelines = ["2.5.1"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.developer.homekit"
+capability = "HomeKit"
+signals = ["HMHomeManager"]
+guidelines = ["2.5.1"]
+approval = false
+note = "HomeKit must provide home automation, and the description must say so."
+
+[[entitlements]]
+key = "com.apple.developer.matter.allow-setup-payload"
+capability = "Matter setup payload"
+signals = ["MatterAddDeviceRequest"]
+guidelines = ["2.5.17"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.developer.siri"
+capability = "Siri"
+signals = ["INExtension", "INInteraction", "INPreferences.requestSiriAuthorization", "IntentsSupported"]
+guidelines = ["2.5.11"]
+approval = false
+note = "App Intents and App Shortcuts need no entitlement; this one is for SiriKit intents."
+
+[[entitlements]]
+key = "com.apple.developer.networking.vpn.api"
+capability = "Personal VPN"
+signals = ["NEVPNManager"]
+guidelines = ["5.4"]
+approval = false
+note = "Guideline 5.4 limits VPN apps to organization accounts and requires a data-use declaration before purchase or use."
+
+[[entitlements]]
+key = "com.apple.developer.networking.networkextension"
+capability = "Network Extensions"
+signals = ["NETunnelProviderManager", "NEPacketTunnelProvider", "NEAppProxyProvider", "NEFilterDataProvider", "NEFilterManager", "NEDNSProxyProvider", "NEDNSSettingsManager", "NEAppPushProvider", "NERelayManager", "NEURLFilterManager"]
+guidelines = ["5.4"]
+approval = false
+note = "Tunnel, proxy, and filter providers fall under 5.4: organization account, data-use declaration, no data sale."
+
+[[entitlements]]
+key = "com.apple.developer.networking.multicast"
+capability = "Multicast networking"
+signals = ["NWConnectionGroup", "NWMulticastGroup", "IP_ADD_MEMBERSHIP"]
+guidelines = ["2.5.1"]
+approval = true
+
+[[entitlements]]
+key = "com.apple.developer.networking.HotspotHelper"
+capability = "Hotspot Helper"
+signals = ["NEHotspotHelper"]
+guidelines = ["2.5.1"]
+approval = true
+
+[[entitlements]]
+key = "com.apple.developer.networking.HotspotConfiguration"
+capability = "Hotspot Configuration"
+signals = ["NEHotspotConfigurationManager"]
+guidelines = ["2.5.1"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.developer.networking.wifi-info"
+capability = "Access Wi-Fi Information"
+signals = ["CNCopyCurrentNetworkInfo", "fetchCurrent"]
+guidelines = ["5.1.1"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.developer.family-controls"
+capability = "Family Controls"
+signals = ["AuthorizationCenter.shared", "ManagedSettingsStore", "DeviceActivityCenter"]
+guidelines = ["2.5.1"]
+approval = true
+note = "The development variant works without approval; request permission before submitting to the App Store."
+
+[[entitlements]]
+key = "com.apple.developer.contacts.notes"
+capability = "Contact notes"
+signals = ["CNContactNoteKey"]
+guidelines = ["5.1.1"]
+approval = true
+
+[[entitlements]]
+key = "com.apple.developer.exposure-notification"
+capability = "Exposure Notification"
+signals = ["ENManager"]
+guidelines = ["5.1.1"]
+approval = true
+request = "https://developer.apple.com/contact/request/exposure-notification-entitlement"
+
+[[entitlements]]
+key = "com.apple.developer.sensorkit.reader.allow"
+capability = "SensorKit"
+signals = ["SRSensorReader"]
+guidelines = ["5.1.3"]
+approval = true
+note = "Granted only for studies Apple approves."
+
+[[entitlements]]
+key = "com.apple.developer.automatic-assessment-configuration"
+capability = "Automatic Assessment Configuration"
+signals = ["AEAssessmentSession"]
+guidelines = ["2.5.1"]
+approval = true
+
+[[entitlements]]
+key = "com.apple.developer.financekit"
+capability = "FinanceKit"
+signals = ["FinanceStore"]
+guidelines = ["5.1.1"]
+approval = true
+
+[[entitlements]]
+key = "com.apple.developer.nfc.hce"
+capability = "NFC host card emulation"
+signals = ["CardSession"]
+guidelines = ["2.5.1"]
+approval = true
+
+[[entitlements]]
+key = "com.apple.developer.nfc.readersession.formats"
+capability = "NFC tag reading"
+signals = ["NFCNDEFReaderSession", "NFCTagReaderSession", "NFCVASReaderSession"]
+guidelines = ["2.5.1"]
+approval = false
+note = "Needs NFCReaderUsageDescription."
+
+[[entitlements]]
+key = "com.apple.developer.storekit.external-purchase"
+capability = "StoreKit External Purchase"
+signals = ["ExternalPurchase"]
+guidelines = ["3.1.1"]
+approval = true
+
+[[entitlements]]
+key = "com.apple.developer.storekit.external-purchase-link"
+capability = "StoreKit External Purchase Link"
+signals = ["ExternalPurchaseLink"]
+guidelines = ["3.1.1"]
+approval = false
+note = "Apple assigns it to eligible accounts; confirm the account holds it before shipping."
+
+[[entitlements]]
+key = "com.apple.developer.storekit.external-link.account"
+capability = "External Link Account"
+signals = ["ExternalLinkAccount"]
+guidelines = ["3.1.3"]
+approval = false
+note = "Reader apps only."
+
+[[entitlements]]
+key = "com.apple.developer.web-browser"
+capability = "Default web browser"
+signals = ["WKWebView", "WebPage("]
+guidelines = ["2.5.6"]
+approval = true
+request = "https://developer.apple.com/documentation/xcode/preparing-your-app-to-be-the-default-browser"
+note = "The app must open http and https URLs directly, offer a URL field, search, or bookmarks at launch, avoid UIWebView, and skip the purpose strings the page bans."
+
+[[entitlements]]
+key = "com.apple.developer.web-browser-engine.host"
+capability = "Alternative browser engine"
+signals = ["BrowserEngineKit"]
+guidelines = ["2.5.6"]
+approval = true
+request = "https://developer.apple.com/support/alternative-browser-engines/"
+note = "EU and Japan only, requested per region."
+
+[[entitlements]]
+key = "com.apple.developer.mail-client"
+capability = "Default mail app"
+signals = []
+guidelines = ["2.5.1"]
+approval = true
+
+[[entitlements]]
+key = "com.apple.developer.marketplace.app-installation"
+capability = "Alternative app marketplace"
+signals = ["MarketplaceKit"]
+guidelines = ["2.5.1"]
+approval = true
+
+[[entitlements]]
+key = "com.apple.developer.carplay-audio"
+capability = "CarPlay audio"
+signals = ["CPTemplateApplicationSceneDelegate", "CPInterfaceController"]
+guidelines = ["2.5.1"]
+approval = true
+request = "https://developer.apple.com/carplay/"
+note = "Every com.apple.developer.carplay-* entitlement is requested from Apple."
+
+[[entitlements]]
+key = "com.apple.developer.carplay-maps"
+capability = "CarPlay navigation"
+signals = ["CPMapTemplate"]
+guidelines = ["2.5.1"]
+approval = true
+request = "https://developer.apple.com/carplay/"
+
+[[entitlements]]
+key = "com.apple.developer.carplay-communication"
+capability = "CarPlay communication"
+signals = ["CPTemplateApplicationSceneDelegate"]
+guidelines = ["2.5.1"]
+approval = true
+request = "https://developer.apple.com/carplay/"
+
+[[entitlements]]
+key = "com.apple.developer.applesignin"
+capability = "Sign in with Apple"
+signals = ["ASAuthorizationAppleIDProvider", "SignInWithAppleButton"]
+guidelines = ["4.8"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.developer.associated-domains"
+capability = "Associated Domains"
+signals = ["onContinueUserActivity", "NSUserActivityTypeBrowsingWeb", "onOpenURL", "continue userActivity", "ASAuthorizationPasswordProvider"]
+guidelines = ["2.1"]
+approval = false
+note = "Each applinks domain must serve apple-app-site-association over HTTPS, or links open in Safari for the reviewer."
+
+[[entitlements]]
+key = "com.apple.security.application-groups"
+capability = "App Groups"
+signals = ["containerURL(forSecurityApplicationGroupIdentifier:", "UserDefaults(suiteName:", "groupContainer"]
+guidelines = ["2.5.2"]
+approval = false
+note = "On macOS, prefix the group with the Team ID or authorize it in the embedded provisioning profile; otherwise macOS 15 asks the user for access."
+
+[[entitlements]]
+key = "keychain-access-groups"
+capability = "Keychain Sharing"
+signals = ["kSecAttrAccessGroup"]
+guidelines = ["1.6"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.developer.in-app-payments"
+capability = "Apple Pay"
+signals = ["PKPaymentRequest", "PKPaymentAuthorizationController", "PayWithApplePayButton", "PKPaymentButton"]
+guidelines = ["4.9"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.developer.pass-type-identifiers"
+capability = "Wallet"
+signals = ["PKAddPassesViewController", "PKPassLibrary", "AddPassToWalletButton"]
+guidelines = ["2.5.1"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.developer.game-center"
+capability = "Game Center"
+signals = ["GKLocalPlayer"]
+guidelines = ["2.5.1"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.developer.push-to-talk"
+capability = "Push to Talk"
+signals = ["PTChannelManager"]
+guidelines = ["2.5.4"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.developer.group-session"
+capability = "Group Activities"
+signals = ["GroupActivity", "GroupSession"]
+guidelines = ["2.5.1"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.developer.weatherkit"
+capability = "WeatherKit"
+signals = ["WeatherService"]
+guidelines = ["2.5.1"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.developer.kernel.increased-memory-limit"
+capability = "Increased Memory Limit"
+signals = []
+guidelines = ["2.4.2"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.security.app-sandbox"
+capability = "App Sandbox (macOS)"
+signals = []
+guidelines = ["2.4.5"]
+approval = false
+note = "Required, set to true, on every executable in a Mac App Store app."
+
+[[entitlements]]
+key = "com.apple.security.network.server"
+capability = "Incoming network connections (macOS sandbox)"
+signals = ["NWListener", "CFSocketCreate", "listen(", "NetService(", "GCDWebServer"]
+guidelines = ["2.4.5"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.security.device.camera"
+capability = "Camera (macOS sandbox)"
+signals = ["AVCaptureDevice", "AVCaptureSession"]
+guidelines = ["2.4.5"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.security.device.audio-input"
+capability = "Audio input (macOS sandbox)"
+signals = ["AVAudioRecorder", "AVAudioEngine", "inputNode", "AVCaptureDevice"]
+guidelines = ["2.4.5"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.security.files.downloads.read-write"
+capability = "Downloads folder (macOS sandbox)"
+signals = ["downloadsDirectory", "NSDownloadsDirectory"]
+guidelines = ["2.4.5"]
+approval = false
+
+[[entitlements]]
+key = "com.apple.security.temporary-exception"
+capability = "Sandbox temporary exceptions (macOS)"
+signals = []
+guidelines = ["2.4.5"]
+approval = false
+note = "Prefix match for every com.apple.security.temporary-exception.* key. Each widens the sandbox; prefer a supported entitlement or user-selected file access."

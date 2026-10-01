@@ -1,0 +1,25 @@
+id = "build.macos-bundle-contents"
+title = "Mac app bundles installers, kernel extensions, or Java"
+severity = "error"
+evidence = ["binary", "source"]
+enforced_by = "app-review"
+guidelines = ["2.4.5"]
+applies_when = ["macos"]
+summary = """
+Mac App Store apps must be a single self-contained bundle built with Xcode. They may not ship third-party installers, install kexts or code into shared locations, download standalone apps or code that changes features, or depend on deprecated or optionally installed runtimes such as Java. This covers 2.4.5(ii), (iv), and (viii).
+"""
+fix = """
+Remove embedded `.pkg`, `.mpkg`, `.dmg`, `.kext`, and `.jar` payloads from the Mac App Store build. Bundle any runtime the app needs inside the app, or drop it.
+"""
+
+[check]
+id = "bundle-files"
+confidence = "high"
+extensions = [".pkg", ".mpkg", ".dmg", ".kext", ".jar"]
+patterns = ['JavaVM\.framework', '/Library/Extensions/', '/Library/Application Support/[^"]*/[^"]*\.(app|dylib|bundle)', 'installer -pkg']
+
+[review]
+questions = [
+  "Does the app write code or resources outside its container, such as into /Library or another app's folder?",
+  "Does the app download other apps, plug-ins, or code that change what it does after review?",
+]

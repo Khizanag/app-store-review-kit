@@ -1,0 +1,42 @@
+# Mode-to-symbol map adapted from berkayturk/appstore-precheck (MIT).
+id = "capabilities.background-modes-unused"
+title = "Background mode declared without code that uses it"
+severity = "warning"
+evidence = ["plist", "source", "human"]
+enforced_by = "app-review"
+guidelines = ["2.5", "2.5.4"]
+summary = """
+Background services may be used only for their intended purpose: audio playback, location, VoIP, task completion, and so on. Each `UIBackgroundModes` value with no matching API in the app, such as `audio` without an audio session or `location` without background location updates, is a common 2.5.4 rejection. Playing silent audio to stay awake is rejected too.
+"""
+fix = """
+Turn off every Background Modes checkbox the app does not need. For each remaining mode, be ready to show the reviewer the feature that uses it, and say where to find it in the review notes.
+"""
+references = [
+  "https://developer.apple.com/documentation/bundleresources/information-property-list/uibackgroundmodes",
+  "https://developer.apple.com/documentation/xcode/configuring-background-execution-modes",
+]
+
+[check]
+id = "background-mode-signals"
+confidence = "medium"
+
+[check.signals]
+audio = ["AVAudioSession", "AVPlayer", "AVAudioPlayer", "AVQueuePlayer", "AVAudioEngine", "AVPlayerViewController", "VideoPlayer", "MPNowPlayingInfoCenter", "MPRemoteCommandCenter"]
+location = ["allowsBackgroundLocationUpdates", "CLBackgroundActivitySession", "startMonitoringSignificantLocationChanges", "CLLocationUpdate.liveUpdates", "startMonitoringVisits"]
+voip = ["PKPushRegistry", "CXProvider"]
+fetch = ["BGAppRefreshTask", "BGAppRefreshTaskRequest", "setMinimumBackgroundFetchInterval", "performFetchWithCompletionHandler", ".backgroundTask(.appRefresh"]
+processing = ["BGProcessingTask", "BGProcessingTaskRequest"]
+remote-notification = ["didReceiveRemoteNotification", "fetchCompletionHandler"]
+bluetooth-central = ["CBCentralManager"]
+bluetooth-peripheral = ["CBPeripheralManager"]
+external-accessory = ["EAAccessoryManager", "EASession"]
+nearby-interaction = ["NISession"]
+push-to-talk = ["PTChannelManager"]
+network-authentication = ["NEHotspotHelper"]
+screen-capture = ["SCStream", "RPScreenRecorder", "RPBroadcastSampleHandler"]
+
+[review]
+questions = [
+  "For each background mode, which feature needs it, and can the reviewer reach that feature?",
+  "Does the app play audio in the background only when people are listening to it?",
+]

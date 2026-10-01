@@ -1,0 +1,27 @@
+id = "build.hardware-switches"
+title = "App repurposes hardware buttons or blocks standard behavior"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["2.5.9"]
+summary = """
+Apps may not alter or disable standard switches, such as the volume buttons or the Ring/Silent switch, or other native behaviors, and may not block links out to other apps. Observing `outputVolume` to turn volume presses into app actions, or refusing to open external links, are the common cases.
+"""
+fix = """
+For a camera shutter on the hardware buttons, use `AVCaptureEventInteraction` in UIKit or `onCameraCaptureEvent` in SwiftUI, which the system supports. Let links to other apps open normally.
+"""
+references = [
+  "https://developer.apple.com/documentation/avkit/avcaptureeventinteraction",
+]
+
+[check]
+id = "source-patterns"
+confidence = "low"
+code_only = true
+patterns = ['"outputVolume"', '\.outputVolume\b', 'SystemVolumeDidChange']
+
+[review]
+questions = [
+  "Do volume buttons, the Action button, or the Ring/Silent switch do anything other than their system function outside a capture session?",
+  "Does the app block or intercept links that should open another app?",
+]

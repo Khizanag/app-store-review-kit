@@ -1,0 +1,20 @@
+id = "capabilities.entitlement-approval"
+title = "Managed entitlement without Apple's approval"
+severity = "error"
+evidence = ["entitlements", "project"]
+enforced_by = "upload"
+summary = """
+Managed capabilities, such as Critical Alerts, Family Controls, Multicast Networking, CarPlay, the default browser and mail entitlements, StoreKit External Purchase, and contact notes, need Apple to assign the entitlement to the account first. Without it the distribution profile cannot carry the entitlement, so the App Store build cannot be signed or uploaded with it. Family Controls has a development variant that works locally and fails at distribution.
+"""
+fix = """
+Have the Account Holder request the capability under Certificates, Identifiers & Profiles > Identifiers > Capability Requests, and wait for approval before building the feature into a release. Remove the entitlement from the release build until then.
+"""
+references = [
+  "https://developer.apple.com/help/account/capabilities/capability-requests/",
+]
+
+[check]
+id = "entitlement-signals"
+confidence = "high"
+catalog = "entitlements"
+approval = true

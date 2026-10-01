@@ -1,0 +1,23 @@
+id = "capabilities.call-blocking"
+title = "Call, SMS, or spam blocking without disclosed criteria"
+severity = "warning"
+evidence = ["project", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["2.5.12"]
+summary = """
+Apps using CallKit or an SMS filter extension should block only numbers confirmed as spam. Apps with call, SMS, or MMS blocking or spam identification must name the feature in the marketing text and explain the criteria for their block and spam lists. Data from these extensions may be used only to run or improve the app, never for tracking, profiling, or sale.
+"""
+fix = """
+Describe the blocking feature and the list criteria in the description. Keep call and message data inside the extension's purpose, and remove any analytics or ad SDK from the extension.
+"""
+
+[check]
+id = "extension-point"
+confidence = "high"
+extension_point = ["com.apple.callkit.call-directory", "com.apple.identitylookup.message-filter", "com.apple.identitylookup.classification-ui"]
+
+[review]
+questions = [
+  "Does the description name the blocking or spam feature and explain how numbers get on the lists?",
+  "Does call or message data leave the device for anything other than running the filter?",
+]

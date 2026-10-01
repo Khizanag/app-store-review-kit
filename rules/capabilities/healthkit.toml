@@ -1,0 +1,28 @@
+id = "capabilities.healthkit"
+title = "HealthKit capability without a health feature"
+severity = "warning"
+evidence = ["entitlements", "source", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["2.5.1"]
+applies_when = ["health"]
+summary = """
+HealthKit must be used for health and fitness, integrate with the Health app, and be named in the app description. The HealthKit entitlement with no `HKHealthStore` use, clinical-records access the app does not read, or Health data used for an unrelated feature gets rejected. Data handling for health information is covered by the privacy rules.
+"""
+fix = """
+Remove the HealthKit capability if no feature reads or writes Health data. Otherwise request only the types the feature uses, mention the Health integration in the description, and show the reviewer where it appears.
+"""
+references = [
+  "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.healthkit",
+  "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.healthkit.access",
+]
+
+[check]
+id = "entitlement-signals"
+confidence = "high"
+catalog = "entitlements"
+keys = ["com.apple.developer.healthkit", "com.apple.developer.healthkit.access", "com.apple.developer.healthkit.background-delivery"]
+
+[review]
+questions = [
+  "Which feature reads or writes Health data, and does the description mention the Health integration?",
+]

@@ -1,0 +1,21 @@
+id = "capabilities.push-without-use"
+title = "Push entitlement with no remote notification code"
+severity = "note"
+evidence = ["entitlements", "source"]
+enforced_by = "app-review"
+guidelines = ["2.5.1", "4.5.4"]
+summary = """
+`aps-environment` is set but nothing registers for remote notifications. Templates, `expo-notifications`, and analytics SDKs add it even when the app only schedules local notifications. It is a capability App Review can ask about, and it implies a push feature the app does not have.
+"""
+fix = """
+Remove the Push Notifications capability if the app does not receive remote pushes. Local notifications through `UNUserNotificationCenter` need no entitlement.
+"""
+references = [
+  "https://developer.apple.com/documentation/bundleresources/entitlements/aps-environment",
+]
+
+[check]
+id = "entitlement-signals"
+confidence = "medium"
+catalog = "entitlements"
+keys = ["aps-environment", "com.apple.developer.aps-environment"]

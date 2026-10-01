@@ -1,3 +1,4 @@
+# Extra hosts and regexes adapted from ElxMaj/app-store-review-skill, artbyjazi/app-store-approval, and UppercutLabs/heimdall (all MIT).
 id = "build.debug-endpoints"
 title = "Development endpoints shipped in the release build"
 severity = "warning"
@@ -5,7 +6,7 @@ evidence = ["source", "binary"]
 enforced_by = "app-review"
 guidelines = ["2.1"]
 summary = """
-URLs pointing at localhost, private network addresses, tunnels, or staging hosts in the release build usually mean a feature that fails for the reviewer, which is a 2.1 completeness rejection.
+URLs pointing at localhost, private network addresses, tunnels, or staging hosts in the release build usually mean a feature that fails for the reviewer, which is a 2.1 completeness rejection. What matters is the value the Release configuration resolves to; a URL inside `#if DEBUG` is fine.
 """
 fix = """
 Move environment URLs behind build configurations and make sure the Release configuration points at production.
@@ -14,4 +15,25 @@ Move environment URLs behind build configurations and make sure the Release conf
 [check]
 id = "debug-hosts"
 confidence = "low"
-patterns = ["localhost", "127.0.0.1", "0.0.0.0", "192.168.", "10.0.2.2", ".ngrok", ".local:", "staging.", "dev."]
+skip_debug_blocks = true
+patterns = [
+  "localhost",
+  "127.0.0.1",
+  "0.0.0.0",
+  "192.168.",
+  "10.0.2.2",
+  ".ngrok",
+  "ngrok-free.app",
+  "trycloudflare.com",
+  "loca.lt",
+  ".local:",
+  ".local/",
+  "staging.",
+  "dev.",
+  "dev-api.",
+  "test-api.",
+]
+regex = [
+  'https?://(localhost|127\.0\.0\.1|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)(:\d+)?',
+  '''https?://[^\s"']*\b(staging|dev|test)\.''',
+]

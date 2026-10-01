@@ -1,0 +1,28 @@
+id = "capabilities.face-authentication"
+title = "Custom facial recognition used to sign in"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["2.5.13"]
+summary = """
+Apps that use facial recognition for account authentication must use LocalAuthentication, not ARKit or other face recognition, where possible, and must offer another sign-in method for users under 13.
+"""
+fix = """
+Authenticate with `LAContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, ...)` so Face ID does the matching. Keep a password or passkey path for everyone, including users under 13.
+"""
+references = [
+  "https://developer.apple.com/documentation/localauthentication",
+]
+
+[check]
+id = "source-patterns"
+confidence = "low"
+code_only = true
+patterns = ['\bARFaceTrackingConfiguration\b', '\bVNDetectFaceLandmarksRequest\b', '\bVNDetectFaceCaptureQualityRequest\b', '\bARFaceAnchor\b']
+near = ['(?i)\b(login|log in|sign ?in|authenticat|unlock|verify)']
+
+[review]
+questions = [
+  "Does any sign-in or unlock flow match faces with ARKit, Vision, or a third-party SDK instead of LocalAuthentication?",
+  "Can users under 13 sign in another way?",
+]

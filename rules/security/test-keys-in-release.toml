@@ -1,0 +1,19 @@
+# Stripe prefixes adapted from RevylAI/greenlight and artbyjazi/app-store-approval (both MIT).
+id = "security.test-keys-in-release"
+title = "Payment test keys in the release build"
+severity = "warning"
+evidence = ["source", "binary"]
+enforced_by = "app-review"
+guidelines = ["2.1"]
+summary = """
+Stripe `sk_test_`, `pk_test_`, and `rk_test_` keys, or a Braintree `sandbox_` tokenization key, in the release build mean checkout runs in test mode: the reviewer sees a payment succeed that charges nothing, and real customers cannot pay. A test secret key in the binary also exposes the test account.
+"""
+fix = """
+Select keys per build configuration so Release uses live publishable keys, and keep secret keys on the server. Gate any test key behind `#if DEBUG`.
+"""
+
+[check]
+id = "secret-patterns"
+confidence = "high"
+skip_debug_blocks = true
+patterns = ['\b(sk|pk|rk)_test_[0-9A-Za-z]{10,}', '\bsandbox_[a-z0-9]{8}_[a-z0-9]{16}\b']

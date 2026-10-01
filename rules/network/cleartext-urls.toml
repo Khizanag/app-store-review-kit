@@ -1,0 +1,27 @@
+# Pattern and ignore list adapted from RevylAI/greenlight (MIT).
+id = "network.cleartext-urls"
+title = "Plain http:// URLs in the app"
+severity = "warning"
+evidence = ["source", "plist"]
+enforced_by = "app-review"
+guidelines = ["1.6"]
+summary = """
+App Transport Security blocks cleartext `http://` loads by default, so a hard-coded `http://` URL either fails for the reviewer or works only because ATS was loosened, in which case user data travels unencrypted. XML namespaces, DTDs, and reserved example domains are identifiers, not connections, and are ignored; local hosts are covered by `build.debug-endpoints`.
+"""
+fix = """
+Switch the URL to `https://`. If the server cannot do TLS, add a narrow `NSExceptionDomains` entry for that host and explain it in the review notes.
+"""
+references = [
+  "https://developer.apple.com/documentation/security/preventing-insecure-network-connections",
+]
+
+[check]
+id = "source-patterns"
+confidence = "medium"
+strings_only = true
+patterns = ['''"http://[^"\s]+"''', """'http://[^'\\s]+'"""]
+ignore = [
+  '(?i)http://(localhost|127\.0\.0\.1|0\.0\.0\.0|\[::1\])',
+  '(?i)http://([a-z0-9-]+\.)*(example\.(com|org|net)|test|invalid)\b',
+  '(?i)(xmlns|w3\.org|DTD|doctype|purl\.org|schemas\.(xmlsoap|microsoft|openxmlformats)\.|ns\.adobe\.com|apple\.com/DTDs)',
+]

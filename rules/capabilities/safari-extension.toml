@@ -1,0 +1,28 @@
+# Extension point list adapted from berkayturk/appstore-precheck (MIT).
+id = "capabilities.safari-extension"
+title = "Safari extension claims broad website access"
+severity = "warning"
+evidence = ["plist", "source", "human"]
+enforced_by = "app-review"
+guidelines = ["4.4", "4.4.2"]
+summary = """
+Safari extensions should claim access to no more websites than they need, must run on the current Safari, may not interfere with system or Safari UI, and must never include malicious or misleading code; violations lead to removal from the Apple Developer Program. `<all_urls>`, `*://*/*`, or wildcard content-script matches are the first thing to justify.
+"""
+fix = """
+Request `activeTab`, specific host patterns, or `optional_permissions` instead of `<all_urls>`. Test the extension on the current Safari release before submitting.
+"""
+references = [
+  "https://developer.apple.com/documentation/safariservices/managing-safari-web-extension-permissions",
+]
+
+[check]
+id = "extension-point"
+confidence = "medium"
+extension_point = ["com.apple.Safari.web-extension", "com.apple.Safari.extension", "com.apple.Safari.content-blocker"]
+manifest_patterns = ['"<all_urls>"', '"\*://\*/\*"', '"https?://\*/\*"']
+
+[review]
+questions = [
+  "Does the extension need every website it asks for?",
+  "Does the extension change Safari or system UI, or inject anything people would not expect?",
+]

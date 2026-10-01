@@ -1,0 +1,29 @@
+id = "capabilities.ads-placement"
+title = "Ads outside the main app or without required controls"
+severity = "error"
+evidence = ["binary", "project", "human"]
+enforced_by = "app-review"
+guidelines = ["2.5.18", "2.5.16", "4.4"]
+applies_when = ["advertising"]
+summary = """
+Display ads belong only in the main app binary, not in extensions, App Clips, widgets, notifications, keyboards, or watchOS apps. Ads must fit the age rating, let people see the data used to target them without leaving the app, and never target on sensitive data such as health, classroom, or kids' data. Interstitials must be clearly labeled, must not trick people into tapping, and need a close or skip button large enough to use. People must be able to report inappropriate ads.
+"""
+fix = """
+Link ad SDKs only into the main app target. Configure the SDK for the app's age rating, turn off targeting on sensitive data, and add an ad-info and report-ad control to each ad placement.
+"""
+
+[check]
+id = "extension-point"
+confidence = "medium"
+list_all = true
+include_app_clips = true
+include_watch_apps = true
+forbids = ['\bGoogleMobileAds\b', '\bGADMobileAds\b', '\bAppLovinSDK\b', '\bUnityAds\b', '\bFBAudienceNetwork\b', '\bIronSource\b', '\bVungleAds\b', '\bInMobiSDK\b']
+
+[review]
+questions = [
+  "Can people see why an ad was shown to them without leaving the app?",
+  "Can people report an inappropriate ad?",
+  "Does every interstitial have a visible, easy-to-hit close or skip button and a clear ad label?",
+  "Is any ad targeting based on health, classroom, or kids' data?",
+]

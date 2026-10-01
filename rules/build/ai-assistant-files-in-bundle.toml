@@ -1,0 +1,19 @@
+# File list adapted from ElxMaj/app-store-review-skill (MIT).
+id = "build.ai-assistant-files-in-bundle"
+title = "AI assistant instruction files shipped in the app bundle"
+severity = "note"
+evidence = ["binary", "project"]
+enforced_by = "app-review"
+guidelines = ["2.1"]
+summary = """
+Files such as `CLAUDE.md`, `AGENTS.md`, `.cursorrules`, or a `.claude/` folder end up in the `.app` when a synchronized folder or a Copy Bundle Resources phase picks them up. Anyone who unzips the IPA can read them, and they often hold internal paths, hosts, and workflow notes. Submissions should be final builds without development artifacts.
+"""
+fix = """
+Exclude the files from every target: move them out of synchronized folders or add a membership exception, and remove them from Copy Bundle Resources. Check the archived `.app` for them before upload.
+"""
+
+[check]
+id = "bundle-files"
+confidence = "high"
+names = ["CLAUDE.md", "AGENTS.md", "GEMINI.md", ".cursorrules", ".windsurfrules", ".clinerules", "copilot-instructions.md"]
+directories = [".claude", ".cursor", ".windsurf", ".aider", ".continue"]

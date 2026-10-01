@@ -1,0 +1,24 @@
+id = "capabilities.recording-consent"
+title = "Recording or activity logging without consent and an indicator"
+severity = "error"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["2.5.14"]
+summary = """
+Apps must get explicit consent and show a clear visual or audible indication whenever they record or log user activity, including camera, microphone, screen recording, and other user input. Recording that starts silently, or capturing keystrokes or screen content without an indicator, breaks this rule.
+"""
+fix = """
+Start recording only from a deliberate action, show a persistent recording indicator for as long as it runs, and give an obvious stop control. Log keystrokes or other input only with explicit opt-in.
+"""
+
+[check]
+id = "source-patterns"
+confidence = "low"
+code_only = true
+patterns = ['\bRPScreenRecorder\b', '\bRPSystemBroadcastPickerView\b', '\bSCStream\b', '\bAVAudioRecorder\b', '\bAVCaptureMovieFileOutput\b', '\bAVAssetWriter\b', '\bCGEvent\.tapCreate\b', '\bCGEventTapCreate\b', 'addGlobalMonitorForEvents']
+
+[review]
+questions = [
+  "Does every recording or activity log start from an explicit action, with a visible or audible indicator while it runs?",
+  "Does the app record anyone other than the user, such as call participants, and get their consent?",
+]

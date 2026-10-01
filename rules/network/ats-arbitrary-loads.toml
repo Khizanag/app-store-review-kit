@@ -5,18 +5,20 @@ evidence = ["plist", "human"]
 enforced_by = "app-review"
 guidelines = ["1.6"]
 summary = """
-`NSAllowsArbitraryLoads` turns off App Transport Security for every connection. App Review asks for a justification, and plain HTTP exposes user data.
+`NSAllowsArbitraryLoads` turns off App Transport Security for every connection, and `NSAllowsArbitraryLoadsForMedia` and `NSAllowsArbitraryLoadsInWebContent` do the same for media and web views. Apple says these exceptions need a justification and may trigger additional App Review, and plain HTTP exposes user data.
 """
 fix = """
-Remove the global exception. Use HTTPS, or add a narrow `NSExceptionDomains` entry for the specific host that cannot, and explain it in the review notes.
+Remove the global exception. Use HTTPS, or add a narrow `NSExceptionDomains` entry for the specific host that cannot, and explain it in the review notes. `NSAllowsLocalNetworking` covers local-network devices without a global exception.
 """
 references = [
   "https://developer.apple.com/documentation/bundleresources/information-property-list/nsapptransportsecurity",
+  "https://developer.apple.com/documentation/security/preventing-insecure-network-connections",
 ]
 
 [check]
 id = "ats-exceptions"
 confidence = "high"
+keys = ["NSAllowsArbitraryLoads", "NSAllowsArbitraryLoadsForMedia", "NSAllowsArbitraryLoadsInWebContent"]
 
 [review]
 questions = [

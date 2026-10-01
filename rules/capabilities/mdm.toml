@@ -1,0 +1,29 @@
+# Signals informed by berkayturk/appstore-precheck (MIT).
+id = "capabilities.mdm"
+title = "Mobile device management or configuration profile app"
+severity = "error"
+evidence = ["source", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["5.5"]
+summary = """
+Apps that offer Mobile Device Management must request the capability from Apple and may only come from commercial enterprises, educational institutions, government agencies, or, in limited cases, parental-control and device-security companies. Before any purchase or use, an app screen must declare what data is collected and how it is used. The app may not sell, use, or disclose data to third parties, and the privacy policy must say so; analytics may cover only the MDM app's own performance. Apps that install configuration profiles follow the same rules.
+"""
+fix = """
+Request the MDM capability from Apple, submit from the organization's account, add the data-use screen before sign-up, and limit analytics to the app's own performance.
+"""
+references = [
+  "https://developer.apple.com/documentation/devicemanagement",
+]
+
+[check]
+id = "source-patterns"
+confidence = "low"
+patterns = ['\.mobileconfig\b', 'application/x-apple-aspen-config', '\bcom\.apple\.mdm\b', 'PayloadType</key>']
+
+[review]
+questions = [
+  "Does the app enroll devices in MDM or install configuration profiles, and has Apple granted the MDM capability?",
+  "Is the developer an enterprise, school, government agency, or approved parental-control or security provider?",
+  "Does a screen declare data collection and use before any purchase or enrollment?",
+  "Do analytics collect only data about the app's own performance?",
+]

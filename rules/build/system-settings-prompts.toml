@@ -1,0 +1,33 @@
+id = "build.system-settings-prompts"
+title = "App asks people to restart the device or change unrelated settings"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["2.4", "2.4.4"]
+summary = """
+Apps should never suggest or require a device restart or changes to system settings unrelated to their core function, such as turning off Wi-Fi or disabling security features. Deep links into Settings through the private `App-Prefs:` scheme are also a 2.5.1 problem.
+"""
+fix = """
+Remove the instruction. To send people to the app's own settings, open `UIApplication.openSettingsURLString`.
+"""
+references = [
+  "https://developer.apple.com/documentation/uikit/uiapplication/opensettingsurlstring",
+]
+
+[check]
+id = "source-patterns"
+confidence = "low"
+strings_only = true
+patterns = [
+  '(?i)\brestart (your|the) (device|iphone|ipad|phone)\b',
+  '(?i)\breboot (your|the) (device|iphone|ipad|phone)\b',
+  '(?i)\bturn off (wi-?fi|bluetooth|cellular|mobile data|face id|touch id|passcode)\b',
+  '(?i)\bdisable (wi-?fi|face id|touch id|passcode|find my|low power mode)\b',
+  'App-Prefs:',
+  'prefs:root',
+]
+
+[review]
+questions = [
+  "Does any onboarding, help, or error screen tell people to restart the device or change a system setting the app's core feature does not need?",
+]

@@ -1,0 +1,22 @@
+id = "capabilities.push-entitlement-missing"
+title = "Remote notification code without the push entitlement"
+severity = "warning"
+evidence = ["source", "binary", "entitlements"]
+enforced_by = "upload"
+itms = ["ITMS-90078"]
+summary = """
+The app implements `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)`, but its signed entitlements lack `aps-environment`. Upload succeeds with an ITMS-90078 warning, and push registration fails on customers' devices. A third-party SDK that implements the delegate method triggers the same warning.
+"""
+fix = """
+Enable the Push Notifications capability so Xcode adds `aps-environment`, and sign with a distribution profile from an App ID that has push enabled. If the app does not use push, remove or update the SDK that implements the delegate method.
+"""
+references = [
+  "https://developer.apple.com/documentation/bundleresources/entitlements/aps-environment",
+]
+
+[check]
+id = "entitlement-signals"
+confidence = "high"
+catalog = "entitlements"
+keys = ["aps-environment"]
+direction = "missing"

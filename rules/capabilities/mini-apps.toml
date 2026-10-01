@@ -1,0 +1,31 @@
+id = "capabilities.mini-apps"
+title = "Mini apps, games, chatbots, plug-ins, or emulator content"
+severity = "warning"
+evidence = ["source", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["4.7", "4.7.1", "4.7.4", "4.7.5"]
+summary = """
+Apps may offer HTML5 and JavaScript mini apps and games, streaming games, chatbots, plug-ins, and retro console or PC emulator games that are not in the binary, but the host developer is responsible for all of it. That software must follow the privacy rules, have filtering, reporting, and blocking for objectionable content, and sell digital goods through In-App Purchase. The host must publish an index of the software with universal links to each item, flag software above the app's age rating, and restrict it by verified or declared age.
+"""
+fix = """
+Add a browsable index with a universal link per mini app or game, content reporting and user blocking, IAP for digital goods, and an age gate based on the Declared Age Range API or verified age. Hosts of third-party mini apps can look at the Mini Apps Partner Program.
+"""
+references = [
+  "https://developer.apple.com/programs/mini-apps-partner/",
+  "https://developer.apple.com/documentation/declaredagerange",
+]
+
+[check]
+id = "source-patterns"
+confidence = "low"
+code_only = true
+patterns = ['(?i)\bminiapp', '(?i)\bmini[_-]?program', '(?i)\bmini[_-]?game', '(?i)\blibretro\b', '(?i)\bretroarch\b', '\.(nes|sfc|smc|gba|gbc|n64|z64|iso|chd)"']
+
+[review]
+questions = [
+  "Does the app offer software not in its binary, such as mini apps, mini games, streaming games, chatbots, plug-ins, or emulator games?",
+  "Is there an index of that software with a universal link to each item?",
+  "Can people filter and report objectionable content and block abusive users within it?",
+  "Is software above the app's age rating flagged and restricted by verified or declared age?",
+  "Are digital goods sold inside it through In-App Purchase?",
+]

@@ -3,15 +3,40 @@ title = "Non-public API or private framework in use"
 severity = "error"
 evidence = ["source", "binary"]
 enforced_by = "app-review"
-guidelines = ["2.5.1"]
+guidelines = ["2.5", "2.5.1"]
 summary = """
-Apps may use public APIs only. Linking a private framework, calling underscore-prefixed or undocumented selectors, or reaching private classes through `NSClassFromString` or `perform(_:)` leads to rejection, often by automated binary scanning.
+Apps may use public APIs only. Linking a private framework, calling underscore-prefixed or undocumented selectors, reading private ivars through key-value coding, opening the private `App-Prefs:` or `prefs:root` URL schemes, or reaching private classes through `NSClassFromString` or `perform(_:)` leads to rejection, often by automated binary scanning. Deprecated APIs such as `UIAlertView`, `UIActionSheet`, and `NSURLConnection` are public, as are `dlopen`, `dlsym`, and `performSelector` with a public selector; they are not private API.
 """
 fix = """
-Replace the call with a public API. If a dependency does it, update or replace the dependency.
+Replace the call with a public API: `UIApplication.openSettingsURLString` instead of `App-Prefs:`, public properties instead of `value(forKey: "_…")`. If a dependency does it, update or replace the dependency.
 """
+references = [
+  "https://developer.apple.com/documentation/uikit/uiapplication/opensettingsurlstring",
+]
 
 [check]
 id = "private-symbols"
 confidence = "medium"
-patterns = ["/PrivateFrameworks/", "LSApplicationWorkspace", "_UIApplication", "UIStatusBarManager().performSelector", "NSClassFromString(\"_", "Selector((\"_"]
+patterns = [
+  "/PrivateFrameworks/",
+  "LSApplicationWorkspace",
+  "_UIApplication",
+  "UIStatusBarManager().performSelector",
+  "NSClassFromString(\"_",
+  "NSClassFromString(@\"_",
+  "NSSelectorFromString(\"_",
+  "NSSelectorFromString(@\"_",
+  "Selector((\"_",
+  "@selector(_",
+  "value(forKey: \"_",
+  "valueForKey:@\"_",
+  "forKeyPath: \"_",
+  "App-Prefs:",
+  "prefs:root",
+  "MGCopyAnswer",
+  "AVSystemController",
+  "UIGetScreenImage",
+  "SBSLaunchApplication",
+]
+# Public APIs that other scanners misreport as private. Never flag these here.
+not_private = ["dlopen", "dlsym", "UIAlertView", "UIActionSheet", "NSURLConnection", "performSelector", "objc_msgSend", "setSelectionIndicatorImage"]

@@ -1,0 +1,31 @@
+# Patterns adapted from CharlesWiltgen/Axiom and safaiyeh/app-store-review-skill (both MIT).
+id = "security.tokens-in-userdefaults"
+title = "Credentials stored in UserDefaults or AsyncStorage"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["1.6"]
+summary = """
+`UserDefaults`, `@AppStorage`, and React Native `AsyncStorage` write unencrypted plists or files that land in device backups and are readable on a compromised device. Session tokens, refresh tokens, passwords, and API keys stored there break 1.6's requirement to protect user information from unauthorized access.
+"""
+fix = """
+Store secrets in the keychain with an accessibility class such as `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`; in React Native use a keychain-backed module. Keep only non-sensitive preferences in `UserDefaults`.
+"""
+references = [
+  "https://developer.apple.com/documentation/security/keychain-services",
+]
+
+[check]
+id = "source-patterns"
+confidence = "medium"
+patterns = [
+  '''(?i)@AppStorage\(\s*"[^"]*(token|password|passwd|secret|api_?key|jwt|session)[^"]*"''',
+  '''(?i)UserDefaults[^\n]*\.set\([^\n]*forKey:\s*"[^"]*(token|password|passwd|secret|api_?key|jwt|session)''',
+  '''(?i)\[\[NSUserDefaults standardUserDefaults\] setObject:[^\n]*forKey:@"[^"]*(token|password|secret|apikey|jwt)''',
+  '''(?i)AsyncStorage\.setItem\(\s*["'`][^"'`]*(token|password|secret|api_?key|jwt|session)''',
+]
+
+[review]
+questions = [
+  "Where does the app keep session tokens, refresh tokens, and passwords, and is it the keychain?",
+]

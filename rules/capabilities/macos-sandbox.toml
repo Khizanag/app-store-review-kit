@@ -1,0 +1,25 @@
+id = "capabilities.macos-sandbox"
+title = "Mac App Store executable without App Sandbox"
+severity = "error"
+evidence = ["entitlements", "binary"]
+enforced_by = "upload"
+guidelines = ["2.4.5"]
+applies_when = ["macos"]
+itms = ["ITMS-90296"]
+summary = """
+Every executable in a Mac App Store app, including helpers, XPC services, and login items inside the bundle, must be signed with `com.apple.security.app-sandbox` set to true. A missing sandbox fails upload with ITMS-90296. The entitlements file in the project does not count; only the entitlements in the signature do.
+"""
+fix = """
+Enable App Sandbox in Signing & Capabilities for the app and every embedded executable target, archive again, and confirm with `codesign --display --entitlements - <path>` on each executable.
+"""
+references = [
+  "https://developer.apple.com/documentation/security/app-sandbox",
+]
+
+[check]
+id = "entitlement-signals"
+confidence = "high"
+catalog = "entitlements"
+keys = ["com.apple.security.app-sandbox"]
+direction = "missing"
+every_executable = true

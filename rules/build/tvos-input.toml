@@ -1,0 +1,27 @@
+id = "build.tvos-input"
+title = "Apple TV app needs hardware beyond the Siri Remote"
+severity = "warning"
+evidence = ["plist", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["2.4.3"]
+summary = """
+Apple TV apps must work with the Siri Remote or a third-party game controller alone. A game that requires a controller must say so in its metadata so customers know they need the extra hardware.
+"""
+fix = """
+Support the Siri Remote for every flow, including menus. If gameplay requires a controller, set `GCRequiresControllerUserInteraction` for tvOS and state the requirement in the description.
+"""
+references = [
+  "https://developer.apple.com/documentation/bundleresources/information-property-list/gcsupportscontrolleruserinteraction",
+]
+
+[check]
+id = "plist-key-used"
+confidence = "low"
+keys = ["GCRequiresControllerUserInteraction"]
+platforms = ["appletvos"]
+
+[review]
+questions = [
+  "Can every screen of the tvOS app be used with only the Siri Remote?",
+  "If a game controller is required, does the description say so?",
+]

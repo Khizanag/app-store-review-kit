@@ -1,0 +1,29 @@
+id = "build.macos-auto-launch"
+title = "Mac app launches at login or keeps running without consent"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["2.4.5"]
+applies_when = ["macos"]
+summary = """
+Mac App Store apps may not run code at startup or login without consent, spawn processes that keep running after the person quits, or add themselves to the Dock or desktop. Registering a login item on first launch, or a helper that outlives the app, is rejected under 2.4.5(iii).
+"""
+fix = """
+Register login items with `SMAppService` only after the person turns the option on in the app's settings, and unregister when they turn it off. Stop helpers when the app quits.
+"""
+references = [
+  "https://developer.apple.com/documentation/servicemanagement/smappservice",
+]
+
+[check]
+id = "source-patterns"
+confidence = "low"
+code_only = true
+patterns = ['SMAppService\b[^\n]*\.register\(', 'SMLoginItemSetEnabled', 'LSSharedFileListInsertItemURL', 'kLSSharedFileListSessionLoginItems', 'SMJobSubmit', 'LaunchAgents/']
+
+[review]
+questions = [
+  "Is launch at login off until the person turns it on?",
+  "Does any helper process keep running after the person quits the app?",
+  "Does the app add itself to the Dock or put shortcuts on the desktop?",
+]

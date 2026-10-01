@@ -8,14 +8,14 @@ A section's level is the strongest automation among its rules: **automated** nee
 
 | Level | Sections | Rules |
 | --- | --- | --- |
-| automated | 15 | 38 |
-| assisted | 47 | 102 |
-| manual | 27 | 30 |
-| subsections | 4 | - |
-| uncovered | 26 | - |
+| automated | 19 | 54 |
+| assisted | 69 | 131 |
+| manual | 29 | 32 |
+| subsections | 2 | - |
+| uncovered | 0 | - |
 | n/a | 6 | - |
 
-170 rules in total, including ones enforced by upload validation or App Store Connect rather than a guideline section.
+217 rules in total, including ones enforced by upload validation or App Store Connect rather than a guideline section.
 
 ## Sections
 
@@ -39,9 +39,9 @@ A section's level is the strongest automation among its rules: **automated** nee
 | [1.4.4](guidelines/1.4.4.md) | manual | `safety.physical-harm` |
 | [1.4.5](guidelines/1.4.5.md) | manual | `safety.physical-harm` |
 | [1.5 Developer Information](guidelines/1.5.md) | assisted | `legal.developer-identity`, `metadata.support-url` |
-| [1.6 Data Security](guidelines/1.6.md) | assisted | `network.ats-arbitrary-loads` |
+| [1.6 Data Security](guidelines/1.6.md) | automated | `build.debug-logging`, `network.ats-arbitrary-loads`, `network.ats-exception-domains`, `network.cleartext-urls`, `security.hardcoded-secrets`, `security.secret-files-in-bundle`, `security.secrets-in-logs`, `security.tokens-in-userdefaults` |
 | [1.7 Reporting Criminal Activity](guidelines/1.7.md) | manual | `safety.criminal-reporting` |
-| [2.1 App Completeness](guidelines/2.1.md) | automated | `account.demo-account`, `build.debug-endpoints`, `metadata.future-features`, `metadata.placeholder-text`, `metadata.pre-order`, `metadata.review-notes`, `payments.iap-review-metadata`, `payments.legacy-receipt-validation`, `payments.paid-apps-agreement`, `payments.product-ids-mismatch`, `payments.transaction-listener`, `tracking.prompt-not-shown` |
+| [2.1 App Completeness](guidelines/2.1.md) | automated | `account.demo-account`, `build.ai-assistant-files-in-bundle`, `build.debug-endpoints`, `metadata.future-features`, `metadata.placeholder-text`, `metadata.pre-order`, `metadata.review-notes`, `payments.iap-review-metadata`, `payments.legacy-receipt-validation`, `payments.paid-apps-agreement`, `payments.product-ids-mismatch`, `payments.transaction-listener`, `security.test-keys-in-release`, `tracking.prompt-not-shown` |
 | [2.2 Beta Testing](guidelines/2.2.md) | assisted | `metadata.beta-wording` |
 | [2.3 Accurate Metadata](guidelines/2.3.md) | assisted | `metadata.claims-match-build`, `metadata.future-features`, `metadata.localization-incomplete` |
 | [2.3.1](guidelines/2.3.1.md) | automated | `metadata.claims-match-build`, `metadata.misleading-claims`, `metadata.placeholder-text`, `metadata.review-notes` |
@@ -57,33 +57,33 @@ A section's level is the strongest automation among its rules: **automated** nee
 | [2.3.11](guidelines/2.3.11.md) | manual | `metadata.pre-order` |
 | [2.3.12](guidelines/2.3.12.md) | assisted | `metadata.whats-new-generic` |
 | [2.3.13](guidelines/2.3.13.md) | manual | `metadata.in-app-events` |
-| [2.4 Hardware Compatibility](guidelines/2.4.md) | subsections | - |
+| [2.4 Hardware Compatibility](guidelines/2.4.md) | assisted | `build.power-usage`, `build.system-settings-prompts` |
 | [2.4.1](guidelines/2.4.1.md) | assisted | `design.ipad-layout` |
-| [2.4.2](guidelines/2.4.2.md) | automated | `payments.crypto-mining` |
-| [2.4.3](guidelines/2.4.3.md) | uncovered | - |
-| [2.4.4](guidelines/2.4.4.md) | uncovered | - |
-| [2.4.5](guidelines/2.4.5.md) | uncovered | - |
-| [2.5 Software Requirements](guidelines/2.5.md) | subsections | - |
-| [2.5.1](guidelines/2.5.1.md) | automated | `build.private-api` |
-| [2.5.2](guidelines/2.5.2.md) | assisted | `build.executable-code` |
-| [2.5.3](guidelines/2.5.3.md) | uncovered | - |
-| [2.5.4](guidelines/2.5.4.md) | assisted | `permissions.location-background` |
+| [2.4.2](guidelines/2.4.2.md) | automated | `build.power-usage`, `payments.crypto-mining` |
+| [2.4.3](guidelines/2.4.3.md) | assisted | `build.tvos-input` |
+| [2.4.4](guidelines/2.4.4.md) | assisted | `build.system-settings-prompts` |
+| [2.4.5](guidelines/2.4.5.md) | automated | `build.macos-auto-launch`, `build.macos-bundle-contents`, `build.macos-file-access`, `build.macos-license-keys`, `build.macos-privilege-escalation`, `build.macos-self-updater`, `capabilities.macos-app-group-prefix`, `capabilities.macos-sandbox` |
+| [2.5 Software Requirements](guidelines/2.5.md) | automated | `build.alternate-home-screen`, `build.private-api`, `capabilities.background-modes-unused`, `network.ipv4-literals` |
+| [2.5.1](guidelines/2.5.1.md) | automated | `build.private-api`, `build.uiwebview`, `capabilities.entitlement-unused`, `capabilities.healthkit`, `capabilities.icloud`, `capabilities.push-without-use` |
+| [2.5.2](guidelines/2.5.2.md) | assisted | `build.executable-code`, `build.macos-file-access` |
+| [2.5.3](guidelines/2.5.3.md) | manual | `security.malware` |
+| [2.5.4](guidelines/2.5.4.md) | assisted | `capabilities.background-modes-unused`, `permissions.location-background` |
 | [2.5.5](guidelines/2.5.5.md) | automated | `network.ipv4-literals` |
-| [2.5.6](guidelines/2.5.6.md) | uncovered | - |
+| [2.5.6](guidelines/2.5.6.md) | assisted | `build.web-browser-engine` |
 | [2.5.7](guidelines/2.5.7.md) | n/a | - |
-| [2.5.8](guidelines/2.5.8.md) | uncovered | - |
-| [2.5.9](guidelines/2.5.9.md) | uncovered | - |
+| [2.5.8](guidelines/2.5.8.md) | manual | `build.alternate-home-screen` |
+| [2.5.9](guidelines/2.5.9.md) | assisted | `build.hardware-switches` |
 | [2.5.10](guidelines/2.5.10.md) | n/a | - |
-| [2.5.11](guidelines/2.5.11.md) | uncovered | - |
-| [2.5.12](guidelines/2.5.12.md) | uncovered | - |
-| [2.5.13](guidelines/2.5.13.md) | uncovered | - |
-| [2.5.14](guidelines/2.5.14.md) | uncovered | - |
-| [2.5.15](guidelines/2.5.15.md) | uncovered | - |
-| [2.5.16](guidelines/2.5.16.md) | uncovered | - |
-| [2.5.17](guidelines/2.5.17.md) | uncovered | - |
-| [2.5.18](guidelines/2.5.18.md) | uncovered | - |
+| [2.5.11](guidelines/2.5.11.md) | assisted | `capabilities.siri-intents` |
+| [2.5.12](guidelines/2.5.12.md) | assisted | `capabilities.call-blocking` |
+| [2.5.13](guidelines/2.5.13.md) | assisted | `capabilities.face-authentication` |
+| [2.5.14](guidelines/2.5.14.md) | assisted | `capabilities.recording-consent` |
+| [2.5.15](guidelines/2.5.15.md) | assisted | `capabilities.file-picker` |
+| [2.5.16](guidelines/2.5.16.md) | assisted | `capabilities.ads-placement`, `capabilities.extension-scope` |
+| [2.5.17](guidelines/2.5.17.md) | assisted | `capabilities.matter` |
+| [2.5.18](guidelines/2.5.18.md) | assisted | `capabilities.ads-placement` |
 | [3.1 Payments](guidelines/3.1.md) | automated | `payments.external-purchase-entitlement`, `payments.external-purchase-storefront`, `payments.multiplatform-purchases`, `payments.physical-goods-via-iap`, `payments.reader-app-link`, `payments.subscription-migration` |
-| [3.1.1 In-App Purchase](guidelines/3.1.1.md) | automated | `business.creator-tips`, `payments.crypto-nft-unlocks`, `payments.custom-unlock-mechanism`, `payments.digital-goods-outside-iap`, `payments.external-purchase-entitlement`, `payments.external-purchase-storefront`, `payments.free-trial-terms`, `payments.gifting`, `payments.hardcoded-prices`, `payments.local-entitlement-only`, `payments.loot-box-odds`, `payments.purchased-items-expire`, `payments.restore-missing` |
+| [3.1.1 In-App Purchase](guidelines/3.1.1.md) | automated | `build.macos-license-keys`, `business.creator-tips`, `payments.crypto-nft-unlocks`, `payments.custom-unlock-mechanism`, `payments.digital-goods-outside-iap`, `payments.external-purchase-entitlement`, `payments.external-purchase-storefront`, `payments.free-trial-terms`, `payments.gifting`, `payments.hardcoded-prices`, `payments.local-entitlement-only`, `payments.loot-box-odds`, `payments.purchased-items-expire`, `payments.restore-missing` |
 | [3.1.2 Subscriptions](guidelines/3.1.2.md) | automated | `business.forced-store-actions`, `payments.cancellation-friction`, `payments.free-trial-terms`, `payments.hardcoded-prices`, `payments.local-entitlement-only`, `payments.paywall-billed-amount`, `payments.paywall-dismiss`, `payments.paywall-false-urgency`, `payments.paywall-trial-toggle`, `payments.subscription-disclosure`, `payments.subscription-groups`, `payments.subscription-migration` |
 | [3.1.3 Other Purchase Methods](guidelines/3.1.3.md) | automated | `payments.digital-goods-outside-iap`, `payments.external-purchase-entitlement`, `payments.external-purchase-storefront`, `payments.multiplatform-purchases`, `payments.physical-goods-via-iap`, `payments.reader-app-link` |
 | [3.1.4 Hardware-Specific Content](guidelines/3.1.4.md) | assisted | `business.forced-store-actions`, `payments.custom-unlock-mechanism` |
@@ -101,24 +101,24 @@ A section's level is the strongest automation among its rules: **automated** nee
 | [4.2.6](guidelines/4.2.6.md) | manual | `design.template-generated` |
 | [4.2.7 Remote Desktop Clients](guidelines/4.2.7.md) | assisted | `design.remote-desktop` |
 | [4.3 Spam](guidelines/4.3.md) | assisted | `design.spam`, `design.template-generated` |
-| [4.4 Extensions](guidelines/4.4.md) | uncovered | - |
-| [4.4.1](guidelines/4.4.1.md) | uncovered | - |
-| [4.4.2](guidelines/4.4.2.md) | uncovered | - |
+| [4.4 Extensions](guidelines/4.4.md) | assisted | `capabilities.ads-placement`, `capabilities.extension-scope`, `capabilities.keyboard-full-access`, `capabilities.safari-extension` |
+| [4.4.1](guidelines/4.4.1.md) | assisted | `capabilities.keyboard-behavior`, `capabilities.keyboard-full-access` |
+| [4.4.2](guidelines/4.4.2.md) | assisted | `capabilities.safari-extension` |
 | [4.4.3](guidelines/4.4.3.md) | n/a | - |
 | [4.5 Apple Sites and Services](guidelines/4.5.md) | assisted | `design.apple-site-scraping`, `design.live-activity-ads` |
 | [4.5.1](guidelines/4.5.1.md) | manual | `design.apple-site-scraping` |
 | [4.5.2](guidelines/4.5.2.md) | assisted | `design.apple-music` |
 | [4.5.3](guidelines/4.5.3.md) | assisted | `design.game-center-ids`, `design.live-activity-ads` |
-| [4.5.4](guidelines/4.5.4.md) | assisted | `design.push-marketing` |
+| [4.5.4](guidelines/4.5.4.md) | automated | `capabilities.push-without-use`, `design.push-marketing` |
 | [4.5.5](guidelines/4.5.5.md) | assisted | `design.game-center-ids` |
 | [4.5.6](guidelines/4.5.6.md) | assisted | `design.apple-emoji` |
 | [4.6](guidelines/4.6.md) | n/a | - |
-| [4.7 Mini apps, mini games, streaming games, chatbots, plug-ins, and game emulators](guidelines/4.7.md) | uncovered | - |
-| [4.7.1](guidelines/4.7.1.md) | uncovered | - |
-| [4.7.2](guidelines/4.7.2.md) | uncovered | - |
-| [4.7.3](guidelines/4.7.3.md) | uncovered | - |
-| [4.7.4](guidelines/4.7.4.md) | uncovered | - |
-| [4.7.5](guidelines/4.7.5.md) | uncovered | - |
+| [4.7 Mini apps, mini games, streaming games, chatbots, plug-ins, and game emulators](guidelines/4.7.md) | assisted | `capabilities.mini-apps` |
+| [4.7.1](guidelines/4.7.1.md) | assisted | `capabilities.mini-apps` |
+| [4.7.2](guidelines/4.7.2.md) | assisted | `capabilities.mini-app-native-bridge` |
+| [4.7.3](guidelines/4.7.3.md) | assisted | `capabilities.mini-app-native-bridge` |
+| [4.7.4](guidelines/4.7.4.md) | assisted | `capabilities.mini-apps` |
+| [4.7.5](guidelines/4.7.5.md) | assisted | `capabilities.mini-apps` |
 | [4.8 Login Services](guidelines/4.8.md) | assisted | `account.login-service-equivalent`, `account.siwa-private-email` |
 | [4.9 Apple Pay](guidelines/4.9.md) | assisted | `payments.apple-pay-branding`, `payments.apple-pay-recurring-disclosure` |
 | [4.10 Monetizing Built-In Capabilities](guidelines/4.10.md) | manual | `design.monetized-capabilities` |
@@ -139,8 +139,8 @@ A section's level is the strongest automation among its rules: **automated** nee
 | [5.3.2](guidelines/5.3.2.md) | assisted | `payments.sweepstakes-rules` |
 | [5.3.3](guidelines/5.3.3.md) | assisted | `payments.real-money-gaming` |
 | [5.3.4](guidelines/5.3.4.md) | assisted | `payments.real-money-gaming` |
-| [5.4 VPN Apps](guidelines/5.4.md) | uncovered | - |
-| [5.5 Mobile Device Management](guidelines/5.5.md) | uncovered | - |
+| [5.4 VPN Apps](guidelines/5.4.md) | assisted | `capabilities.vpn` |
+| [5.5 Mobile Device Management](guidelines/5.5.md) | assisted | `capabilities.mdm` |
 | [5.6 Developer Code of Conduct](guidelines/5.6.md) | assisted | `legal.code-of-conduct`, `legal.discovery-fraud`, `payments.cancellation-friction`, `payments.paywall-billed-amount`, `payments.paywall-dismiss`, `payments.paywall-false-urgency`, `payments.paywall-trial-toggle` |
 | [5.6.1 App Store Reviews](guidelines/5.6.1.md) | assisted | `business.custom-review-prompt`, `business.review-gating`, `design.review-prompt`, `legal.code-of-conduct` |
 | [5.6.2 Developer Identity](guidelines/5.6.2.md) | manual | `legal.developer-identity` |

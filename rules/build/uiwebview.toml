@@ -1,0 +1,25 @@
+# Source patterns adapted from RevylAI/greenlight (MIT).
+id = "build.uiwebview"
+title = "UIWebView in the app or a dependency"
+severity = "error"
+evidence = ["source", "binary"]
+enforced_by = "upload"
+guidelines = ["2.5.1"]
+itms = ["ITMS-90809"]
+summary = """
+`UIWebView` has been deprecated since iOS 12, and App Store Connect no longer accepts new apps or updates that reference it. The upload fails with ITMS-90809, often because an old SDK still links the class even when the app's own code does not.
+"""
+fix = """
+Replace `UIWebView` with `WKWebView`. Find a dependency that still references it with `grep -r UIWebView` on the built `.app` or `nm` on each framework binary, then update or remove that dependency.
+"""
+references = [
+  "https://developer.apple.com/documentation/uikit/uiwebview",
+  "https://developer.apple.com/news/?id=12232019b",
+]
+
+[check]
+id = "uiwebview"
+confidence = "high"
+code_only = true
+patterns = ['\bUIWebView\s*[(*]', '\bUIWebViewDelegate\b', '[:\[]\s*UIWebView\b', '\bUIWebView\.']
+binary_symbols = ["_OBJC_CLASS_$_UIWebView", "UIWebViewDelegate"]

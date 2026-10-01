@@ -1,0 +1,25 @@
+id = "network.ats-exception-domains"
+title = "Per-domain App Transport Security exceptions"
+severity = "note"
+evidence = ["plist", "human"]
+enforced_by = "app-review"
+guidelines = ["1.6"]
+summary = """
+`NSExceptionAllowsInsecureHTTPLoads` and a lowered `NSExceptionMinimumTLSVersion` under `NSExceptionDomains` weaken transport security for one host. Apple lists both among the exceptions that need a justification and may trigger additional App Review. An exception for a host the app no longer calls is dead weight that still draws questions.
+"""
+fix = """
+Move the host to HTTPS with TLS 1.2 or later and delete the exception. Keep only exceptions for hosts the app still calls, and state the reason for each in the review notes.
+"""
+references = [
+  "https://developer.apple.com/documentation/security/preventing-insecure-network-connections",
+]
+
+[check]
+id = "ats-exceptions"
+confidence = "high"
+domain_keys = ["NSExceptionAllowsInsecureHTTPLoads", "NSExceptionMinimumTLSVersion"]
+
+[review]
+questions = [
+  "Does the app still call each excepted host, and why can it not use HTTPS with current TLS?",
+]

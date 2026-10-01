@@ -1,0 +1,28 @@
+# Detection adapted from berkayturk/appstore-precheck (MIT).
+id = "capabilities.keyboard-full-access"
+title = "Keyboard extension depends on Full Access"
+severity = "warning"
+evidence = ["plist", "source", "human"]
+enforced_by = "app-review"
+guidelines = ["4.4", "4.4.1"]
+summary = """
+A keyboard extension that sets `RequestsOpenAccess` asks people for Full Access, which grants network access and a shared container. Keyboards must stay functional without network access and without Full Access, and may collect activity only to improve the keyboard itself. A keyboard that blanks, nags, or locks keys until Full Access is on is rejected.
+"""
+fix = """
+Make typing work with `hasFullAccess` false, and gate only the extra features on it. Keep keystrokes on the device unless the person opts in to a networked feature.
+"""
+references = [
+  "https://developer.apple.com/documentation/uikit/configuring-open-access-for-a-custom-keyboard",
+]
+
+[check]
+id = "extension-point"
+confidence = "high"
+extension_point = "com.apple.keyboard-service"
+plist_keys = ["NSExtension.NSExtensionAttributes.RequestsOpenAccess"]
+
+[review]
+questions = [
+  "Does the keyboard type normally with Full Access off and with no network?",
+  "Does the keyboard collect or send keystrokes for any purpose other than improving itself?",
+]

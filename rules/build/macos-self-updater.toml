@@ -1,0 +1,18 @@
+id = "build.macos-self-updater"
+title = "Mac app ships its own update mechanism"
+severity = "error"
+evidence = ["source", "binary"]
+enforced_by = "app-review"
+guidelines = ["2.4.5"]
+applies_when = ["macos"]
+summary = """
+Mac App Store apps must get updates through the Mac App Store. An embedded updater such as Sparkle, or code that downloads and installs a newer build, is rejected under 2.4.5(vii).
+"""
+fix = """
+Remove the updater framework and its feed URL from the Mac App Store build. Keep it only in a separate Developer ID build configuration.
+"""
+
+[check]
+id = "source-patterns"
+confidence = "high"
+patterns = ['\bSparkle\.framework\b', '\bimport Sparkle\b', '\bSPUStandardUpdaterController\b', '\bSPUUpdater\b', '\bSUUpdater\b', '\bSUFeedURL\b']

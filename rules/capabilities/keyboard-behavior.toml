@@ -1,0 +1,28 @@
+id = "capabilities.keyboard-behavior"
+title = "Keyboard extension missing the next-keyboard key or launching apps"
+severity = "error"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["4.4.1"]
+summary = """
+Keyboard extensions must provide typed input, offer a way to switch to the next keyboard, follow the sticker rules for images and emoji, launch no app other than Settings, and keep every key doing what it shows.
+"""
+fix = """
+Show a globe key when `needsInputModeSwitchKey` is true and call `advanceToNextInputMode()` or `handleInputModeList(from:with:)` from it. Remove any key or gesture that opens another app or repurposes a standard key.
+"""
+references = [
+  "https://developer.apple.com/documentation/uikit/configuring-open-access-for-a-custom-keyboard",
+]
+
+[check]
+id = "extension-point"
+confidence = "medium"
+extension_point = "com.apple.keyboard-service"
+requires_any = ["advanceToNextInputMode", "handleInputModeList"]
+forbids = ['\bopenURL\b', '\.open\(\s*URL', 'openURL\(']
+
+[review]
+questions = [
+  "Is there a visible way to switch to the next keyboard?",
+  "Does any key or long press open another app or do something other than what it shows?",
+]

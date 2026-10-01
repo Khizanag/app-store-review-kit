@@ -1,14 +1,15 @@
+# Literal regex adapted from RevylAI/greenlight, socket API list from berkayturk/appstore-precheck (both MIT).
 id = "network.ipv4-literals"
-title = "Hard-coded IPv4 addresses"
+title = "Hard-coded IPv4 addresses or IPv4-only socket APIs"
 severity = "warning"
-evidence = ["source"]
+evidence = ["source", "plist"]
 enforced_by = "app-review"
-guidelines = ["2.5.5"]
+guidelines = ["2.5", "2.5.5"]
 summary = """
-Apps must work on IPv6-only networks, which App Review uses. Connecting to IPv4 literals or using IPv4-only socket APIs fails there.
+Apps must work on IPv6-only networks, which App Review uses. Connecting to IPv4 literals, or resolving and connecting with IPv4-specific APIs such as `inet_addr`, `inet_aton`, `gethostbyname`, or `sockaddr_in`, fails there.
 """
 fix = """
-Connect by hostname with `URLSession` or `Network.framework`, which handle NAT64 automatically.
+Connect by hostname with `URLSession` or `Network.framework`, which handle NAT64 automatically. In BSD socket code, use `getaddrinfo` and `sockaddr_storage` instead of IPv4-only calls.
 """
 references = [
   "https://developer.apple.com/support/ipv6/",
@@ -17,3 +18,7 @@ references = [
 [check]
 id = "ipv4-literals"
 confidence = "low"
+literal = '(?<![\w.])(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}(?![\w.]|/\d)'
+# Lines with version strings, netmasks, and loopback or wildcard addresses are not connections.
+ignore = ['(?i)version', '\b0\.0\.0\.0\b', '\b127\.0\.0\.1\b', '\b255\.255\.']
+socket_apis = ['\binet_addr\b', '\binet_aton\b', '\bgethostbyname\b', '\bsockaddr_in\b', '\bAF_INET\b']

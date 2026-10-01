@@ -1,0 +1,18 @@
+id = "build.macos-privilege-escalation"
+title = "Mac app requests root privileges"
+severity = "error"
+evidence = ["source", "binary"]
+enforced_by = "app-review"
+guidelines = ["2.4.5"]
+applies_when = ["macos"]
+summary = """
+Mac App Store apps may not request escalation to root or use setuid attributes, under 2.4.5(v). Privileged helpers, authorization-based execution, and shelling out to `sudo` or `osascript ... with administrator privileges` all count.
+"""
+fix = """
+Do the work inside the sandbox with the matching entitlement or a user-selected file. Move features that truly need root to a Developer ID build.
+"""
+
+[check]
+id = "source-patterns"
+confidence = "high"
+patterns = ['\bAuthorizationExecuteWithPrivileges\b', '\bSMJobBless\b', 'SMAppService\.daemon\(', '\bsetuid\(', '\bseteuid\(', 'with administrator privileges', '"/usr/bin/sudo"']

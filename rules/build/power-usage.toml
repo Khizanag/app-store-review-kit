@@ -1,0 +1,35 @@
+# Mining patterns adapted from RevylAI/greenlight and berkayturk/appstore-precheck (both MIT).
+id = "build.power-usage"
+title = "Excessive power use or background mining"
+severity = "warning"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["2.4", "2.4.2"]
+summary = """
+Apps must not drain the battery, overheat the device, or strain its resources, and may not run unrelated background work such as cryptocurrency mining, including inside third-party ads. Disabling the idle timer everywhere, polling with sub-second timers, continuous best-accuracy location, or mining pool connections are the usual signals.
+"""
+fix = """
+Disable the idle timer only while a feature needs the screen on, and restore it after. Use `BGTaskScheduler`, push, and significant-change location instead of polling. Remove mining code and any SDK that mines.
+"""
+
+[check]
+id = "source-patterns"
+confidence = "low"
+code_only = true
+patterns = [
+  'isIdleTimerDisabled\s*=\s*true',
+  'idleTimerDisabled\s*=\s*YES',
+  'kCLLocationAccuracyBestForNavigation',
+  'distanceFilter\s*=\s*(0|kCLDistanceFilterNone)\b',
+  'stratum\+tcp',
+  '(?i)\b(crypto|coin)\s*miner\b',
+  '(?i)\bmining\s*pool\b',
+  '(?i)\bcoinhive\b',
+]
+
+[review]
+questions = [
+  "Does the app keep the screen on, the GPS at full accuracy, or the CPU busy longer than the feature in use needs?",
+  "Does the app or any ad SDK in it run work unrelated to the app in the background?",
+  "Does the app ask people to use the device in a way that risks damage, such as under a pillow while charging?",
+]

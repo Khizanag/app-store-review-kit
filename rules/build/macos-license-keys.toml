@@ -1,0 +1,25 @@
+# Phrase list adapted from UppercutLabs/heimdall (MIT).
+id = "build.macos-license-keys"
+title = "Mac app asks for a license key or adds copy protection"
+severity = "error"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["2.4.5", "3.1.1"]
+applies_when = ["macos"]
+summary = """
+Mac App Store apps may not show a license screen at launch, require license keys, or implement their own copy protection, under 2.4.5(vi). Unlocking paid features with a key also bypasses In-App Purchase.
+"""
+fix = """
+Remove license entry and activation from the Mac App Store build. Sell upgrades with In-App Purchase and verify entitlement with StoreKit.
+"""
+
+[check]
+id = "source-patterns"
+confidence = "low"
+strings_only = true
+patterns = ['(?i)\blicen[cs]e[ _]?key\b', '(?i)\bserial[ _]?(number|key)\b', '(?i)\bactivation[ _]?code\b', '(?i)\benter (your )?licen[cs]e\b']
+
+[review]
+questions = [
+  "Does the Mac App Store build show a license or activation screen, or check a key before features work?",
+]

@@ -1,0 +1,24 @@
+# Call list and per-file threshold adapted from RevylAI/greenlight and UppercutLabs/heimdall (both MIT).
+id = "build.debug-logging"
+title = "Debug logging left in the release build"
+severity = "note"
+evidence = ["source"]
+enforced_by = "app-review"
+guidelines = ["1.6"]
+summary = """
+`print`, `debugPrint`, `dump`, `NSLog`, and `console.log` all run in release builds. `NSLog` writes to the unified log without redaction, where anyone with the device and a Mac can read it. Volume alone is not a rejection; logging user data is a 1.6 data security problem, covered by `security.secrets-in-logs`.
+"""
+fix = """
+Log through `Logger` from the `os` framework, which redacts dynamic strings unless marked `.public`. Wrap remaining debug output in `#if DEBUG`, and strip `console.log` in the JavaScript release bundle.
+"""
+references = [
+  "https://developer.apple.com/documentation/os/generating-log-messages-from-your-code",
+]
+
+[check]
+id = "source-patterns"
+confidence = "low"
+code_only = true
+skip_debug_blocks = true
+count_threshold = 5
+patterns = ['\bprint\(', '\bdebugPrint\(', '\bdump\(', '\bNSLog\(', '\bconsole\.(log|debug|warn|error)\s*\(']

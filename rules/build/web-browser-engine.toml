@@ -1,0 +1,28 @@
+id = "build.web-browser-engine"
+title = "Web browsing without WebKit"
+severity = "error"
+evidence = ["binary", "entitlements", "human"]
+enforced_by = "app-review"
+guidelines = ["2.5.6"]
+summary = """
+Apps that browse the web must use WebKit and WebKit JavaScript. An alternative browser engine needs Apple's browser engine entitlement, which is available only for the EU and Japan. A default-browser app also needs the default browser entitlement, may not use `UIWebView`, and must open http and https links directly.
+"""
+fix = """
+Render web pages with `WKWebView`, `WebView`, or `SFSafariViewController`. To ship another engine, request the alternative browser engine entitlement for the eligible region and limit distribution to it.
+"""
+references = [
+  "https://developer.apple.com/support/alternative-browser-engines/",
+  "https://developer.apple.com/documentation/xcode/preparing-your-app-to-be-the-default-browser",
+]
+
+[check]
+id = "entitlement-signals"
+confidence = "medium"
+catalog = "entitlements"
+keys = ["com.apple.developer.web-browser", "com.apple.developer.web-browser-engine.host"]
+engine_symbols = ["BrowserEngineKit"]
+
+[review]
+questions = [
+  "Does the app render general web pages with anything other than WebKit, and if so, does it hold the alternative engine entitlement for every storefront it ships in?",
+]

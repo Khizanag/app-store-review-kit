@@ -1,0 +1,33 @@
+# Symbol list adapted from berkayturk/appstore-precheck (MIT).
+id = "capabilities.vpn"
+title = "VPN app requirements"
+severity = "error"
+evidence = ["source", "entitlements", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["5.4"]
+applies_when = ["vpn"]
+summary = """
+Apps offering VPN services must use the `NEVPNManager` API and may only be offered by developers enrolled as an organization. Before any purchase or use, an app screen must declare what user data is collected and how it is used. The app may not sell, use, or disclose data to third parties, and the privacy policy must commit to that. In territories that require a VPN license, the license goes in the App Review notes. Parental control, content blocking, and security apps from approved providers may also use these APIs. Violations lead to removal and can end the developer account.
+"""
+fix = """
+Submit from an organization account. Add a data-use screen before the paywall or connect button, state the no-sharing commitment in the privacy policy, and put license details in the review notes for each territory that needs one.
+"""
+references = [
+  "https://developer.apple.com/documentation/networkextension/nevpnmanager",
+  "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.networking.vpn.api",
+]
+
+[check]
+id = "entitlement-signals"
+confidence = "high"
+catalog = "entitlements"
+keys = ["com.apple.developer.networking.vpn.api", "com.apple.developer.networking.networkextension"]
+symbols = ["NEVPNManager", "NETunnelProviderManager", "NEPacketTunnelProvider", "NEVPNProtocol"]
+
+[review]
+questions = [
+  "Is the developer account enrolled as an organization?",
+  "Does a screen declare data collection and use before any purchase or connection?",
+  "Does the privacy policy commit to not selling, using, or disclosing data to third parties?",
+  "For territories that require a VPN license, is the license in the review notes?",
+]

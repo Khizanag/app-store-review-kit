@@ -1,0 +1,27 @@
+id = "capabilities.file-picker"
+title = "File picker that leaves out Files and iCloud Drive"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["2.5.15"]
+summary = """
+Apps that let people view and select files should include items from the Files app and the user's iCloud documents. A custom browser over the app's own sandbox, with no way to reach Files or iCloud Drive, falls short.
+"""
+fix = """
+Offer the system picker with `fileImporter` in SwiftUI, `UIDocumentPickerViewController`, or a `DocumentGroup` or `UIDocumentBrowserViewController` document browser.
+"""
+references = [
+  "https://developer.apple.com/documentation/uikit/uidocumentpickerviewcontroller",
+]
+
+[check]
+id = "source-patterns"
+confidence = "low"
+code_only = true
+patterns = ['contentsOfDirectory\(at:', 'contentsOfDirectory\(atPath:', 'enumerator\(at:']
+satisfied_by = ['\bfileImporter\(', '\bUIDocumentPickerViewController\b', '\bUIDocumentBrowserViewController\b', '\bDocumentGroup\b', '\bNSOpenPanel\b']
+
+[review]
+questions = [
+  "Where the app lets people pick a file, can they reach the Files app and iCloud Drive?",
+]

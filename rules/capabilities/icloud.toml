@@ -1,0 +1,22 @@
+id = "capabilities.icloud"
+title = "iCloud capability unused or not allowed for the target"
+severity = "warning"
+evidence = ["entitlements", "source"]
+enforced_by = "app-review"
+guidelines = ["2.5.1"]
+summary = """
+The iCloud capability declares CloudKit, iCloud Documents, or key-value storage. With no `CKContainer`, ubiquity container, or `NSUbiquitousKeyValueStore` use behind it, it is an unused entitlement App Review can ask about. App Clips may use only `CloudKit-Anonymous`; `CloudDocuments` or `CloudKit` in an App Clip target is invalid. What the app stores in iCloud, such as health data, is covered by the privacy rules.
+"""
+fix = """
+Remove iCloud services the app does not call. In App Clip targets, keep only `CloudKit-Anonymous` and share data with the full app through an app group.
+"""
+references = [
+  "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.icloud-services",
+]
+
+[check]
+id = "entitlement-signals"
+confidence = "medium"
+catalog = "entitlements"
+keys = ["com.apple.developer.icloud-services", "com.apple.developer.icloud-container-identifiers", "com.apple.developer.ubiquity-kvstore-identifier"]
+app_clip_allowed_values = ["CloudKit-Anonymous"]

@@ -1,0 +1,24 @@
+id = "capabilities.macos-app-group-prefix"
+title = "Mac app group not prefixed with the Team ID"
+severity = "note"
+evidence = ["entitlements"]
+enforced_by = "app-review"
+guidelines = ["2.4.5"]
+applies_when = ["macos"]
+summary = """
+On macOS 15 and later, a sandboxed app that opens an app group container it cannot prove it owns triggers a "would like to access data from other apps" alert. The group is trusted when the app comes from the Mac App Store, when the group ID starts with the Team ID, or when the embedded provisioning profile authorizes it. Builds installed any other way, such as local or Developer ID builds, show the alert.
+"""
+fix = """
+Name macOS app groups `$(TeamIdentifierPrefix)<name>`, or register the `group.` identifier and make sure the provisioning profile embedded in the app lists it. Use the same identifier in `containerURL(forSecurityApplicationGroupIdentifier:)`.
+"""
+references = [
+  "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.security.application-groups",
+  "https://developer.apple.com/forums/thread/721701",
+]
+
+[check]
+id = "entitlement-signals"
+confidence = "medium"
+catalog = "entitlements"
+keys = ["com.apple.security.application-groups"]
+value_pattern = '^[A-Z0-9]{10}\.'

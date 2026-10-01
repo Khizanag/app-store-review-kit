@@ -1,0 +1,17 @@
+id = "build.alternate-home-screen"
+title = "App recreates the home screen or desktop"
+severity = "error"
+evidence = ["human"]
+enforced_by = "app-review"
+guidelines = ["2.5", "2.5.8"]
+summary = """
+Apps that create alternate desktop or home screen environments are rejected. Launcher grids that mimic the home screen, app drawers that open other apps, and full-screen shells meant to replace the system UI fall here.
+"""
+fix = """
+Present the feature as content inside the app, not as a replacement for the home screen. Offer glanceable information through WidgetKit instead.
+"""
+
+[review]
+questions = [
+  "Does the app present itself as a home screen or desktop, with a grid of other apps to launch?",
+]

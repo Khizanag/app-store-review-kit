@@ -1,0 +1,28 @@
+id = "build.macos-file-access"
+title = "Mac app reaches outside its sandbox or into other apps' data"
+severity = "warning"
+evidence = ["source", "entitlements", "human"]
+enforced_by = "app-review"
+guidelines = ["2.4.5", "2.5.2"]
+applies_when = ["macos"]
+summary = """
+Mac App Store apps must follow the file system rules for sandboxed apps, change other apps' data, such as bookmarks, contacts, or calendars, only through the matching framework, and keep every localization in the one app bundle, under 2.4.5(i) and (ix). Hard-coded paths into other apps' Library folders and temporary-exception entitlements are the usual signals.
+"""
+fix = """
+Read and write user files through open and save panels or security-scoped bookmarks. Use Contacts, EventKit, and similar frameworks for other apps' data. Replace temporary exceptions with a supported entitlement. Ship every localization in the app bundle.
+"""
+references = [
+  "https://developer.apple.com/documentation/security/app-sandbox",
+]
+
+[check]
+id = "source-patterns"
+confidence = "low"
+patterns = ['Library/(Safari|Mail|Messages|Containers|Group Containers)/', 'com\.apple\.security\.temporary-exception\.']
+
+[review]
+questions = [
+  "Does the app read or change another app's data without that data's framework?",
+  "Is each temporary-exception entitlement still needed?",
+  "Are all languages and localizations inside the single app bundle, with none downloaded later?",
+]
