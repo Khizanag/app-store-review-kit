@@ -1,0 +1,85 @@
+# Required reason API categories and their approved reasons.
+# Source: https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitype
+
+source = "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitype"
+verified = 2026-10-01
+
+[[categories]]
+key = "NSPrivacyAccessedAPICategoryFileTimestamp"
+name = "File timestamp"
+symbols = [
+  "creationDate",
+  "modificationDate",
+  "fileModificationDate",
+  "contentModificationDateKey",
+  "creationDateKey",
+  "getattrlist",
+  "getattrlistbulk",
+  "fgetattrlist",
+  "stat",
+  "fstat",
+  "fstatat",
+  "lstat",
+  "getattrlistat",
+]
+reasons = [
+  { code = "DDA9.1", summary = "Display file timestamps to the person using the device; not sent off-device." },
+  { code = "C617.1", summary = "Timestamps, size, or metadata of files inside the app, app group, or CloudKit container." },
+  { code = "3B52.1", summary = "Timestamps, size, or metadata of files the user granted access to, such as via a document picker." },
+  { code = "0A2A.1", summary = "Third-party SDK wrapper called only by the app.", sdk_only = true },
+]
+
+[[categories]]
+key = "NSPrivacyAccessedAPICategorySystemBootTime"
+name = "System boot time"
+symbols = ["systemUptime", "mach_absolute_time"]
+reasons = [
+  { code = "35F9.1", summary = "Measure elapsed time between in-app events or drive timers." },
+  { code = "8FFB.1", summary = "Calculate absolute timestamps for in-app events, such as UIKit or AVFAudio events." },
+  { code = "3D61.1", summary = "Include boot time in an optional, user-submitted bug report." },
+]
+
+[[categories]]
+key = "NSPrivacyAccessedAPICategoryDiskSpace"
+name = "Disk space"
+symbols = [
+  "volumeAvailableCapacityKey",
+  "volumeAvailableCapacityForImportantUsageKey",
+  "volumeAvailableCapacityForOpportunisticUsageKey",
+  "volumeTotalCapacityKey",
+  "systemFreeSize",
+  "systemSize",
+  "statfs",
+  "statvfs",
+  "fstatfs",
+  "fstatvfs",
+  "getattrlist",
+  "fgetattrlist",
+  "getattrlistat",
+]
+reasons = [
+  { code = "85F4.1", summary = "Display disk space to the person using the device." },
+  { code = "E174.1", summary = "Check for enough space to write files, or delete files when space is low." },
+  { code = "7D9E.1", summary = "Include disk space in an optional, user-submitted bug report." },
+  { code = "B728.1", summary = "Health research app warning participants about low disk space." },
+]
+
+[[categories]]
+key = "NSPrivacyAccessedAPICategoryActiveKeyboards"
+name = "Active keyboards"
+symbols = ["activeInputModes"]
+reasons = [
+  { code = "3EC4.1", summary = "Custom keyboard app whose primary function is a systemwide keyboard." },
+  { code = "54BD.1", summary = "Present the correct customized UI for the active keyboard in the app's text fields." },
+]
+
+[[categories]]
+key = "NSPrivacyAccessedAPICategoryUserDefaults"
+name = "User defaults"
+symbols = ["UserDefaults", "NSUserDefaults", "@AppStorage"]
+reasons = [
+  { code = "CA92.1", summary = "Read and write information only the app itself can access." },
+  { code = "1C8F.1", summary = "Read and write information shared within the app's App Group." },
+  { code = "C56D.1", summary = "Third-party SDK wrapper called only by the app.", sdk_only = true },
+  { code = "AC6B.1", summary = "Read managed app configuration or write managed feedback for MDM." },
+]

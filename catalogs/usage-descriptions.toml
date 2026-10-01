@@ -1,0 +1,97 @@
+# Protected resources, the APIs that request them, and the Info.plist purpose string each needs.
+# Source: https://developer.apple.com/documentation/bundleresources/information-property-list
+
+source = "https://developer.apple.com/documentation/bundleresources/information-property-list"
+verified = 2026-10-01
+
+[[resources]]
+name = "Camera"
+keys = ["NSCameraUsageDescription"]
+symbols = ["AVCaptureDevice", "AVCaptureSession", "UIImagePickerController.SourceType.camera", "DataScannerViewController"]
+
+[[resources]]
+name = "Microphone"
+keys = ["NSMicrophoneUsageDescription"]
+symbols = ["AVAudioRecorder", "AVAudioApplication.requestRecordPermission", "recordPermission", "inputNode"]
+
+[[resources]]
+name = "Photo library"
+keys = ["NSPhotoLibraryUsageDescription", "NSPhotoLibraryAddUsageDescription"]
+symbols = ["PHPhotoLibrary.requestAuthorization", "PHAsset.fetchAssets", "UIImageWriteToSavedPhotosAlbum", "PHAssetChangeRequest"]
+note = "PhotosPicker and PHPickerViewController need no purpose string; prefer them."
+
+[[resources]]
+name = "Location"
+keys = ["NSLocationWhenInUseUsageDescription", "NSLocationAlwaysAndWhenInUseUsageDescription"]
+symbols = ["CLLocationManager", "CLLocationUpdate.liveUpdates", "CLServiceSession"]
+
+[[resources]]
+name = "Contacts"
+keys = ["NSContactsUsageDescription"]
+symbols = ["CNContactStore"]
+note = "ContactAccessPicker and CNContactPickerViewController need no purpose string; prefer them."
+
+[[resources]]
+name = "Calendars"
+keys = ["NSCalendarsFullAccessUsageDescription", "NSCalendarsWriteOnlyAccessUsageDescription"]
+symbols = ["requestFullAccessToEvents", "requestWriteOnlyAccessToEvents", "EKEventStore"]
+
+[[resources]]
+name = "Reminders"
+keys = ["NSRemindersFullAccessUsageDescription"]
+symbols = ["requestFullAccessToReminders"]
+
+[[resources]]
+name = "Health"
+keys = ["NSHealthShareUsageDescription", "NSHealthUpdateUsageDescription"]
+symbols = ["HKHealthStore"]
+
+[[resources]]
+name = "Bluetooth"
+keys = ["NSBluetoothAlwaysUsageDescription"]
+symbols = ["CBCentralManager", "CBPeripheralManager"]
+
+[[resources]]
+name = "Face ID"
+keys = ["NSFaceIDUsageDescription"]
+symbols = ["LAContext", "deviceOwnerAuthenticationWithBiometrics"]
+
+[[resources]]
+name = "Speech recognition"
+keys = ["NSSpeechRecognitionUsageDescription"]
+symbols = ["SFSpeechRecognizer"]
+
+[[resources]]
+name = "Motion and fitness"
+keys = ["NSMotionUsageDescription"]
+symbols = ["CMMotionActivityManager", "CMPedometer"]
+
+[[resources]]
+name = "Tracking"
+keys = ["NSUserTrackingUsageDescription"]
+symbols = ["ATTrackingManager"]
+
+[[resources]]
+name = "Media library"
+keys = ["NSAppleMusicUsageDescription"]
+symbols = ["MPMediaLibrary", "MPMediaQuery", "MusicAuthorization.request"]
+
+[[resources]]
+name = "HomeKit"
+keys = ["NSHomeKitUsageDescription"]
+symbols = ["HMHomeManager"]
+
+[[resources]]
+name = "Local network"
+keys = ["NSLocalNetworkUsageDescription"]
+symbols = ["NWBrowser", "NetServiceBrowser", "MCNearbyServiceBrowser", "NWListener"]
+
+[[resources]]
+name = "NFC"
+keys = ["NFCReaderUsageDescription"]
+symbols = ["NFCNDEFReaderSession", "NFCTagReaderSession"]
+
+[[resources]]
+name = "Siri"
+keys = ["NSSiriUsageDescription"]
+symbols = ["INPreferences.requestSiriAuthorization"]
