@@ -1,0 +1,13 @@
+# SwiftLint configuration for the engine. The rules live in iOS-Toolkit; this file
+# adds only paths. Run `swiftlint --strict` before every commit.
+
+parent_config: https://raw.githubusercontent.com/Khizanag/iOS-Toolkit/v1.1.0/swiftlint/base.yml
+
+included:
+  - Package.swift
+  - Sources
+  - Tests
+
+excluded:
+  - .build
+  - "**/Generated"

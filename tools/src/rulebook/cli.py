@@ -6,15 +6,15 @@ from collections.abc import Callable
 from pathlib import Path
 
 from rulebook import coverage, mirror
-from rulebook.build import compile_rulebook
+from rulebook.build import SWIFT_PATH, compile_rulebook, compile_swift
 from rulebook.model import Rulebook, RulebookError, load
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
 Generator = Callable[[Rulebook], str]
-GENERATED: dict[str, tuple[str, Generator]] = {
-    "build": ("rulebook.json", compile_rulebook),
-    "coverage": ("COVERAGE.md", coverage.render),
+GENERATED: dict[str, tuple[tuple[str, Generator], ...]] = {
+    "build": (("rulebook.json", compile_rulebook), (SWIFT_PATH, compile_swift)),
+    "coverage": (("COVERAGE.md", coverage.render),),
 }
 
 
@@ -30,9 +30,10 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     commands.add_parser("validate", help="Validate every rule and catalog.")
-    for name, (output, _) in GENERATED.items():
-        command = commands.add_parser(name, help=f"Write {output}.")
-        command.add_argument("--check", action="store_true", help=f"Fail if {output} is stale.")
+    for name, outputs in GENERATED.items():
+        files = ", ".join(output for output, _ in outputs)
+        command = commands.add_parser(name, help=f"Write {files}.")
+        command.add_argument("--check", action="store_true", help=f"Fail if {files} is stale.")
 
     args = parser.parse_args(argv)
     root: Path = args.root
@@ -54,14 +55,16 @@ def main(argv: list[str] | None = None) -> int:
         print(f"{len(rulebook.rules)} rules, {len(rulebook.catalogs)} catalogs: valid")
         return 0
 
-    output, generate = GENERATED[args.command]
-    target = root / output
-    content = generate(rulebook)
-    if args.check:
-        if not target.exists() or target.read_text() != content:
-            print(f"{output} is stale; run `uv run rulebook {args.command}`", file=sys.stderr)
-            return 1
-        return 0
-    target.write_text(content)
-    print(f"Wrote {output}")
-    return 0
+    stale = False
+    for output, generate in GENERATED[args.command]:
+        target = root / output
+        content = generate(rulebook)
+        if args.check:
+            if not target.exists() or target.read_text() != content:
+                print(f"{output} is stale; run `uv run rulebook {args.command}`", file=sys.stderr)
+                stale = True
+            continue
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(content)
+        print(f"Wrote {output}")
+    return 1 if stale else 0
