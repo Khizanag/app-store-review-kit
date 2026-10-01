@@ -67,8 +67,8 @@ uv run rulebook validate && uv run rulebook build && uv run rulebook coverage
 ## Develop
 
 ```bash
-cd tools
-uv run ruff check . && uv run ruff format --check . && uv run mypy && uv run pytest --cov=rulebook
+./scripts/install-hooks.sh   # once per clone: run the gate before every commit
+./scripts/check.sh           # lint, types, tests, rule validation, stale-output check
 ```
 
 ## License
