@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rulebook"
+version = "0.1.0"
+description = "Mirror, validate, and compile the App Store review rulebook."
+requires-python = ">=3.14"
+license = "MIT"
+authors = [{ name = "Giga Khizanishvili", email = "khizanag@gmail.com" }]
+dependencies = []
+
+[dependency-groups]
+dev = [
+  "pytest>=8",
+  "pytest-cov>=6",
+  "ruff>=0.13",
+  "mypy>=1.18",
+]
+
+[project.scripts]
+rulebook = "rulebook.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rulebook"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "S", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+files = ["src", "tests"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers --tb=short"
+testpaths = ["tests"]
