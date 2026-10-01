@@ -11,6 +11,8 @@ Static App Store scanners exist; each one encodes Apple's rules privately and cl
 - **Coverage map** — every guideline section against the rules that cover it, including the ones that need a human.
 - **Engine** — a Swift CLI and Xcode plugin that runs the rulebook against a project or build. Planned.
 
+See the [landscape](docs/landscape.md) review of every comparable tool and the [roadmap](docs/roadmap.md).
+
 ## Layout
 
 | Path | Contents |
