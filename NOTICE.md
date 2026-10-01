@@ -1,6 +1,17 @@
 # Notice
 
-Parts of this repository adapt data or code from other MIT-licensed projects. Each entry names what was taken and where it lives here. The MIT license of each project applies to the adapted parts.
+Parts of this repository adapt data from other MIT-licensed projects: signal lists, SDK names, term lists, and patterns, each checked against Apple's documentation before use. Each entry names what was taken and where it lives here. The MIT license of each project applies to the adapted parts.
 
 | Project | Copyright | Adapted | Where |
 | --- | --- | --- | --- |
+| [RevylAI/greenlight](https://github.com/RevylAI/greenlight) | 2025 Revyl | Tracking SDK names, vague purpose-string phrases, crypto wallet, on-ramp, exchange and mining patterns, secret, UIWebView, cleartext URL, IPv4 and logging patterns, account deletion synonyms, placeholder terms | `catalogs/tracking-sdks.toml`, `catalogs/crypto-sdks.toml`, `rules/permissions/`, `rules/payments/`, `rules/build/`, `rules/network/`, `rules/security/`, `rules/account/`, `rules/metadata/` |
+| [berkayturk/appstore-precheck](https://github.com/berkayturk/appstore-precheck) | 2026 Berkay Turk | Ad SDK names, Swift wallet SDKs, payment SDKs, background mode map, socket APIs, hot-patch SDKs, keyboard, Safari, VPN and MDM signals, misleading, kids, remote desktop, push, saturated category and review prompt terms, review question wording | `catalogs/tracking-sdks.toml`, `rules/payments/`, `rules/capabilities/`, `rules/metadata/`, `rules/design/` |
+| [artbyjazi/app-store-approval](https://github.com/artbyjazi/app-store-approval) | 2026 Jad Ghazi | AI host list, consent and seen-flag symbols, vendor-named check, test key patterns, development endpoints, sign-out-only deletion, regional login SDKs, vital-sign claims, checkout hosts | `rules/privacy/third-party-ai-disclosure.toml`, `rules/security/`, `rules/build/`, `rules/account/`, `rules/safety/`, `rules/payments/` |
+| [setlog-app/expo-plist-audit](https://github.com/setlog-app/expo-plist-audit) | 2026 AI Jidoka Lab | Leftover generator purpose-string default, entitlement keys | `rules/permissions/usage-description-vague.toml`, `catalogs/entitlements.toml` |
+| [Kofiloski/app-store-review-risk](https://github.com/Kofiloski/app-store-review-risk) | 2026 Kristijan Kofiloski | Web billing phrases, entitlement keys | `rules/payments/`, `catalogs/entitlements.toml` |
+| [UppercutLabs/heimdall](https://github.com/UppercutLabs/heimdall) | 2026 UppercutLabs | Payment processor names, beta, roadmap, keyword, locale and reviewer one-time-code checks, logging and license phrases | `rules/payments/`, `rules/metadata/`, `rules/build/` |
+| [truongduy2611/app-store-preflight-skills](https://github.com/truongduy2611/app-store-preflight-skills) | 2026 truongduy2611 | Six-section review notes structure, AI brand names, platform and trademark terms | `rules/metadata/`, `rules/legal/` |
+| [ElxMaj/app-store-review-skill](https://github.com/ElxMaj/app-store-review-skill) | 2026 Elie Majorel | Price claim terms, assistant files in the bundle, development endpoints | `rules/metadata/`, `rules/build/` |
+| [safaiyeh/app-store-review-skill](https://github.com/safaiyeh/app-store-review-skill) | 2026 safaiyeh | Mining patterns, Live Activities promotion, stored token checks | `rules/payments/`, `rules/design/`, `rules/security/` |
+| [CharlesWiltgen/Axiom](https://github.com/CharlesWiltgen/Axiom) | 2025 Charles Wiltgen | Secret, user defaults and logging patterns | `rules/security/` |
+| [aprilNH7/expo-preflight](https://github.com/aprilNH7/expo-preflight) | 2026 aprilNH7 | Secret file names | `rules/security/` |
