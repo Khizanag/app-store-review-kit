@@ -1,0 +1,23 @@
+id = "payments.hardcoded-prices"
+title = "Paywall shows hard-coded prices instead of StoreKit's localized price"
+severity = "warning"
+evidence = ["source"]
+enforced_by = "app-review"
+guidelines = ["3.1.1", "3.1.2"]
+applies_when = ["in-app-purchase"]
+summary = """
+Prices typed into code or strings, such as "$9.99" or "4.99 USD", do not follow the reviewer's storefront, currency, or later price changes. The paywall then shows a price that differs from the one the purchase sheet charges, and Apple expects the full renewal price localized in available currencies.
+"""
+fix = """
+Load products with `Product.products(for:)` and show `Product.displayPrice`, or format `Product.price` with `priceFormatStyle`. For introductory offers, read `product.subscription?.introductoryOffer` and its `displayPrice`. Never ship a fallback price.
+"""
+references = [
+  "https://developer.apple.com/documentation/storekit/product/displayprice",
+  "https://developer.apple.com/app-store/subscriptions/#clear-description",
+]
+
+[check]
+id = "hardcoded-prices"
+confidence = "medium"
+patterns = ["\\$\\s?\\d+[.,]\\d{2}", "€\\s?\\d+[.,]\\d{2}", "£\\s?\\d+[.,]\\d{2}", "\\d+[.,]\\d{2}\\s?(USD|EUR|GBP)", "\\d+[.,]99\\b"]
+satisfied_by = ["displayPrice", "priceFormatStyle", "localizedPriceString", "SKProduct.priceLocale"]

@@ -1,0 +1,22 @@
+id = "payments.crypto-mining"
+title = "Cryptocurrency mining on the device"
+severity = "error"
+evidence = ["source", "binary", "runtime"]
+enforced_by = "app-review"
+guidelines = ["3.1.5", "2.4.2"]
+summary = """
+Apps may not mine cryptocurrency unless the processing happens off the device, such as cloud-based mining. Apps, including third-party ads shown in them, may not run unrelated background processes such as mining, which drains the battery and heats the device.
+"""
+fix = """
+Remove on-device mining code and any SDK or ad network that mines. An app that manages cloud mining may only show and control work done on remote servers.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.5",
+  "https://developer.apple.com/app-store/review/guidelines/#2.4.2",
+]
+
+[check]
+id = "crypto-mining"
+confidence = "medium"
+catalog = "crypto-sdks"
+section = "mining"

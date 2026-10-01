@@ -1,0 +1,28 @@
+id = "payments.paywall-false-urgency"
+title = "Paywall uses fake countdowns or scarcity to push a purchase"
+severity = "warning"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.2", "5.6"]
+applies_when = ["in-app-purchase"]
+summary = """
+A countdown that restarts on every launch, an "offer ends tonight" banner with no real end date, or a discount measured against a price never charged pressures people with a deadline that does not exist. The Developer Code of Conduct forbids tricking people into unwanted purchases, and 3.1.2 removes bait-and-switch subscription apps.
+"""
+fix = """
+Show a deadline only for a real offer that ends at that time for everyone: an introductory, promotional, or win-back offer configured in App Store Connect. Compare discounts only against the price you actually charge. Drop timers that reset.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.6",
+  "https://developer.apple.com/app-store/subscriptions/",
+]
+
+[check]
+id = "paywall-countdown"
+confidence = "low"
+signals = ["offer ends in", "expires in", "limited time", "only today", "last chance", "ends tonight", "countdown", "Timer.publish", "TimelineView(.periodic"]
+
+[review]
+questions = [
+  "Does any countdown or deadline on the paywall match a real offer end date, or does it restart?",
+  "Is every \"was\" or crossed-out price one the product actually sold at?",
+]

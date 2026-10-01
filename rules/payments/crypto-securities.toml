@@ -1,0 +1,28 @@
+id = "payments.crypto-securities"
+title = "ICOs, crypto futures, or crypto-securities from an unapproved provider"
+severity = "error"
+evidence = ["source", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.5"]
+applies_when = ["crypto"]
+summary = """
+Apps that facilitate Initial Coin Offerings, cryptocurrency futures trading, or other crypto-securities or quasi-securities trading must come from established banks, securities firms, futures commission merchants, or other approved financial institutions, and must comply with all applicable law.
+"""
+fix = """
+Submit from the regulated institution's organization account and name its registrations in the review notes. Otherwise remove token sales, futures, leveraged, and margin products from the app.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.5",
+]
+
+[check]
+id = "crypto-securities"
+confidence = "low"
+catalog = "crypto-sdks"
+section = "securities"
+
+[review]
+questions = [
+  "Does the app sell new tokens, or offer futures, perpetuals, leverage, or margin on crypto assets?",
+  "Is the submitting organization a bank, securities firm, futures commission merchant, or other approved financial institution?",
+]

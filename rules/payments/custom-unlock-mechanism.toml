@@ -1,0 +1,29 @@
+id = "payments.custom-unlock-mechanism"
+title = "Features unlocked by license keys, codes, or markers instead of in-app purchase"
+severity = "error"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.1", "3.1.4"]
+summary = """
+Apps may not unlock content or functionality with their own mechanisms, such as license keys, activation or promo codes, augmented reality markers, QR codes, or cryptocurrency. The exceptions are narrow: hardware-dependent features, an optional approved physical product when an in-app purchase option also exists, and the purchase methods in 3.1.3. An app may never require buying an unrelated product, or advertising and marketing activity, to unlock functionality.
+"""
+fix = """
+Sell the unlock through StoreKit. For promotions, use App Store offer codes and present the system redemption sheet with `AppStore.presentOfferCodeRedeemSheet(from:options:)` or the SwiftUI offer code modifier. For a hardware unlock, explain in review notes which device enables the feature and keep an in-app purchase alternative where the product is optional.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.1",
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.4",
+  "https://developer.apple.com/documentation/storekit/appstore/presentoffercoderedeemsheet(in:)",
+]
+
+[check]
+id = "custom-unlock"
+confidence = "low"
+signals = ["licenseKey", "license key", "activationCode", "activation code", "unlockCode", "unlock code", "redeemCode", "promoCode", "serialNumber", "validateLicense"]
+satisfied_by = ["presentOfferCodeRedeemSheet", "offerCodeRedemption"]
+
+[review]
+questions = [
+  "Does any code, key, marker, scan, or outside purchase unlock content or features in the app?",
+  "If it is tied to hardware or a physical product, is that product required for the feature to work, and is an in-app purchase option offered where it is optional?",
+]

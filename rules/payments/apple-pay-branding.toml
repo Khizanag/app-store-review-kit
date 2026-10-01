@@ -1,0 +1,29 @@
+id = "payments.apple-pay-branding"
+title = "Apple Pay shown with custom buttons, marks, or incomplete purchase details"
+severity = "warning"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["4.9"]
+summary = """
+Apps using Apple Pay must give all material purchase information before the sale and use Apple Pay branding and interface elements as the Apple Pay Marketing Guidelines and Human Interface Guidelines describe. A hand-drawn "Pay with Apple Pay" button, a recoloured mark, or a sheet that opens before the total is known breaks 4.9.
+"""
+fix = """
+Use the system button, `PKPaymentButton` in UIKit or `PayWithApplePayButton` in SwiftUI, with a system type and style. Show the item, total, taxes, and shipping before the sheet opens, and make the total line the amount billed at authorization.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#4.9",
+  "https://developer.apple.com/apple-pay/marketing/",
+  "https://developer.apple.com/design/human-interface-guidelines/apple-pay",
+]
+
+[check]
+id = "apple-pay-button"
+confidence = "low"
+signals = ["\"Apple Pay\"", "Pay with Apple Pay", "applepay.png", "apple_pay", "ApplePayLogo"]
+satisfied_by = ["PKPaymentButton", "PayWithApplePayButton"]
+
+[review]
+questions = [
+  "Is every Apple Pay button the system button, unmodified?",
+  "Does the app show the full purchase details before the payment sheet, with the billed amount in the total line?",
+]

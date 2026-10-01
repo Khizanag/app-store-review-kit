@@ -1,0 +1,28 @@
+id = "payments.paywall-trial-toggle"
+title = "Paywall switch hides which plan and price the purchase starts"
+severity = "warning"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.2", "5.6"]
+applies_when = ["subscriptions"]
+summary = """
+A toggle such as "Enable free trial" or "Not sure yet? Try free" swaps the selected product, price, and billing terms behind one control. People cannot tell which plan the purchase button starts, or what is billed when the trial ends. Apple requires the trial length and the price billed after it to be clear in the purchase flow, and removes apps that trick people into subscribing.
+"""
+fix = """
+Replace the switch with distinct, labelled plan options. On each option state the trial length, the price billed when it ends, and the billing period, and keep the purchase button's label in step with the selected plan.
+"""
+references = [
+  "https://developer.apple.com/app-store/subscriptions/#clear-description",
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.2",
+]
+
+[check]
+id = "paywall-trial-toggle"
+confidence = "low"
+signals = ["Toggle(\"Enable free trial", "Toggle(\"Free trial", "freeTrialEnabled", "isTrialEnabled", "trialToggle", "Enable Free Trial", "Not sure yet"]
+
+[review]
+questions = [
+  "Does any switch on the paywall change the product, price, or billing terms the purchase button starts?",
+  "With every control in every position, can people see the trial length and the amount billed after it?",
+]

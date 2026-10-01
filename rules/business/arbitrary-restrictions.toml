@@ -1,0 +1,26 @@
+id = "business.arbitrary-restrictions"
+title = "App arbitrarily restricts who may use it"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["3.2.2"]
+summary = """
+Apps may not arbitrarily restrict who can use them, for example by location or carrier. Blocking people by region, carrier, or device without a legal or service reason is rejected under 3.2.2(v). Restrictions the law requires, such as real-money gaming geo-fencing, are not arbitrary.
+"""
+fix = """
+Remove the gate, or limit availability in App Store Connect and explain the legal or service reason for any in-app restriction in the review notes.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.2.2",
+]
+
+[check]
+id = "arbitrary-restriction"
+confidence = "low"
+signals = ["CTCarrier", "serviceSubscriberCellularProviders", "carrierName", "mobileCountryCode", "Locale.current.region", "regionCode", "not available in your country", "not available in your region"]
+
+[review]
+questions = [
+  "Does the app refuse service to anyone based on region, carrier, or device?",
+  "If so, is there a legal or service reason, and is it explained in the review notes?",
+]

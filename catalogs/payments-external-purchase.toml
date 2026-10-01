@@ -1,0 +1,70 @@
+# StoreKit programs that let an app link to, or process, purchases outside in-app purchase.
+# Each program pairs an API with an entitlement and, for most, an Info.plist key listing the
+# storefronts it covers. Region codes are lowercase ISO 3166-1 alpha-2, as Apple lists them.
+# StoreKit `Storefront.countryCode` returns ISO 3166-1 alpha-3 ("USA", "NLD"); convert before comparing.
+
+source = "https://developer.apple.com/documentation/storekit/external-purchase"
+verified = 2026-10-01
+
+# The United States storefront needs no entitlement for buttons, links, or calls to action
+# to other purchase methods (App Review Guidelines 3.1.1(a), 3.1.3, 3.1.3(a)).
+entitlement_free_storefronts = ["us"]
+
+eu = ["at", "be", "bg", "hr", "cy", "cz", "dk", "ee", "fi", "fr", "de", "gr", "hu", "ie", "it", "lv", "lt", "lu", "mt", "nl", "pl", "pt", "ro", "sk", "si", "es", "se"]
+
+[[programs]]
+id = "external-purchases-or-offers"
+name = "StoreKit External Purchases or Offers Entitlement (custom links)"
+api = ["ExternalPurchaseCustomLink", "ExternalPurchaseCustomLink.isEligible", "ExternalPurchaseCustomLink.showNotice(for:)", "ExternalPurchaseCustomLink.token(for:)"]
+entitlement = "com.apple.developer.storekit.custom-purchase-link.allowed-regions"
+entitlement_type = "array"
+plist_key = "SKExternalPurchaseCustomLinkRegions"
+regions = ["eu", "br", "jp"]
+summary = "Alternative payment processing in the app, or out-of-app offers with actionable links. Since October 1, 2026 the EU path for every external purchase option. Apple In-App Purchase must be offered at the same time and at least as prominently."
+source = "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.storekit.custom-purchase-link.allowed-regions"
+
+[[programs]]
+id = "external-purchase-link"
+name = "StoreKit External Purchase Link Entitlement"
+api = ["ExternalPurchaseLink", "ExternalPurchaseLink.canOpen", "ExternalPurchaseLink.eligibleURLs", "ExternalPurchaseLink.open"]
+entitlement = "com.apple.developer.storekit.external-purchase-link"
+entitlement_type = "boolean"
+plist_key = ["SKExternalPurchaseLink", "SKExternalPurchaseMultiLink"]
+regions = ["eu", "is", "no", "ru"]
+url_rules = ["https scheme", "absolute URL", "no query parameters", "1,000 or fewer ASCII characters", "matches the binary under review"]
+max_links = { music_streaming_eea = 5, other = 1 }
+summary = "One link (up to five for qualifying music streaming apps in the EEA) to a website for external purchases. The EU addendum was phased out on October 1, 2026 in favour of External Purchases or Offers."
+source = "https://developer.apple.com/documentation/bundleresources/information-property-list/skexternalpurchaselink"
+
+[[programs]]
+id = "alternative-payment-provider"
+name = "StoreKit External Purchase Entitlement (alternative payment service provider)"
+api = ["ExternalPurchase", "ExternalPurchase.canPresent", "ExternalPurchase.presentNoticeSheet"]
+entitlement = "com.apple.developer.storekit.external-purchase"
+entitlement_type = "boolean"
+plist_key = "SKExternalPurchase"
+regions = ["eu", "kr"]
+summary = "In-app payment through an alternative payment service provider."
+source = "https://developer.apple.com/documentation/bundleresources/information-property-list/skexternalpurchase"
+
+[[programs]]
+id = "music-streaming-link"
+name = "Music Streaming Services Entitlement"
+api = ["ExternalPurchaseCustomLink"]
+entitlement = "com.apple.developer.storekit.external-purchase-link-streaming"
+entitlement_type = "boolean"
+plist_key = "SKExternalPurchaseLinkStreamingRegions"
+regions = ["eu", "is", "no"]
+summary = "Music streaming apps communicating and promoting offers, including a buy button and email capture for a purchase link."
+source = "https://developer.apple.com/documentation/storekit/external-purchase"
+
+[[programs]]
+id = "external-link-account"
+name = "External Link Account Entitlement (reader apps)"
+api = ["ExternalLinkAccount", "ExternalLinkAccount.canOpen", "ExternalLinkAccount.open"]
+entitlement = "com.apple.developer.storekit.external-link.account"
+entitlement_type = "boolean"
+plist_key = "SKExternalLinkAccount"
+regions = ["all"]
+summary = "Approved reader apps link to a website to create or manage an account, after a system disclosure sheet."
+source = "https://developer.apple.com/support/reader-apps/"

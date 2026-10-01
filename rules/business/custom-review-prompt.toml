@@ -1,0 +1,30 @@
+id = "business.custom-review-prompt"
+title = "Custom rating prompt instead of the system review request"
+severity = "error"
+evidence = ["source", "runtime"]
+enforced_by = "app-review"
+guidelines = ["5.6.1"]
+summary = """
+Apps must use the provided API to prompt for App Store reviews, and Apple disallows custom review prompts. A home-made star picker, a "Rate us 5 stars" alert, or a sheet that opens the App Store review page unasked is a custom prompt. The system request shows at most three times in 365 days and may not appear at all, so it must not be called from a button tap either.
+"""
+fix = """
+Call the SwiftUI `requestReview` environment action (`RequestReviewAction`) or `AppStore.requestReview(in:)` after a completed task, never at launch or from a button. For a persistent "Write a review" button in settings, open `https://apps.apple.com/app/id<APP_ID>?action=write-review` only when the person taps it.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.6.1",
+  "https://developer.apple.com/documentation/storekit/requestreviewaction",
+  "https://developer.apple.com/documentation/storekit/requesting-app-store-reviews",
+  "https://developer.apple.com/design/human-interface-guidelines/ratings-and-reviews",
+]
+
+[check]
+id = "custom-review-prompt"
+confidence = "medium"
+signals = ["Rate us", "Rate Us", "rate this app", "Rate this app", "Rate 5 stars", "5 stars", "five stars", "StarRatingView", "RatingPromptView", "Love this app?", "action=write-review", "SKStoreReviewController"]
+satisfied_by = ["requestReview", "RequestReviewAction", "AppStore.requestReview"]
+
+[review]
+questions = [
+  "Does any in-app screen ask for a star rating or App Store review other than the system request?",
+  "Is the system request called only after a completed task, never at launch, during onboarding, or from a button tap?",
+]

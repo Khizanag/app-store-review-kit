@@ -1,0 +1,28 @@
+id = "business.financial-trading"
+title = "Trading, investing, or derivatives app without the required licensing"
+severity = "error"
+evidence = ["source", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["3.2.1", "3.2.2"]
+applies_when = ["regulated"]
+summary = """
+Apps for financial trading, investing, or money management should be submitted by the financial institution performing the service, with licensing and permissions where they are offered. Binary options trading is not allowed at all. Apps for contracts for difference, FOREX, or other derivatives must be properly licensed in every jurisdiction where the service is available.
+"""
+fix = """
+Submit from the licensed institution's organization account, limit storefronts to licensed jurisdictions, and list the licences in the review notes. Remove binary options entirely.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.2.1",
+  "https://developer.apple.com/app-store/review/guidelines/#3.2.2",
+]
+
+[check]
+id = "financial-trading"
+confidence = "low"
+signals = ["binary option", "binaryOption", "CFD", "contract for difference", "forex", "FOREX", "leverage", "margin call", "stop loss", "brokerage"]
+
+[review]
+questions = [
+  "Does the app offer binary options? If so, it cannot ship.",
+  "For trading, investing, CFDs, FOREX, or other derivatives, is the submitter the licensed institution, licensed in every storefront offered?",
+]

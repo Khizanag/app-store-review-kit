@@ -1,0 +1,28 @@
+id = "business.charity-fundraising"
+title = "Donations collected in the app without approved nonprofit status"
+severity = "error"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["3.2.1", "3.2.2"]
+summary = """
+Only approved nonprofits may fundraise inside an app, and they must support Apple Pay, disclose how funds are used, follow local and federal law, and make tax receipts available. Platforms that connect donors to nonprofits must list only approved nonprofits. Everyone else must keep the app free and collect donations outside it, such as in Safari or by SMS.
+"""
+fix = """
+Get approved to accept donations with Apple Pay (Candid Seal of Transparency in the US, Benevity elsewhere) and take donations with the Donate with Apple Pay button, stating how the money is used. Without approval, remove in-app donation flows and link out to Safari or an SMS donation number.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.2.1",
+  "https://developer.apple.com/app-store/review/guidelines/#3.2.2",
+  "https://developer.apple.com/apple-pay/nonprofits/",
+]
+
+[check]
+id = "charity-fundraising"
+confidence = "low"
+signals = ["donate", "Donate", "donation", "Donation", "fundraiser", "Fundraiser", "charity", "Charity"]
+
+[review]
+questions = [
+  "Does the app collect money for a charity, cause, or fundraiser?",
+  "If so, is each recipient an approved nonprofit, paid through Apple Pay, with use of funds and tax receipts disclosed?",
+]

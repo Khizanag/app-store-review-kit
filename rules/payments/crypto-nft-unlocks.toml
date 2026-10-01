@@ -1,0 +1,27 @@
+id = "payments.crypto-nft-unlocks"
+title = "Cryptocurrency, wallets, or NFTs unlock app features"
+severity = "error"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.1"]
+applies_when = ["crypto"]
+summary = """
+Apps may not unlock content or functionality with cryptocurrency or cryptocurrency wallets. Apps may sell NFT-related services such as minting, listing, and transferring through in-app purchase, and may show people their own NFTs, but NFT ownership may not unlock features. Except on the United States storefront, apps that let people browse others' NFT collections may not include buttons, links, or calls to action to purchase outside in-app purchase.
+"""
+fix = """
+Gate features on StoreKit entitlements, not on wallet balances or token ownership. Sell minting, listing, and transfer services through in-app purchase, and remove outside-purchase calls to action from NFT browsing on non-US storefronts.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.1",
+]
+
+[check]
+id = "nft-gating"
+confidence = "low"
+signals = ["ownsNFT", "nftOwnership", "tokenGated", "token-gated", "holdsToken", "balanceOf(", "ownerOf(", "unlockWithNFT"]
+
+[review]
+questions = [
+  "Does holding a token, NFT, or wallet balance unlock any content or feature?",
+  "Are minting, listing, and transfer services sold through in-app purchase?",
+]

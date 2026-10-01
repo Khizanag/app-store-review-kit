@@ -1,0 +1,22 @@
+id = "payments.iap-review-metadata"
+title = "In-app purchase not ready for review or not submitted with the app"
+severity = "error"
+evidence = ["metadata"]
+enforced_by = "app-store-connect"
+guidelines = ["2.1"]
+applies_when = ["in-app-purchase"]
+summary = """
+Each in-app purchase needs its App Review screenshot, which shows the item being offered, and complete metadata before it can be added for review. The first consumable, non-consumable, auto-renewable subscription, and non-renewing subscription of each type must be submitted together with a new app version. A product left in Prepare for Submission is not reviewable, so the app's paywall finds nothing and the build is rejected under 2.1(b).
+"""
+fix = """
+In App Store Connect, upload the App Review screenshot and fill in the localized display name, description, and price for each product, plus review notes with any test steps. Add new products to the same submission as the app version, so they reach Waiting for Review with it.
+"""
+references = [
+  "https://developer.apple.com/help/app-store-connect/manage-submissions-to-app-review/submit-an-in-app-purchase",
+  "https://developer.apple.com/help/app-store-connect/reference/in-app-purchases-and-subscriptions/in-app-purchase-information",
+  "https://developer.apple.com/help/app-store-connect/reference/in-app-purchases-and-subscriptions/in-app-purchase-statuses",
+]
+
+[check]
+id = "asc-iap-review-ready"
+confidence = "high"

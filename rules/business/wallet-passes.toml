@@ -1,0 +1,26 @@
+id = "business.wallet-passes"
+title = "Wallet passes used for something other than payments, offers, or identification"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["3.2.1"]
+summary = """
+Wallet passes may be used to make or receive payments, transmit offers, or offer identification, such as movie tickets, coupons, and VIP credentials. Other uses may lead to rejection and revocation of Wallet credentials.
+"""
+fix = """
+Issue passes only for payments, offers, tickets, or identification. Move other content, such as notes or ads, into the app.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.2.1",
+  "https://developer.apple.com/documentation/passkit",
+]
+
+[check]
+id = "wallet-passes"
+confidence = "low"
+signals = ["PKAddPassesViewController", "PKPassLibrary", "PKPass(", "addPasses", ".pkpass"]
+
+[review]
+questions = [
+  "Does every Wallet pass the app issues serve a payment, an offer, a ticket, or identification?",
+]

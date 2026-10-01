@@ -1,0 +1,23 @@
+id = "payments.transaction-listener"
+title = "No transaction listener at launch"
+severity = "warning"
+evidence = ["source"]
+enforced_by = "app-review"
+guidelines = ["2.1"]
+applies_when = ["in-app-purchase"]
+summary = """
+Purchases that complete outside the app's own purchase call, such as Ask to Buy approvals, offer code redemptions, purchases made in the App Store, and purchases made on another device, arrive through `Transaction.updates`, as do unfinished transactions right after launch. Without a listener started at launch, the app may miss them, so in-app purchases do not work as the reviewer expects.
+"""
+fix = """
+Start a task at launch that iterates `Transaction.updates`, verifies each `VerificationResult`, grants the entitlement, and calls `transaction.finish()`. With StoreKit 1, add an `SKPaymentTransactionObserver` in `application(_:didFinishLaunchingWithOptions:)`.
+"""
+references = [
+  "https://developer.apple.com/documentation/storekit/transaction/updates",
+  "https://developer.apple.com/app-store/review/guidelines/#2.1",
+]
+
+[check]
+id = "transaction-listener"
+confidence = "medium"
+signals = ["Product.purchase", "product.purchase(", "SKPaymentQueue"]
+satisfied_by = ["Transaction.updates", "SKPaymentQueue.default().add(", "SubscriptionStoreView", "Purchases.configure"]

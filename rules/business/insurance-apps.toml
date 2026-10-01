@@ -1,0 +1,22 @@
+id = "business.insurance-apps"
+title = "Insurance app is paid or sells through in-app purchase"
+severity = "error"
+evidence = ["source", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["3.2.1"]
+applies_when = ["regulated"]
+summary = """
+Insurance apps must be free, comply with the law in each region where they are distributed, and may not use in-app purchase.
+"""
+fix = """
+Make the app free, remove StoreKit products, take premiums with Apple Pay or another payment method, and limit storefronts to regions where you are licensed.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.2.1",
+]
+
+[review]
+questions = [
+  "Does the app sell or manage insurance?",
+  "If so, is it free on the App Store with no in-app purchase products, and licensed in every storefront offered?",
+]

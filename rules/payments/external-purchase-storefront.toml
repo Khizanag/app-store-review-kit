@@ -1,0 +1,34 @@
+id = "payments.external-purchase-storefront"
+title = "Link to outside purchasing shown in a storefront that does not allow it"
+severity = "error"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1", "3.1.1", "3.1.3"]
+applies_when = ["in-app-purchase"]
+summary = """
+Buttons, links, and other calls to action that send people to buy digital goods outside in-app purchase are allowed without an entitlement only on the United States storefront. Everywhere else they need a StoreKit external purchase entitlement for that storefront, presented through the entitlement's API and its system notice sheet. In the EU, Apple In-App Purchase must be offered at the same time and at least as prominently, and the App Store product page may not mention the alternative. A link that shows on every storefront, or a hard-coded web checkout, is rejected outside the US.
+"""
+fix = """
+Gate each call to action on the current storefront: read `Storefront.current?.countryCode` (ISO 3166-1 alpha-3, such as `USA`) or the entitlement API's `canOpen`, `isEligible`, or `eligibleURLs`, and hide the link where neither applies. Outside the US, open links only through the entitlement's API. Keep outside-purchase wording off the product page in the EU.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.1",
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.3",
+  "https://developer.apple.com/documentation/storekit/storefront/countrycode",
+  "https://developer.apple.com/documentation/storekit/external-purchase",
+  "https://developer.apple.com/support/apps-using-alternative-payment-providers-in-the-eu/",
+]
+
+[check]
+id = "external-purchase-gating"
+confidence = "medium"
+catalog = "payments-external-purchase"
+signals = ["ExternalPurchaseLink.open", "ExternalPurchaseCustomLink", "ExternalPurchase.presentNoticeSheet", "ExternalLinkAccount.open", "buy on our website", "subscribe on the web", "cheaper on our website", "checkout.stripe.com", "buy.stripe.com"]
+satisfied_by = ["Storefront.current", "Storefront.updates", "countryCode", "ExternalPurchaseLink.canOpen", "ExternalPurchaseLink.eligibleURLs", "ExternalPurchaseCustomLink.isEligible", "ExternalPurchase.canPresent", "ExternalLinkAccount.canOpen"]
+
+[review]
+questions = [
+  "On which storefronts does a call to action to outside purchasing appear, and does the app hold the matching entitlement for each one other than the US?",
+  "On EU storefronts, is Apple In-App Purchase offered at the same time and at least as prominently as the alternative?",
+  "Does the system notice sheet appear before every link-out or alternative payment outside the US?",
+]

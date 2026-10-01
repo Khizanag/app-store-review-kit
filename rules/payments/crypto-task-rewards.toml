@@ -1,0 +1,27 @@
+id = "payments.crypto-task-rewards"
+title = "Cryptocurrency given for completing tasks"
+severity = "error"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.5"]
+applies_when = ["crypto"]
+summary = """
+Cryptocurrency apps may not offer currency for completing tasks, such as downloading other apps, getting others to download, or posting to social networks. Watch-to-earn, refer-to-earn, and airdrops for social actions fall under 3.1.5(v).
+"""
+fix = """
+Remove cryptocurrency rewards tied to downloads, referrals, social posts, or other tasks.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.5",
+]
+
+[check]
+id = "crypto-task-rewards"
+confidence = "low"
+catalog = "crypto-sdks"
+section = "task_rewards"
+
+[review]
+questions = [
+  "Does anyone receive cryptocurrency or tokens for downloading apps, referring people, posting, or other tasks?",
+]

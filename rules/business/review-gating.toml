@@ -1,0 +1,28 @@
+id = "business.review-gating"
+title = "Pre-prompt sends only happy users to the App Store review"
+severity = "error"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["3", "5.6.1", "5.6.3"]
+summary = """
+An "Enjoying the app?" question that shows the review request only to people who answer yes, and routes everyone else to a feedback form, filters App Store ratings. Apple treats filtered feedback as review manipulation, which can lead to removal from the Apple Developer Program, and disallows custom review prompts.
+"""
+fix = """
+Remove the pre-prompt. Call the system review request at a natural break for everyone who reaches it, and offer a separate, always-available "Send feedback" action elsewhere.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3",
+  "https://developer.apple.com/app-store/review/guidelines/#5.6.1",
+  "https://developer.apple.com/documentation/storekit/requestreviewaction",
+]
+
+[check]
+id = "review-gating"
+confidence = "medium"
+signals = ["Enjoying", "enjoying the app", "Do you like", "Are you enjoying", "Happy with", "Do you love", "How do you like", "isHappyUser", "positiveFeedback", "negativeFeedback", "thumbsUp", "showRatingPrompt"]
+
+[review]
+questions = [
+  "Does any question or rating step decide whether the App Store review request is shown?",
+  "Do people who give a low answer get a feedback form instead of the review request?",
+]

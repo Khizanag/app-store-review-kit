@@ -1,0 +1,29 @@
+id = "payments.crypto-wallet-organization"
+title = "Cryptocurrency wallet submitted from an individual account"
+severity = "error"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.5"]
+applies_when = ["crypto"]
+summary = """
+Apps may facilitate virtual currency storage only when offered by a developer enrolled in the Apple Developer Program as an organization. A wallet SDK, a seed-phrase screen, or WalletConnect support in an app from an individual account is rejected under 3.1.5(i).
+"""
+fix = """
+Enroll as an organization, or transfer the app to the organization's account, before submitting. If the app only shows prices or links to an outside wallet, say so in the review notes.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.5",
+  "https://developer.apple.com/programs/enroll/",
+]
+
+[check]
+id = "crypto-wallet"
+confidence = "medium"
+catalog = "crypto-sdks"
+section = "wallets"
+
+[review]
+questions = [
+  "Does the app store, send, or receive cryptocurrency or hold keys for people?",
+  "Is the App Store Connect account enrolled as an organization rather than an individual?",
+]

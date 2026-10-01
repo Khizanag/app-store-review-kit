@@ -1,0 +1,32 @@
+# Cryptocurrency SDKs, services, and phrases that signal guideline 3.1.5 obligations.
+# Package lists adapted from RevylAI/greenlight internal/codescan/rules_crypto.go and rules.go
+# (MIT, Copyright (c) RevylAI) and berkayturk/appstore-precheck scan.sh (MIT, Copyright 2026 Berkay Turk).
+
+source = "https://developer.apple.com/app-store/review/guidelines/#3.1.5"
+verified = 2026-10-01
+
+# 3.1.5(i): storing virtual currency needs an organization developer account.
+[wallets]
+swift = ["import web3swift", "import Web3", "import WalletCore", "#import <WalletCore", "import WalletConnectSign", "import WalletConnectSwift", "import ReownAppKit", "import CoinbaseWalletSDK", "import SolanaSwift"]
+npm = ["ethers", "@ethersproject/", "viem", "wagmi", "@wagmi/", "web3", "@reown/appkit", "@walletconnect/", "@privy-io/", "@web3auth/", "@magic-sdk/", "@dynamic-labs/", "@solana/web3.js", "@coinbase/wallet-sdk", "@rainbow-me/", "thirdweb", "@web3-onboard/", "bitcoinjs-lib", "@trustwallet/"]
+phrases = ["seed phrase", "recovery phrase", "mnemonic", "BIP39", "wallet address"]
+
+# 3.1.5(ii): no on-device mining (also 2.4.2: no unrelated background processes).
+[mining]
+patterns = ["(?i)(crypto|coin)\\s*miner", "(?i)mining\\s*pool", "(?i)stratum\\+(tcp|ssl)://", "(?i)\\bhash\\s*rate\\b", "(?i)\\bxmrig\\b", "(?i)coinhive", "(?i)moneroMiner", "(?i)\\bmineBlock\\b"]
+
+# 3.1.5(iii): exchanges and fiat on-ramps need licensing in every storefront offered.
+[exchanges]
+onramp_npm = ["@moonpay/", "moonpay-", "@transak/", "transak-", "@ramp-network/", "ramp-network-", "onramper", "banxa", "mercuryo", "sardine", "sardine-ai", "sendwyre", "wyre"]
+exchange_npm = ["ccxt", "@binance/", "binance-connector", "node-binance-api", "@okx/", "coinbase-pro", "@coinbase-samples/", "@kucoin/", "@bybit/"]
+domains = ["coinbase.com", "binance.com", "binance.us", "kraken.com", "bybit.com", "okx.com", "kucoin.com", "bitfinex.com", "bitstamp.net", "bitget.com", "mexc.com", "huobi.com", "gemini.com", "crypto.com", "bitpay.com"]
+copy_pattern = "(?i)\\b(crypto[\\s_-]?currency[\\s_-]?exchange|crypto[\\s_-]?exchange|(buy|sell|trade|swap)[\\s_-]?crypto|(buy|sell)[\\s_-]?(bitcoin|btc|ethereum|eth|usdt|usdc)|fiat[\\s_-]?(on|off)[\\s_-]?ramps?|(on|off)[_-]ramps?\\b|p2p[\\s_-]?trad)"
+negation_skip = "(?i)\\b(not|never|no|without|isn['’]?t|aren['’]?t|doesn['’]?t|don['’]?t|won['’]?t|can['’]?t|cannot)\\b.{0,30}?(crypto|exchange|on[_-]?ramp|off[_-]?ramp|bitcoin)"
+
+# 3.1.5(iv): ICOs, crypto futures, and crypto-securities need an established financial institution.
+[securities]
+phrases = ["ICO", "initial coin offering", "token sale", "presale", "perpetual", "perps", "futures", "leverage", "margin trading", "liquidation price", "staking yield"]
+
+# 3.1.5(v): no currency for completing tasks.
+[task_rewards]
+phrases = ["earn crypto", "earn bitcoin", "free crypto", "crypto rewards", "airdrop", "claim tokens", "refer and earn", "watch to earn", "move to earn", "play to earn"]

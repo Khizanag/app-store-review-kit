@@ -1,0 +1,20 @@
+id = "payments.paid-apps-agreement"
+title = "Paid Apps Agreement not active"
+severity = "error"
+evidence = ["metadata"]
+enforced_by = "app-store-connect"
+guidelines = ["2.1"]
+applies_when = ["in-app-purchase"]
+summary = """
+To sell apps or offer in-app purchases, the Account Holder must sign the Paid Apps Agreement in App Store Connect, with tax and banking information complete. Until it is active, the app's in-app purchases cannot be sold, and the reviewer cannot complete a purchase.
+"""
+fix = """
+Have the Account Holder sign the Paid Apps Agreement under Business in App Store Connect and complete tax and banking information. Accept any new version the updates generate before submitting.
+"""
+references = [
+  "https://developer.apple.com/help/app-store-connect/manage-agreements/sign-and-update-agreements",
+]
+
+[check]
+id = "asc-paid-apps-agreement"
+confidence = "high"

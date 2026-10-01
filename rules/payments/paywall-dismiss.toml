@@ -1,0 +1,29 @@
+id = "payments.paywall-dismiss"
+title = "Paywall hides its close control or keeps coming back"
+severity = "warning"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.2", "5.6"]
+applies_when = ["in-app-purchase"]
+summary = """
+A close button that appears only after a delay, is too small or faint to find, or a paywall that reopens right after it is dismissed, pressures people into buying. Apple forbids tricking customers into unwanted purchases and removes subscription apps that use bait-and-switch or scam practices.
+"""
+fix = """
+Show a clearly visible close control from the moment the paywall appears, honour the dismissal, and wait for a new action, such as tapping a premium feature, before showing the paywall again.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.6",
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.2",
+]
+
+[check]
+id = "paywall-dismiss"
+confidence = "low"
+signals = ["closeButtonDelay", "showCloseAfter", "closeDelay", "dismissDelay", "interactiveDismissDisabled()", "isModalInPresentation = true"]
+
+[review]
+questions = [
+  "Is the paywall's close control visible and usable as soon as the paywall appears?",
+  "After someone dismisses the paywall, does it stay away until they choose a paid feature?",
+  "Is the plan selected by default clearly labelled with its billed amount?",
+]

@@ -1,0 +1,28 @@
+id = "payments.purchased-items-expire"
+title = "Purchased credits, currency, or items expire"
+severity = "error"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.1", "3.2.1"]
+applies_when = ["in-app-purchase"]
+summary = """
+Credits and in-game currencies bought through in-app purchase may not expire. Apart from approved rental content, such as films, television, music, or books whose rental period has ended, purchased items and services may not expire either.
+"""
+fix = """
+Remove expiry from purchased credits, currency, and items. Expire only rentals of approved media, and state the rental period before purchase.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.1",
+  "https://developer.apple.com/app-store/review/guidelines/#3.2.1",
+]
+
+[check]
+id = "expiring-currency"
+confidence = "low"
+signals = ["coinsExpire", "creditsExpire", "creditExpiry", "expiringCredits", "credits expire", "coins expire", "gems expire", "points expire"]
+
+[review]
+questions = [
+  "Does any purchased credit, currency, or item stop working after a date or period of inactivity?",
+  "If it does, is it a rental of approved media with the period shown before purchase?",
+]

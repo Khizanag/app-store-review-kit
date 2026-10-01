@@ -1,0 +1,21 @@
+id = "business.model-unclear"
+title = "Business model or in-app purchases not obvious to the reviewer"
+severity = "warning"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["3"]
+summary = """
+If App Review cannot understand how the app makes money, or cannot find its in-app purchases, the review is delayed and may be rejected. Apple also refuses apps and in-app purchase items priced irrationally high to cheat people.
+"""
+fix = """
+Explain in the description and review notes what is free, what is paid, and where each purchase lives in the app, with steps to reach it. Price items in line with what they deliver.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3",
+]
+
+[review]
+questions = [
+  "Do the review notes say where each in-app purchase and paywall is and how to reach it?",
+  "Is any app or in-app purchase priced far above what comparable items sell for?",
+]

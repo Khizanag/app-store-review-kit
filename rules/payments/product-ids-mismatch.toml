@@ -1,0 +1,22 @@
+id = "payments.product-ids-mismatch"
+title = "Product identifiers in the app do not match App Store Connect"
+severity = "error"
+evidence = ["source", "metadata"]
+enforced_by = "app-review"
+guidelines = ["2.1"]
+applies_when = ["in-app-purchase"]
+summary = """
+`Product.products(for:)` leaves out, without an error, any identifier that is invalid or that the App Store cannot find, so a typo or a product missing from App Store Connect leaves an empty paywall or a purchase button that does nothing. App Review rejects in-app purchases that are not complete, visible, and functional, and asks for an explanation in review notes for any configured product the reviewer cannot find.
+"""
+fix = """
+Keep product identifiers in one place, compare them with the products in App Store Connect before each submission, and handle an empty result from `Product.products(for:)` with a visible error and retry. Explain in review notes any configured product the app does not show.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#2.1",
+  "https://developer.apple.com/documentation/storekit/product/products(for:)",
+]
+
+[check]
+id = "iap-product-ids"
+confidence = "medium"
+signals = ["Product.products(for:", "SKProductsRequest(productIdentifiers:", "productIdentifiers"]

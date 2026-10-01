@@ -1,0 +1,26 @@
+id = "payments.physical-goods-via-iap"
+title = "Physical goods or real-world services sold through in-app purchase"
+severity = "error"
+evidence = ["source", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1", "3.1.3"]
+summary = """
+Physical goods and services consumed outside the app, such as deliveries, rides, tickets, or physical gift cards, must be paid for with methods other than in-app purchase, such as Apple Pay or card entry. Selling them as in-app purchase products is rejected under 3.1.3(e).
+"""
+fix = """
+Take payment for physical goods and real-world services with Apple Pay (`PKPaymentRequest` or `PayWithApplePayButton`) or a card processor, and keep in-app purchase for digital content used in the app.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.3",
+  "https://developer.apple.com/documentation/passkit/paywithapplepaybutton",
+]
+
+[check]
+id = "iap-for-physical"
+confidence = "low"
+signals = ["shippingAddress", "deliveryAddress", "ShippingMethod", "addToCart", "orderTracking"]
+
+[review]
+questions = [
+  "Is anything sold through in-app purchase delivered or used outside the app?",
+]

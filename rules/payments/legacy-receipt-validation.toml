@@ -20,4 +20,5 @@ references = [
 [check]
 id = "receipt-validation"
 confidence = "low"
-signals = ["appStoreReceiptURL", "PKCS7", "AppleIncRootCertificate", "SKReceiptRefreshRequest"]
+signals = ["appStoreReceiptURL", "PKCS7", "AppleIncRootCertificate", "SKReceiptRefreshRequest", "d2i_PKCS7", "TPInAppReceipt"]
+satisfied_by = ["Transaction.currentEntitlements", "Transaction.updates", "AppTransaction.shared", "VerificationResult"]

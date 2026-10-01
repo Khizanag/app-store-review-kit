@@ -1,0 +1,28 @@
+id = "payments.crypto-exchange-licensing"
+title = "Crypto trading or on-ramp offered where the app is not licensed"
+severity = "error"
+evidence = ["source", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.5", "3.2.1"]
+summary = """
+Apps may facilitate cryptocurrency transactions or transmissions only on an approved exchange, and only in countries or regions where the app has the licensing and permissions to provide an exchange. Buy, sell, swap, and fiat on-ramp features, whether built in or through an SDK such as MoonPay or Transak, count. Financial trading apps must also come from the institution providing the service.
+"""
+fix = """
+Limit availability in App Store Connect to the storefronts where you hold an exchange licence, submit from the licensed entity's account, and list the licences per region in the review notes. Remove trading and on-ramp features everywhere else.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.5",
+  "https://developer.apple.com/app-store/review/guidelines/#3.2.1",
+]
+
+[check]
+id = "crypto-exchange"
+confidence = "medium"
+catalog = "crypto-sdks"
+section = "exchanges"
+
+[review]
+questions = [
+  "Can people buy, sell, swap, or transfer cryptocurrency through the app or an embedded provider?",
+  "Is the app available only in storefronts where the developer, or the exchange it uses, holds the required licence?",
+]

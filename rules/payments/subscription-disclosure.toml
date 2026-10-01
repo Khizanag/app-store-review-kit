@@ -1,28 +1,32 @@
 id = "payments.subscription-disclosure"
 title = "Subscription terms not clearly disclosed"
 severity = "warning"
-evidence = ["metadata", "runtime", "human"]
+evidence = ["source", "metadata", "runtime", "human"]
 enforced_by = "app-review"
 guidelines = ["3.1.2"]
 applies_when = ["subscriptions"]
 summary = """
-Auto-renewable subscriptions must provide ongoing value, last at least seven days, and state clearly what the person gets, the price, and the billing period before purchase. The app and its metadata must link the Terms of Use (EULA) and the privacy policy.
+Auto-renewable subscriptions must provide ongoing value, last at least seven days, work on all of the person's devices, and state clearly before purchase what the person gets, the full renewal price, and the billing period. The sign-up screen needs the subscription name and duration, what it provides, the renewal price, and a way to sign in or restore. The app and its App Store metadata must link the Terms of Use (EULA) and the privacy policy.
 """
 fix = """
-Show price, period, and what is included on the paywall, with the billed amount as the most prominent price. Link Terms of Use and Privacy Policy on the paywall and in the App Store description or the EULA field.
+Show the subscription name, period from `product.subscription?.subscriptionPeriod`, price from `displayPrice`, what is included, and that it renews automatically until cancelled. Link Terms of Use and Privacy Policy on the paywall, or use `SubscriptionStoreView` with `.subscriptionStorePolicyDestination(url:for:)` for `.termsOfService` and `.privacyPolicy`. Add a Terms of Use link to the App Store description or a custom EULA in App Store Connect.
 """
 references = [
-  "https://developer.apple.com/app-store/subscriptions/",
+  "https://developer.apple.com/app-store/subscriptions/#clear-description",
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.2",
 ]
 
 [check]
 id = "subscription-links"
 confidence = "low"
-signals = ["SubscriptionStoreView", "subscription", "Product.SubscriptionInfo"]
+signals = ["SubscriptionStoreView", "subscription", "Product.SubscriptionInfo", "subscriptionPeriod", "autoRenewable"]
+satisfied_by = ["Terms of Use", "terms of use", "EULA", "apple.com/legal/internet-services/itunes/dev/stdeula", "Privacy Policy", "privacy policy", "subscriptionStorePolicyDestination"]
 
 [review]
 questions = [
-  "Is the billed amount the most prominent price on the paywall, with any per-week breakdown secondary?",
-  "Does the paywall show the trial length and what happens when it ends?",
-  "Are Terms of Use and Privacy Policy linked from the paywall?",
+  "Does the sign-up screen show the subscription name, duration, what it provides, and the full renewal price?",
+  "Does it say the subscription renews automatically until cancelled?",
+  "Are Terms of Use and Privacy Policy linked from the paywall, and is a Terms of Use link in the App Store description or the EULA field?",
+  "Is every subscription period at least seven days, and does the subscription unlock on all of the person's devices?",
+  "For remotely configured paywalls, such as RevenueCat, Superwall, or Adapty, does every live variant meet these terms?",
 ]

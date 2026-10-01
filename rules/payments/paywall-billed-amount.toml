@@ -1,0 +1,28 @@
+id = "payments.paywall-billed-amount"
+title = "Paywall makes a price breakdown more prominent than the billed amount"
+severity = "error"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.2", "5.6"]
+applies_when = ["subscriptions"]
+summary = """
+Apple requires the amount that will be billed to be the most prominent pricing element in the purchase flow. A yearly plan headlined as "$0.96/week" or "just $0.13 a day", with the real yearly charge in small or faded text, misleads people about what they pay. Breakdowns and savings badges are allowed only in a subordinate position and size.
+"""
+fix = """
+Show the billed amount for each plan, from `Product.displayPrice`, as the largest price on the screen. Put any per-week, per-month, or per-day equivalent below it in a smaller, secondary style, and compute it with `Product.price` and `priceFormatStyle`.
+"""
+references = [
+  "https://developer.apple.com/app-store/subscriptions/#clear-description",
+  "https://developer.apple.com/documentation/storekit/product/displayprice",
+]
+
+[check]
+id = "paywall-price-breakdown"
+confidence = "low"
+signals = ["/ 52", "/52", "/ 4.33", "/ 365", "/365", "/week", "/wk", "/day", "weeklyPrice", "pricePerWeek", "pricePerDay", "dailyPrice"]
+
+[review]
+questions = [
+  "On every plan, is the amount billed at purchase the largest, most legible price?",
+  "Are per-week or per-day equivalents and savings badges smaller and placed below the billed amount?",
+]

@@ -1,0 +1,29 @@
+id = "payments.subscription-migration"
+title = "Switch to a subscription takes away what earlier buyers paid for"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1", "3.1.2"]
+applies_when = ["subscriptions"]
+summary = """
+When a paid app or a one-time unlock moves to a subscription, people who already paid must keep the primary functionality they bought. Putting existing buyers behind the new paywall breaks 3.1.2(a).
+"""
+fix = """
+Grandfather earlier buyers: compare `AppTransaction.shared`'s `originalAppVersion` or `originalPurchaseDate` with the version or date the model changed, and keep existing non-consumable entitlements from `Transaction.currentEntitlements`, before showing the paywall.
+"""
+references = [
+  "https://developer.apple.com/documentation/storekit/apptransaction/originalappversion",
+  "https://developer.apple.com/documentation/storekit/supporting-business-model-changes-by-using-the-app-transaction",
+]
+
+[check]
+id = "business-model-migration"
+confidence = "low"
+signals = ["SubscriptionStoreView", "Product.SubscriptionInfo"]
+satisfied_by = ["originalAppVersion", "originalPurchaseDate", "currentEntitlements"]
+
+[review]
+questions = [
+  "Did this app, or a non-consumable in it, ever sell the functionality the subscription now gates?",
+  "If yes, can someone who bought it before the change still use it without subscribing?",
+]

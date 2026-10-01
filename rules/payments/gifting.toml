@@ -1,0 +1,27 @@
+id = "payments.gifting"
+title = "Gifts or gift cards for digital content sold outside the rules"
+severity = "warning"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.1"]
+applies_when = ["in-app-purchase"]
+summary = """
+Apps may let people gift items that are eligible for in-app purchase, but such gifts may be refunded only to the original purchaser and may not be exchanged. Digital gift cards, certificates, vouchers, and coupons redeemable for digital goods or services may be sold in the app only through in-app purchase; only physical gift cards mailed to customers may use other payment methods.
+"""
+fix = """
+Sell digital gifts and digital gift cards through StoreKit. Route refunds only to the buyer and block exchanging a gift for other items or currency. Use an external processor only for physical gift cards you mail.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.1",
+]
+
+[check]
+id = "gifting"
+confidence = "low"
+signals = ["gift card", "giftCard", "GiftCard", "send as gift", "sendGift", "giftSubscription", "redeemGift", "voucher", "gift certificate"]
+
+[review]
+questions = [
+  "Is any gift or gift card for digital content paid for outside in-app purchase?",
+  "Can a received gift be exchanged, or refunded to anyone other than the buyer?",
+]

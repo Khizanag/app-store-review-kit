@@ -1,0 +1,28 @@
+id = "payments.loot-box-odds"
+title = "Paid randomized items without odds shown before purchase"
+severity = "error"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.1"]
+applies_when = ["in-app-purchase"]
+summary = """
+Loot boxes, gacha pulls, mystery boxes, card packs, and other mechanisms that sell randomized virtual items must disclose the odds of receiving each type of item before the purchase. This applies whether the box is bought directly or with in-game currency bought through in-app purchase.
+"""
+fix = """
+Show the drop rate of every item type or rarity tier on the purchase screen, or one tap away from it, before the person pays. Keep the published odds in step with the server's actual rates.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.1",
+]
+
+[check]
+id = "loot-box-odds"
+confidence = "low"
+signals = ["lootbox", "loot box", "LootBox", "gacha", "Gacha", "mystery box", "MysteryBox", "card pack", "summon", "spin the wheel", "dropTable", "dropRate", "rarityWeights"]
+satisfied_by = ["odds", "Odds", "drop rate", "Drop Rates", "probability", "Probability"]
+
+[review]
+questions = [
+  "Can people pay, directly or with purchased currency, for an item whose contents are random?",
+  "Are the odds for each item type shown before that purchase?",
+]

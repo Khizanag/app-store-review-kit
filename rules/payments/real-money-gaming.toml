@@ -1,0 +1,28 @@
+id = "payments.real-money-gaming"
+title = "Real-money gaming without licensing, geo-restriction, or a free listing"
+severity = "error"
+evidence = ["source", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["5.3", "5.3.3", "5.3.4"]
+summary = """
+Apps offering real-money gaming, such as sports betting, poker, casino games, horse racing, or lotteries, must hold the licences and permissions for every location where they are used, be geo-restricted to those locations, and be free on the App Store. In-app purchase may not sell credit or currency used with real-money gaming of any kind. Illegal gambling aids, such as card counters, are not allowed, and lottery apps must have consideration, chance, and a prize.
+"""
+fix = """
+Submit from the licensed operator's organization account, list the licences in review notes, limit availability in App Store Connect to licensed regions, and enforce the location in the app with a geolocation check; device locale or storefront is not a location. Make the app free and take wagers and deposits outside in-app purchase.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.3.3",
+  "https://developer.apple.com/app-store/review/guidelines/#5.3.4",
+]
+
+[check]
+id = "real-money-gaming"
+confidence = "low"
+signals = ["GeoComply", "geocomply", "sportsbook", "placeBet", "wager", "betslip", "BetSlip", "parlay", "casino", "slot machine", "real money", "cash out", "card counter", "lottery"]
+
+[review]
+questions = [
+  "Can people stake money or anything bought with money for a chance to win money or prizes?",
+  "Is the app free, licensed in every region it is offered, and geo-restricted to those regions in both App Store Connect and the app?",
+  "Does any in-app purchase product buy credit or currency usable in the wagering?",
+]

@@ -6,10 +6,10 @@ enforced_by = "app-review"
 guidelines = ["3.1.1"]
 applies_when = ["in-app-purchase"]
 summary = """
-The app sells non-consumables or subscriptions but has no visible way to restore them. Guideline 3.1.1 expects a restore mechanism for any restorable in-app purchase.
+The app sells non-consumables or subscriptions but has no visible way to restore them. Guideline 3.1.1 expects a restore mechanism for any restorable in-app purchase, and the reviewer taps it: a button that does nothing, or that only rereads a local flag, fails.
 """
 fix = """
-Add a Restore Purchases action that calls `AppStore.sync()`, or use the StoreKit views, which include it. Place it where people look for it: the paywall and settings.
+Add a Restore Purchases action that calls `AppStore.sync()` and then rereads `Transaction.currentEntitlements`, or use the StoreKit views, which include it. Show a result either way. Place it where people look for it: the paywall and settings.
 """
 references = [
   "https://developer.apple.com/documentation/storekit/appstore/sync()",
@@ -18,5 +18,5 @@ references = [
 [check]
 id = "restore-purchases"
 confidence = "medium"
-purchase_signals = ["Product.purchase", "product.purchase(", "SKPaymentQueue", "SubscriptionStoreView", "StoreView"]
-restore_signals = ["AppStore.sync", "restoreCompletedTransactions", "SubscriptionStoreView", "StoreView", ".storeButton(.visible, for: .restorePurchases)"]
+purchase_signals = ["Product.purchase", "product.purchase(", "SKPaymentQueue", "SubscriptionStoreView", "StoreView", "ProductView", "Purchases.shared.purchase", "requestPurchase", "purchaseProduct", "react-native-iap", "expo-in-app-purchases", "in_app_purchase", "purchases_flutter"]
+restore_signals = ["AppStore.sync", "restoreCompletedTransactions", "SubscriptionStoreView", "StoreView", ".storeButton(.visible, for: .restorePurchases)", "restorePurchases", "syncPurchases", "getAvailablePurchases"]

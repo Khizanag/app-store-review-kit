@@ -1,0 +1,25 @@
+id = "payments.external-purchase-entitlement"
+title = "External purchase API, entitlement, and Info.plist keys out of sync"
+severity = "error"
+evidence = ["source", "entitlements", "plist"]
+enforced_by = "app-review"
+guidelines = ["3.1", "3.1.1", "3.1.3"]
+summary = """
+Each StoreKit external purchase program pairs an API with an entitlement and, for most programs, an Info.plist key that lists its storefronts: `ExternalPurchaseLink` with `com.apple.developer.storekit.external-purchase-link` and `SKExternalPurchaseLink` or `SKExternalPurchaseMultiLink`; `ExternalPurchase` with `com.apple.developer.storekit.external-purchase` and `SKExternalPurchase`; `ExternalPurchaseCustomLink` with `com.apple.developer.storekit.custom-purchase-link.allowed-regions`; `ExternalLinkAccount` with `com.apple.developer.storekit.external-link.account` and `SKExternalLinkAccount`. An API without its entitlement fails at runtime. A key that lists a storefront outside the program, or a link URL that differs from the binary under review, breaks the entitlement terms. In the EU, the External Purchase Link addendum was phased out on October 1, 2026; EU apps now use the StoreKit External Purchases or Offers Entitlement with `ExternalPurchaseCustomLink`.
+"""
+fix = """
+Request the entitlement for each program you use, add it to the `.entitlements` file, and list only that program's storefronts, as lowercase ISO 3166-1 alpha-2 codes. Link URLs must be absolute HTTPS, without query parameters, at most 1,000 ASCII characters, and match the binary. Move EU flows to `ExternalPurchaseCustomLink` and call `showNotice(for:)` before every external purchase or link-out.
+"""
+references = [
+  "https://developer.apple.com/documentation/storekit/external-purchase",
+  "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.storekit.custom-purchase-link.allowed-regions",
+  "https://developer.apple.com/documentation/bundleresources/information-property-list/skexternalpurchaselink",
+  "https://developer.apple.com/documentation/bundleresources/information-property-list/skexternalpurchasemultilink",
+  "https://developer.apple.com/support/apps-using-alternative-payment-providers-in-the-eu/",
+  "https://developer.apple.com/support/reader-apps/",
+]
+
+[check]
+id = "external-purchase-config"
+confidence = "high"
+catalog = "payments-external-purchase"

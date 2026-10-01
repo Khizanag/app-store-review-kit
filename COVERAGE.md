@@ -8,14 +8,14 @@ A section's level is the strongest automation among its rules: **automated** nee
 
 | Level | Sections | Rules |
 | --- | --- | --- |
-| automated | 9 | 28 |
-| assisted | 19 | 42 |
-| manual | 3 | 9 |
+| automated | 14 | 36 |
+| assisted | 29 | 79 |
+| manual | 3 | 12 |
 | subsections | 7 | - |
-| uncovered | 81 | - |
+| uncovered | 66 | - |
 | n/a | 6 | - |
 
-79 rules in total, including ones enforced by upload validation or App Store Connect rather than a guideline section.
+127 rules in total, including ones enforced by upload validation or App Store Connect rather than a guideline section.
 
 ## Sections
 
@@ -41,7 +41,7 @@ A section's level is the strongest automation among its rules: **automated** nee
 | [1.5 Developer Information](guidelines/1.5.md) | assisted | `metadata.support-url` |
 | [1.6 Data Security](guidelines/1.6.md) | assisted | `network.ats-arbitrary-loads` |
 | [1.7 Reporting Criminal Activity](guidelines/1.7.md) | uncovered | - |
-| [2.1 App Completeness](guidelines/2.1.md) | automated | `account.demo-account`, `build.debug-endpoints`, `metadata.placeholder-text`, `metadata.review-notes`, `payments.legacy-receipt-validation`, `tracking.prompt-not-shown` |
+| [2.1 App Completeness](guidelines/2.1.md) | automated | `account.demo-account`, `build.debug-endpoints`, `metadata.placeholder-text`, `metadata.review-notes`, `payments.iap-review-metadata`, `payments.legacy-receipt-validation`, `payments.paid-apps-agreement`, `payments.product-ids-mismatch`, `payments.transaction-listener`, `tracking.prompt-not-shown` |
 | [2.2 Beta Testing](guidelines/2.2.md) | uncovered | - |
 | [2.3 Accurate Metadata](guidelines/2.3.md) | subsections | - |
 | [2.3.1](guidelines/2.3.1.md) | automated | `metadata.placeholder-text`, `metadata.review-notes` |
@@ -59,7 +59,7 @@ A section's level is the strongest automation among its rules: **automated** nee
 | [2.3.13](guidelines/2.3.13.md) | uncovered | - |
 | [2.4 Hardware Compatibility](guidelines/2.4.md) | subsections | - |
 | [2.4.1](guidelines/2.4.1.md) | assisted | `design.ipad-layout` |
-| [2.4.2](guidelines/2.4.2.md) | uncovered | - |
+| [2.4.2](guidelines/2.4.2.md) | automated | `payments.crypto-mining` |
 | [2.4.3](guidelines/2.4.3.md) | uncovered | - |
 | [2.4.4](guidelines/2.4.4.md) | uncovered | - |
 | [2.4.5](guidelines/2.4.5.md) | uncovered | - |
@@ -82,15 +82,15 @@ A section's level is the strongest automation among its rules: **automated** nee
 | [2.5.16](guidelines/2.5.16.md) | uncovered | - |
 | [2.5.17](guidelines/2.5.17.md) | uncovered | - |
 | [2.5.18](guidelines/2.5.18.md) | uncovered | - |
-| [3.1 Payments](guidelines/3.1.md) | subsections | - |
-| [3.1.1 In-App Purchase](guidelines/3.1.1.md) | automated | `payments.digital-goods-outside-iap`, `payments.restore-missing` |
-| [3.1.2 Subscriptions](guidelines/3.1.2.md) | assisted | `payments.subscription-disclosure` |
-| [3.1.3 Other Purchase Methods](guidelines/3.1.3.md) | assisted | `payments.digital-goods-outside-iap` |
-| [3.1.4 Hardware-Specific Content](guidelines/3.1.4.md) | uncovered | - |
-| [3.1.5 Cryptocurrencies](guidelines/3.1.5.md) | uncovered | - |
-| [3.2 Other Business Model Issues](guidelines/3.2.md) | uncovered | - |
-| [3.2.1 Acceptable](guidelines/3.2.1.md) | uncovered | - |
-| [3.2.2 Unacceptable](guidelines/3.2.2.md) | uncovered | - |
+| [3.1 Payments](guidelines/3.1.md) | automated | `payments.external-purchase-entitlement`, `payments.external-purchase-storefront`, `payments.multiplatform-purchases`, `payments.physical-goods-via-iap`, `payments.reader-app-link`, `payments.subscription-migration` |
+| [3.1.1 In-App Purchase](guidelines/3.1.1.md) | automated | `business.creator-tips`, `payments.crypto-nft-unlocks`, `payments.custom-unlock-mechanism`, `payments.digital-goods-outside-iap`, `payments.external-purchase-entitlement`, `payments.external-purchase-storefront`, `payments.free-trial-terms`, `payments.gifting`, `payments.hardcoded-prices`, `payments.local-entitlement-only`, `payments.loot-box-odds`, `payments.purchased-items-expire`, `payments.restore-missing` |
+| [3.1.2 Subscriptions](guidelines/3.1.2.md) | automated | `business.forced-store-actions`, `payments.cancellation-friction`, `payments.free-trial-terms`, `payments.hardcoded-prices`, `payments.local-entitlement-only`, `payments.paywall-billed-amount`, `payments.paywall-dismiss`, `payments.paywall-false-urgency`, `payments.paywall-trial-toggle`, `payments.subscription-disclosure`, `payments.subscription-groups`, `payments.subscription-migration` |
+| [3.1.3 Other Purchase Methods](guidelines/3.1.3.md) | automated | `payments.digital-goods-outside-iap`, `payments.external-purchase-entitlement`, `payments.external-purchase-storefront`, `payments.multiplatform-purchases`, `payments.physical-goods-via-iap`, `payments.reader-app-link` |
+| [3.1.4 Hardware-Specific Content](guidelines/3.1.4.md) | assisted | `business.forced-store-actions`, `payments.custom-unlock-mechanism` |
+| [3.1.5 Cryptocurrencies](guidelines/3.1.5.md) | automated | `payments.crypto-exchange-licensing`, `payments.crypto-mining`, `payments.crypto-securities`, `payments.crypto-task-rewards`, `payments.crypto-wallet-organization` |
+| [3.2 Other Business Model Issues](guidelines/3.2.md) | subsections | - |
+| [3.2.1 Acceptable](guidelines/3.2.1.md) | assisted | `business.app-catalog`, `business.charity-fundraising`, `business.creator-tips`, `business.financial-trading`, `business.insurance-apps`, `business.wallet-passes`, `payments.crypto-exchange-licensing`, `payments.purchased-items-expire` |
+| [3.2.2 Unacceptable](guidelines/3.2.2.md) | assisted | `business.ad-manipulation`, `business.app-catalog`, `business.arbitrary-restrictions`, `business.charity-fundraising`, `business.financial-trading`, `business.forced-store-actions`, `business.personal-loans`, `business.social-manipulation` |
 | [4.1 Copycats](guidelines/4.1.md) | manual | `design.copycat` |
 | [4.2 Minimum Functionality](guidelines/4.2.md) | assisted | `design.web-wrapper` |
 | [4.2.1](guidelines/4.2.1.md) | uncovered | - |
@@ -120,7 +120,7 @@ A section's level is the strongest automation among its rules: **automated** nee
 | [4.7.4](guidelines/4.7.4.md) | uncovered | - |
 | [4.7.5](guidelines/4.7.5.md) | uncovered | - |
 | [4.8 Login Services](guidelines/4.8.md) | assisted | `account.login-service-equivalent` |
-| [4.9 Apple Pay](guidelines/4.9.md) | uncovered | - |
+| [4.9 Apple Pay](guidelines/4.9.md) | assisted | `payments.apple-pay-branding`, `payments.apple-pay-recurring-disclosure` |
 | [4.10 Monetizing Built-In Capabilities](guidelines/4.10.md) | uncovered | - |
 | [5.1 Privacy](guidelines/5.1.md) | subsections | - |
 | [5.1.1 Data Collection and Storage](guidelines/5.1.1.md) | automated | `account.deletion-missing`, `account.login-required`, `permissions.full-access-over-picker`, `permissions.location-always-pair`, `permissions.location-background`, `permissions.pre-permission-steering`, `permissions.request-before-value`, `permissions.usage-description-missing`, `permissions.usage-description-unused`, `permissions.usage-description-vague`, `privacy.collected-data-undeclared`, `privacy.consent-before-collection`, `privacy.contact-info-optional`, `privacy.data-compilation`, `privacy.manifest-invalid`, `privacy.manifest-missing`, `privacy.policy-link`, `privacy.required-reason-invalid`, `privacy.required-reason-undeclared`, `privacy.safari-view-hidden`, `privacy.social-network-credentials`, `privacy.surreptitious-discovery`, `safety.regulated-services` |
@@ -134,15 +134,15 @@ A section's level is the strongest automation among its rules: **automated** nee
 | [5.2.3 Audio/Video Downloading](guidelines/5.2.3.md) | uncovered | - |
 | [5.2.4 Apple Endorsements](guidelines/5.2.4.md) | uncovered | - |
 | [5.2.5 Apple Products](guidelines/5.2.5.md) | assisted | `design.copycat`, `metadata.apple-trademarks` |
-| [5.3 Gaming, Gambling, and Lotteries](guidelines/5.3.md) | uncovered | - |
-| [5.3.1](guidelines/5.3.1.md) | uncovered | - |
-| [5.3.2](guidelines/5.3.2.md) | uncovered | - |
-| [5.3.3](guidelines/5.3.3.md) | uncovered | - |
-| [5.3.4](guidelines/5.3.4.md) | uncovered | - |
+| [5.3 Gaming, Gambling, and Lotteries](guidelines/5.3.md) | assisted | `payments.real-money-gaming` |
+| [5.3.1](guidelines/5.3.1.md) | assisted | `payments.sweepstakes-rules` |
+| [5.3.2](guidelines/5.3.2.md) | assisted | `payments.sweepstakes-rules` |
+| [5.3.3](guidelines/5.3.3.md) | assisted | `payments.real-money-gaming` |
+| [5.3.4](guidelines/5.3.4.md) | assisted | `payments.real-money-gaming` |
 | [5.4 VPN Apps](guidelines/5.4.md) | uncovered | - |
 | [5.5 Mobile Device Management](guidelines/5.5.md) | uncovered | - |
-| [5.6 Developer Code of Conduct](guidelines/5.6.md) | uncovered | - |
-| [5.6.1 App Store Reviews](guidelines/5.6.1.md) | uncovered | - |
+| [5.6 Developer Code of Conduct](guidelines/5.6.md) | assisted | `payments.cancellation-friction`, `payments.paywall-billed-amount`, `payments.paywall-dismiss`, `payments.paywall-false-urgency`, `payments.paywall-trial-toggle` |
+| [5.6.1 App Store Reviews](guidelines/5.6.1.md) | assisted | `business.custom-review-prompt`, `business.review-gating` |
 | [5.6.2 Developer Identity](guidelines/5.6.2.md) | uncovered | - |
-| [5.6.3 Discovery Fraud](guidelines/5.6.3.md) | uncovered | - |
+| [5.6.3 Discovery Fraud](guidelines/5.6.3.md) | assisted | `business.incentivized-reviews`, `business.review-gating` |
 | [5.6.4 App Quality](guidelines/5.6.4.md) | uncovered | - |

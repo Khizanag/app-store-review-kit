@@ -5,10 +5,10 @@ evidence = ["source", "human"]
 enforced_by = "app-review"
 guidelines = ["3.1.1", "3.1.3"]
 summary = """
-The app links a general payment SDK, such as Stripe or PayPal, or opens checkout URLs. Unlocking features, content, or subscriptions inside the app must use in-app purchase unless an exception in 3.1.3 applies, such as physical goods and services consumed outside the app, reader apps, or storefront-specific entitlements.
+The app links a general payment SDK, such as Stripe, PayPal, Braintree, Adyen, Square, Razorpay, or Paddle, or opens web checkout and billing pages. Unlocking features, content, or subscriptions inside the app must use in-app purchase unless an exception in 3.1.3 applies: reader apps, multiplatform services that also sell the item in the app, enterprise sales to organizations, real-time one-to-one services, physical goods and services consumed outside the app, free companions to a paid web tool with no purchasing or calls to action, and advertising management. Links and calls to action to outside purchasing are allowed without an entitlement only on the United States storefront.
 """
 fix = """
-Route digital unlocks through StoreKit. Keep the external processor only for physical goods, real-world services, or a storefront where you hold the matching entitlement, and say which exception applies in the review notes.
+Route digital unlocks through StoreKit (`Product.purchase(options:)`, `SubscriptionStoreView`, or `StoreView`). Keep the external processor only for physical goods, real-world services, a 3.1.3 exception, or a storefront where you hold the matching entitlement, and say which applies in the review notes.
 """
 references = [
   "https://developer.apple.com/app-store/review/guidelines/#3.1.1",
@@ -18,10 +18,35 @@ references = [
 [check]
 id = "external-payments"
 confidence = "low"
-signals = ["StripePaymentSheet", "Stripe", "PayPalCheckout", "Braintree", "checkout.stripe.com", "paypal.com/checkoutnow"]
+signals = [
+  "StripePaymentSheet",
+  "import Stripe",
+  "PaymentIntent",
+  "checkout.stripe.com",
+  "buy.stripe.com",
+  "billing.stripe.com",
+  "PayPalCheckout",
+  "paypal.com/checkoutnow",
+  "Braintree",
+  "Adyen",
+  "SquareInAppPaymentsSDK",
+  "Razorpay",
+  "Paddle",
+  "lemonsqueezy.com",
+  "gumroad.com",
+  "checkout.com",
+  "checkout session",
+  "billing portal",
+  "subscribe on the web",
+  "purchase on our website",
+]
 
 [review]
 questions = [
   "Does anything bought outside in-app purchase unlock content or features inside the app?",
   "If yes, which 3.1.3 exception or storefront entitlement covers it?",
+  "For enterprise sales, is the app sold only to organizations for their employees or students, with consumer and family sales through in-app purchase?",
+  "For person-to-person services, is each purchase a real-time service between two individuals rather than one-to-few or one-to-many?",
+  "For a free companion app, is there no purchasing and no call to action to buy outside the app?",
+  "For an ad-management app, are ads bought only for display outside the app, with in-app boosts sold through in-app purchase?",
 ]

@@ -1,0 +1,27 @@
+id = "business.ad-manipulation"
+title = "Ad impressions or clicks inflated, or the app exists mainly to show ads"
+severity = "error"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["3.2.2"]
+applies_when = ["advertising"]
+summary = """
+Apps may not artificially increase ad impressions or click-throughs, and apps designed predominantly to display ads are not allowed. Auto-refreshing hidden banners, ads stacked off-screen, and taps routed to ads count as manipulation.
+"""
+fix = """
+Show ads only where they are visible, at your ad network's refresh rate, and only after a deliberate tap. Make the app's own function the main experience.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.2.2",
+]
+
+[check]
+id = "ad-manipulation"
+confidence = "low"
+signals = ["adView.isHidden = true", "bannerView.isHidden = true", "adView.alpha = 0", "bannerView.alpha = 0", "simulateAdClick", "performAdClick", "fakeImpression"]
+
+[review]
+questions = [
+  "Is every ad visible on screen when it records an impression, and opened only by a deliberate tap?",
+  "Would the app still be useful with its ads removed?",
+]

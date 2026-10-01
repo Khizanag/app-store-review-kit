@@ -1,0 +1,27 @@
+id = "business.personal-loans"
+title = "Personal loan terms hidden or above Apple's limits"
+severity = "error"
+evidence = ["source", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["3.2.2"]
+applies_when = ["regulated"]
+summary = """
+Apps offering personal loans must clearly and conspicuously disclose all loan terms, including the equivalent maximum Annual Percentage Rate and the payment due date. They may not charge a maximum APR above 36%, including costs and fees, or require repayment in full in 60 days or less.
+"""
+fix = """
+Show the maximum APR, including all costs and fees, the repayment period, and the due date in the app and the description before someone applies. Offer only loans at or below 36% APR with repayment terms longer than 60 days.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.2.2",
+]
+
+[check]
+id = "personal-loans"
+confidence = "low"
+signals = ["APR", "annual percentage rate", "payday", "cash advance", "loan amount", "repayment", "due date", "instant loan"]
+
+[review]
+questions = [
+  "Does the app offer or broker personal loans?",
+  "Are the maximum APR, including fees, and the payment due date shown before applying, with APR at most 36% and repayment over 60 days?",
+]

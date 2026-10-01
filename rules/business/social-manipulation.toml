@@ -1,0 +1,26 @@
+id = "business.social-manipulation"
+title = "App inflates followers, likes, or rank on other services"
+severity = "error"
+evidence = ["source", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["3.2.2"]
+summary = """
+Apps may not artificially manipulate a person's visibility, status, or rank on other services unless that service's terms permit it. Follower, like, view, and engagement boosters, and like-for-like exchanges, fall under 3.2.2(vii).
+"""
+fix = """
+Remove features that buy, trade, or automate followers, likes, views, or rankings on other services, unless the service's terms explicitly allow them and the review notes cite that permission.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.2.2",
+]
+
+[check]
+id = "social-manipulation"
+confidence = "low"
+signals = ["get followers", "free followers", "buy followers", "get likes", "free likes", "buy likes", "boost views", "followers boost", "like4like", "follow4follow"]
+
+[review]
+questions = [
+  "Does the app sell or generate followers, likes, views, or rankings on another service?",
+  "If so, do that service's terms allow it?",
+]

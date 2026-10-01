@@ -1,0 +1,21 @@
+id = "payments.multiplatform-purchases"
+title = "Content bought on other platforms is not also sold as in-app purchase"
+severity = "warning"
+evidence = ["source", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1", "3.1.3"]
+summary = """
+Apps that work across platforms may unlock content, subscriptions, features, or consumables that people bought on another platform or the developer's website, provided those items are also available as in-app purchases in the app. An app that only signs in to web-bought access, with no way to buy it in the app, does not qualify for 3.1.3(b).
+"""
+fix = """
+Offer every item that cross-platform purchases unlock as an in-app purchase too, at a price you choose. Note in review notes which purchases sync from other platforms.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.3",
+]
+
+[review]
+questions = [
+  "Can a person unlock content or features bought outside the App Store by signing in?",
+  "Is each of those items also available as an in-app purchase inside the app?",
+]

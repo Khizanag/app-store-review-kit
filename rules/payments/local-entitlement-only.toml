@@ -1,0 +1,23 @@
+id = "payments.local-entitlement-only"
+title = "Purchase state kept only in local storage"
+severity = "warning"
+evidence = ["source"]
+enforced_by = "app-review"
+guidelines = ["3.1.1", "3.1.2"]
+applies_when = ["in-app-purchase"]
+summary = """
+An app that remembers purchases only in `UserDefaults` or a local file loses them on reinstall and never sees them on the person's other devices. Subscriptions must work on all of the person's devices where the app is available, and restorable purchases must be restorable.
+"""
+fix = """
+Derive access from `Transaction.currentEntitlements`, or `product.subscription?.status` for subscriptions, at launch and after `Transaction.updates`. Cache locally only for offline display, never as the source of truth.
+"""
+references = [
+  "https://developer.apple.com/documentation/storekit/transaction/currententitlements",
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.2",
+]
+
+[check]
+id = "local-entitlement"
+confidence = "low"
+signals = ["\"isPremium\"", "\"isPro\"", "\"hasPurchased\"", "\"premiumUnlocked\"", "@AppStorage(\"isPremium\")", "@AppStorage(\"isPro\")"]
+satisfied_by = ["currentEntitlements", "currentEntitlement(for:", "subscription?.status", "Purchases.shared.customerInfo"]

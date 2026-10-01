@@ -372,6 +372,599 @@ enum EmbeddedRulebook {
       }
     },
     {
+      "id": "business.ad-manipulation",
+      "title": "Ad impressions or clicks inflated, or the app exists mainly to show ads",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.2.2"
+      ],
+      "applies_when": [
+        "advertising"
+      ],
+      "summary": "Apps may not artificially increase ad impressions or click-throughs, and apps designed predominantly to display ads are not allowed. Auto-refreshing hidden banners, ads stacked off-screen, and taps routed to ads count as manipulation.",
+      "fix": "Show ads only where they are visible, at your ad network's refresh rate, and only after a deliberate tap. Make the app's own function the main experience.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.2.2"
+      ],
+      "check": {
+        "id": "ad-manipulation",
+        "confidence": "low",
+        "signals": [
+          "adView.isHidden = true",
+          "bannerView.isHidden = true",
+          "adView.alpha = 0",
+          "bannerView.alpha = 0",
+          "simulateAdClick",
+          "performAdClick",
+          "fakeImpression"
+        ]
+      },
+      "review": [
+        "Is every ad visible on screen when it records an impression, and opened only by a deliberate tap?",
+        "Would the app still be useful with its ads removed?"
+      ]
+    },
+    {
+      "id": "business.app-catalog",
+      "title": "App is a catalog or store of other apps",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.2.1",
+        "3.2.2"
+      ],
+      "applies_when": [],
+      "summary": "Apps may promote the developer's own apps, provided the app is not merely a catalog of them, and may recommend third-party apps only for a specific approved need, such as health management, aviation, or accessibility, with robust editorial content. An interface that displays third-party apps, extensions, or plug-ins like the App Store, or as a general-interest collection, is not allowed.",
+      "fix": "Make cross-promotion a secondary part of an app with its own function. For curated third-party lists, keep them to one approved need, add editorial content for each entry, and open listings with `SKStoreProductViewController`.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.2.1",
+        "https://developer.apple.com/app-store/review/guidelines/#3.2.2"
+      ],
+      "check": {
+        "id": "app-catalog",
+        "confidence": "low",
+        "signals": [
+          "SKStoreProductViewController",
+          "apps.apple.com/app/",
+          "itms-apps://",
+          "SKOverlay",
+          "moreApps",
+          "MoreAppsView"
+        ]
+      },
+      "review": [
+        "Is listing or promoting other apps the app's main purpose?",
+        "For third-party recommendations, do they serve one approved need with editorial content for each app?"
+      ]
+    },
+    {
+      "id": "business.arbitrary-restrictions",
+      "title": "App arbitrarily restricts who may use it",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.2.2"
+      ],
+      "applies_when": [],
+      "summary": "Apps may not arbitrarily restrict who can use them, for example by location or carrier. Blocking people by region, carrier, or device without a legal or service reason is rejected under 3.2.2(v). Restrictions the law requires, such as real-money gaming geo-fencing, are not arbitrary.",
+      "fix": "Remove the gate, or limit availability in App Store Connect and explain the legal or service reason for any in-app restriction in the review notes.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.2.2"
+      ],
+      "check": {
+        "id": "arbitrary-restriction",
+        "confidence": "low",
+        "signals": [
+          "CTCarrier",
+          "serviceSubscriberCellularProviders",
+          "carrierName",
+          "mobileCountryCode",
+          "Locale.current.region",
+          "regionCode",
+          "not available in your country",
+          "not available in your region"
+        ]
+      },
+      "review": [
+        "Does the app refuse service to anyone based on region, carrier, or device?",
+        "If so, is there a legal or service reason, and is it explained in the review notes?"
+      ]
+    },
+    {
+      "id": "business.charity-fundraising",
+      "title": "Donations collected in the app without approved nonprofit status",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.2.1",
+        "3.2.2"
+      ],
+      "applies_when": [],
+      "summary": "Only approved nonprofits may fundraise inside an app, and they must support Apple Pay, disclose how funds are used, follow local and federal law, and make tax receipts available. Platforms that connect donors to nonprofits must list only approved nonprofits. Everyone else must keep the app free and collect donations outside it, such as in Safari or by SMS.",
+      "fix": "Get approved to accept donations with Apple Pay (Candid Seal of Transparency in the US, Benevity elsewhere) and take donations with the Donate with Apple Pay button, stating how the money is used. Without approval, remove in-app donation flows and link out to Safari or an SMS donation number.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.2.1",
+        "https://developer.apple.com/app-store/review/guidelines/#3.2.2",
+        "https://developer.apple.com/apple-pay/nonprofits/"
+      ],
+      "check": {
+        "id": "charity-fundraising",
+        "confidence": "low",
+        "signals": [
+          "donate",
+          "Donate",
+          "donation",
+          "Donation",
+          "fundraiser",
+          "Fundraiser",
+          "charity",
+          "Charity"
+        ]
+      },
+      "review": [
+        "Does the app collect money for a charity, cause, or fundraiser?",
+        "If so, is each recipient an approved nonprofit, paid through Apple Pay, with use of funds and tax receipts disclosed?"
+      ]
+    },
+    {
+      "id": "business.creator-tips",
+      "title": "Tips or monetary gifts tied to digital content skip in-app purchase",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1.1",
+        "3.2.1"
+      ],
+      "applies_when": [],
+      "summary": "Apps may use in-app purchase currencies to tip the developer or digital content providers. An individual may give a monetary gift to another individual without in-app purchase only if the gift is entirely optional and 100% of the funds reach the receiver. A gift connected at any point to receiving digital content or services must use in-app purchase.",
+      "fix": "Route tips that unlock or relate to digital content, such as paid messages, exclusive posts, or stream perks, through in-app purchase. Use outside payment only for optional person-to-person gifts that pass the full amount to the receiver and unlock nothing.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.1",
+        "https://developer.apple.com/app-store/review/guidelines/#3.2.1"
+      ],
+      "check": {
+        "id": "creator-tips",
+        "confidence": "low",
+        "signals": [
+          "sendTip",
+          "tipJar",
+          "TipJar",
+          "tipCreator",
+          "tip the creator",
+          "superChat",
+          "sendGift",
+          "donateToCreator"
+        ]
+      },
+      "review": [
+        "Does a tip or gift ever unlock, accompany, or relate to digital content or services?",
+        "For gifts paid outside in-app purchase, are they optional and does the receiver get 100% of the funds?"
+      ]
+    },
+    {
+      "id": "business.custom-review-prompt",
+      "title": "Custom rating prompt instead of the system review request",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "runtime"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.6.1"
+      ],
+      "applies_when": [],
+      "summary": "Apps must use the provided API to prompt for App Store reviews, and Apple disallows custom review prompts. A home-made star picker, a \"Rate us 5 stars\" alert, or a sheet that opens the App Store review page unasked is a custom prompt. The system request shows at most three times in 365 days and may not appear at all, so it must not be called from a button tap either.",
+      "fix": "Call the SwiftUI `requestReview` environment action (`RequestReviewAction`) or `AppStore.requestReview(in:)` after a completed task, never at launch or from a button. For a persistent \"Write a review\" button in settings, open `https://apps.apple.com/app/id<APP_ID>?action=write-review` only when the person taps it.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.6.1",
+        "https://developer.apple.com/documentation/storekit/requestreviewaction",
+        "https://developer.apple.com/documentation/storekit/requesting-app-store-reviews",
+        "https://developer.apple.com/design/human-interface-guidelines/ratings-and-reviews"
+      ],
+      "check": {
+        "id": "custom-review-prompt",
+        "confidence": "medium",
+        "signals": [
+          "Rate us",
+          "Rate Us",
+          "rate this app",
+          "Rate this app",
+          "Rate 5 stars",
+          "5 stars",
+          "five stars",
+          "StarRatingView",
+          "RatingPromptView",
+          "Love this app?",
+          "action=write-review",
+          "SKStoreReviewController"
+        ],
+        "satisfied_by": [
+          "requestReview",
+          "RequestReviewAction",
+          "AppStore.requestReview"
+        ]
+      },
+      "review": [
+        "Does any in-app screen ask for a star rating or App Store review other than the system request?",
+        "Is the system request called only after a completed task, never at launch, during onboarding, or from a button tap?"
+      ]
+    },
+    {
+      "id": "business.financial-trading",
+      "title": "Trading, investing, or derivatives app without the required licensing",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.2.1",
+        "3.2.2"
+      ],
+      "applies_when": [
+        "regulated"
+      ],
+      "summary": "Apps for financial trading, investing, or money management should be submitted by the financial institution performing the service, with licensing and permissions where they are offered. Binary options trading is not allowed at all. Apps for contracts for difference, FOREX, or other derivatives must be properly licensed in every jurisdiction where the service is available.",
+      "fix": "Submit from the licensed institution's organization account, limit storefronts to licensed jurisdictions, and list the licences in the review notes. Remove binary options entirely.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.2.1",
+        "https://developer.apple.com/app-store/review/guidelines/#3.2.2"
+      ],
+      "check": {
+        "id": "financial-trading",
+        "confidence": "low",
+        "signals": [
+          "binary option",
+          "binaryOption",
+          "CFD",
+          "contract for difference",
+          "forex",
+          "FOREX",
+          "leverage",
+          "margin call",
+          "stop loss",
+          "brokerage"
+        ]
+      },
+      "review": [
+        "Does the app offer binary options? If so, it cannot ship.",
+        "For trading, investing, CFDs, FOREX, or other derivatives, is the submitter the licensed institution, licensed in every storefront offered?"
+      ]
+    },
+    {
+      "id": "business.forced-store-actions",
+      "title": "Features locked behind rating, reviewing, downloading other apps, or sharing",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.2.2",
+        "3.1.2",
+        "3.1.4"
+      ],
+      "applies_when": [],
+      "summary": "Apps must not force people to rate or review the app, download other apps, or take other store-related actions to access functionality or content. Subscribers must get what they paid for without extra tasks such as posting on social media, uploading contacts, or checking in, and functionality may not require advertising or marketing activity. In-app goals such as finishing a level or watching an ad may still be rewarded.",
+      "fix": "Unlock content without any store action, social post, contact upload, or download of another app. Keep optional rewards only for in-app actions such as finishing a level or watching an ad.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.2.2",
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.2"
+      ],
+      "check": {
+        "id": "forced-store-action",
+        "confidence": "medium",
+        "signals": [
+          "rate to unlock",
+          "review to unlock",
+          "rate to continue",
+          "download to unlock",
+          "install to unlock",
+          "share to unlock",
+          "invite to unlock",
+          "share to continue",
+          "unlockByRating",
+          "unlockBySharing"
+        ]
+      },
+      "review": [
+        "Is any content or feature withheld until the person rates, reviews, downloads another app, shares, invites, or uploads contacts?"
+      ]
+    },
+    {
+      "id": "business.incentivized-reviews",
+      "title": "Rewards offered for ratings, reviews, or chart manipulation",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3",
+        "5.6.3"
+      ],
+      "applies_when": [],
+      "summary": "Offering coins, premium time, unlocks, or entries in exchange for a rating or review inflates rankings with incentivized feedback. Apple may expel developers who manipulate reviews or charts with paid, incentivized, filtered, or fake feedback, or who hire third parties to do it, and 5.6.3 forbids manipulating charts, search, reviews, or referrals.",
+      "fix": "Remove every reward tied to rating, reviewing, or ranking the app. Ask for reviews only through the system request, with nothing given or withheld based on the response.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3",
+        "https://developer.apple.com/app-store/review/guidelines/#5.6.3"
+      ],
+      "check": {
+        "id": "incentivized-review",
+        "confidence": "medium",
+        "signals": [
+          "rate us and get",
+          "rate and get",
+          "review to unlock",
+          "rate to unlock",
+          "rate for coins",
+          "free coins for rating",
+          "reward for review",
+          "rewardForRating",
+          "ratingReward",
+          "reviewReward"
+        ]
+      },
+      "review": [
+        "Does anyone get anything, in or outside the app, for rating or reviewing it?",
+        "Does the developer pay or work with any service that buys reviews, ratings, downloads, or rankings?"
+      ]
+    },
+    {
+      "id": "business.insurance-apps",
+      "title": "Insurance app is paid or sells through in-app purchase",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "3.2.1"
+      ],
+      "applies_when": [
+        "regulated"
+      ],
+      "summary": "Insurance apps must be free, comply with the law in each region where they are distributed, and may not use in-app purchase.",
+      "fix": "Make the app free, remove StoreKit products, take premiums with Apple Pay or another payment method, and limit storefronts to regions where you are licensed.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.2.1"
+      ],
+      "review": [
+        "Does the app sell or manage insurance?",
+        "If so, is it free on the App Store with no in-app purchase products, and licensed in every storefront offered?"
+      ]
+    },
+    {
+      "id": "business.model-unclear",
+      "title": "Business model or in-app purchases not obvious to the reviewer",
+      "severity": "warning",
+      "evidence": [
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "3"
+      ],
+      "applies_when": [],
+      "summary": "If App Review cannot understand how the app makes money, or cannot find its in-app purchases, the review is delayed and may be rejected. Apple also refuses apps and in-app purchase items priced irrationally high to cheat people.",
+      "fix": "Explain in the description and review notes what is free, what is paid, and where each purchase lives in the app, with steps to reach it. Price items in line with what they deliver.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3"
+      ],
+      "review": [
+        "Do the review notes say where each in-app purchase and paywall is and how to reach it?",
+        "Is any app or in-app purchase priced far above what comparable items sell for?"
+      ]
+    },
+    {
+      "id": "business.personal-loans",
+      "title": "Personal loan terms hidden or above Apple's limits",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.2.2"
+      ],
+      "applies_when": [
+        "regulated"
+      ],
+      "summary": "Apps offering personal loans must clearly and conspicuously disclose all loan terms, including the equivalent maximum Annual Percentage Rate and the payment due date. They may not charge a maximum APR above 36%, including costs and fees, or require repayment in full in 60 days or less.",
+      "fix": "Show the maximum APR, including all costs and fees, the repayment period, and the due date in the app and the description before someone applies. Offer only loans at or below 36% APR with repayment terms longer than 60 days.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.2.2"
+      ],
+      "check": {
+        "id": "personal-loans",
+        "confidence": "low",
+        "signals": [
+          "APR",
+          "annual percentage rate",
+          "payday",
+          "cash advance",
+          "loan amount",
+          "repayment",
+          "due date",
+          "instant loan"
+        ]
+      },
+      "review": [
+        "Does the app offer or broker personal loans?",
+        "Are the maximum APR, including fees, and the payment due date shown before applying, with APR at most 36% and repayment over 60 days?"
+      ]
+    },
+    {
+      "id": "business.review-gating",
+      "title": "Pre-prompt sends only happy users to the App Store review",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3",
+        "5.6.1",
+        "5.6.3"
+      ],
+      "applies_when": [],
+      "summary": "An \"Enjoying the app?\" question that shows the review request only to people who answer yes, and routes everyone else to a feedback form, filters App Store ratings. Apple treats filtered feedback as review manipulation, which can lead to removal from the Apple Developer Program, and disallows custom review prompts.",
+      "fix": "Remove the pre-prompt. Call the system review request at a natural break for everyone who reaches it, and offer a separate, always-available \"Send feedback\" action elsewhere.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3",
+        "https://developer.apple.com/app-store/review/guidelines/#5.6.1",
+        "https://developer.apple.com/documentation/storekit/requestreviewaction"
+      ],
+      "check": {
+        "id": "review-gating",
+        "confidence": "medium",
+        "signals": [
+          "Enjoying",
+          "enjoying the app",
+          "Do you like",
+          "Are you enjoying",
+          "Happy with",
+          "Do you love",
+          "How do you like",
+          "isHappyUser",
+          "positiveFeedback",
+          "negativeFeedback",
+          "thumbsUp",
+          "showRatingPrompt"
+        ]
+      },
+      "review": [
+        "Does any question or rating step decide whether the App Store review request is shown?",
+        "Do people who give a low answer get a feedback form instead of the review request?"
+      ]
+    },
+    {
+      "id": "business.social-manipulation",
+      "title": "App inflates followers, likes, or rank on other services",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.2.2"
+      ],
+      "applies_when": [],
+      "summary": "Apps may not artificially manipulate a person's visibility, status, or rank on other services unless that service's terms permit it. Follower, like, view, and engagement boosters, and like-for-like exchanges, fall under 3.2.2(vii).",
+      "fix": "Remove features that buy, trade, or automate followers, likes, views, or rankings on other services, unless the service's terms explicitly allow them and the review notes cite that permission.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.2.2"
+      ],
+      "check": {
+        "id": "social-manipulation",
+        "confidence": "low",
+        "signals": [
+          "get followers",
+          "free followers",
+          "buy followers",
+          "get likes",
+          "free likes",
+          "buy likes",
+          "boost views",
+          "followers boost",
+          "like4like",
+          "follow4follow"
+        ]
+      },
+      "review": [
+        "Does the app sell or generate followers, likes, views, or rankings on another service?",
+        "If so, do that service's terms allow it?"
+      ]
+    },
+    {
+      "id": "business.wallet-passes",
+      "title": "Wallet passes used for something other than payments, offers, or identification",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.2.1"
+      ],
+      "applies_when": [],
+      "summary": "Wallet passes may be used to make or receive payments, transmit offers, or offer identification, such as movie tickets, coupons, and VIP credentials. Other uses may lead to rejection and revocation of Wallet credentials.",
+      "fix": "Issue passes only for payments, offers, tickets, or identification. Move other content, such as notes or ads, into the app.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.2.1",
+        "https://developer.apple.com/documentation/passkit"
+      ],
+      "check": {
+        "id": "wallet-passes",
+        "confidence": "low",
+        "signals": [
+          "PKAddPassesViewController",
+          "PKPassLibrary",
+          "PKPass(",
+          "addPasses",
+          ".pkpass"
+        ]
+      },
+      "review": [
+        "Does every Wallet pass the app issues serve a payment, an offer, a ticket, or identification?"
+      ]
+    },
+    {
       "id": "design.copycat",
       "title": "Name, icon, or UI copies another app or an Apple product",
       "severity": "warning",
@@ -940,6 +1533,385 @@ enum EmbeddedRulebook {
       }
     },
     {
+      "id": "payments.apple-pay-branding",
+      "title": "Apple Pay shown with custom buttons, marks, or incomplete purchase details",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "4.9"
+      ],
+      "applies_when": [],
+      "summary": "Apps using Apple Pay must give all material purchase information before the sale and use Apple Pay branding and interface elements as the Apple Pay Marketing Guidelines and Human Interface Guidelines describe. A hand-drawn \"Pay with Apple Pay\" button, a recoloured mark, or a sheet that opens before the total is known breaks 4.9.",
+      "fix": "Use the system button, `PKPaymentButton` in UIKit or `PayWithApplePayButton` in SwiftUI, with a system type and style. Show the item, total, taxes, and shipping before the sheet opens, and make the total line the amount billed at authorization.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#4.9",
+        "https://developer.apple.com/apple-pay/marketing/",
+        "https://developer.apple.com/design/human-interface-guidelines/apple-pay"
+      ],
+      "check": {
+        "id": "apple-pay-button",
+        "confidence": "low",
+        "signals": [
+          "\"Apple Pay\"",
+          "Pay with Apple Pay",
+          "applepay.png",
+          "apple_pay",
+          "ApplePayLogo"
+        ],
+        "satisfied_by": [
+          "PKPaymentButton",
+          "PayWithApplePayButton"
+        ]
+      },
+      "review": [
+        "Is every Apple Pay button the system button, unmodified?",
+        "Does the app show the full purchase details before the payment sheet, with the billed amount in the total line?"
+      ]
+    },
+    {
+      "id": "payments.apple-pay-recurring-disclosure",
+      "title": "Apple Pay recurring payment without the required disclosures",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "4.9"
+      ],
+      "applies_when": [],
+      "summary": "Apps that take recurring payments with Apple Pay must disclose, before the sale, the length of the renewal term and that it continues until cancelled, what each period provides, the actual charges billed, and how to cancel. A one-off `PKPaymentRequest` used for a subscription hides the schedule from the payment sheet.",
+      "fix": "Set `recurringPaymentRequest` on the `PKPaymentRequest` to a `PKRecurringPaymentRequest` with `paymentDescription`, `regularBilling` (a `PKRecurringPaymentSummaryItem` with interval and start date), `trialBilling` for any trial, and a `managementURL` where people update or cancel. State the term, what each period provides, the charge, and how to cancel in the app before the sheet opens.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#4.9",
+        "https://developer.apple.com/documentation/passkit/pkrecurringpaymentrequest",
+        "https://developer.apple.com/design/human-interface-guidelines/apple-pay"
+      ],
+      "check": {
+        "id": "apple-pay-recurring",
+        "confidence": "low",
+        "signals": [
+          "PKPaymentRequest",
+          "PKPaymentButton",
+          "PayWithApplePayButton",
+          "PKPaymentAuthorizationController"
+        ],
+        "satisfied_by": [
+          "PKRecurringPaymentRequest",
+          "PKRecurringPaymentSummaryItem",
+          "recurringPaymentRequest"
+        ]
+      },
+      "review": [
+        "Does any Apple Pay payment in the app renew or repeat?",
+        "Before the payment sheet, does the app state the renewal term and that it continues until cancelled, what each period provides, the amount billed, and how to cancel?",
+        "For a trial, do the line items show the trial amount, the regular amount after it, and the date regular billing starts?"
+      ]
+    },
+    {
+      "id": "payments.cancellation-friction",
+      "title": "Cancelling a subscription takes a call, an email, or a support ticket",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1.2",
+        "5.6"
+      ],
+      "applies_when": [
+        "subscriptions"
+      ],
+      "summary": "App Store subscriptions are cancelled in the system subscription management UI, not by the developer. Telling people to phone, email, mail a letter, or file a ticket to cancel misleads them and delays the cancellation. Apple asks apps to make the system management UI easy to reach.",
+      "fix": "Add a Manage Subscription action that calls `AppStore.showManageSubscriptions(in:)` or the SwiftUI `manageSubscriptionsSheet(isPresented:)` modifier, and say that cancelling happens there. Hide the action on macOS, where the sheet is not supported.",
+      "references": [
+        "https://developer.apple.com/documentation/storekit/appstore/showmanagesubscriptions(in:)",
+        "https://developer.apple.com/app-store/subscriptions/"
+      ],
+      "check": {
+        "id": "cancellation-path",
+        "confidence": "low",
+        "signals": [
+          "to cancel, email",
+          "to cancel, call",
+          "to cancel, contact",
+          "cancel by phone",
+          "cancel by email",
+          "contact support to cancel",
+          "email us to cancel"
+        ],
+        "satisfied_by": [
+          "showManageSubscriptions",
+          "manageSubscriptionsSheet",
+          "apps.apple.com/account/subscriptions",
+          "SubscriptionStoreView"
+        ]
+      },
+      "review": [
+        "Can a subscriber reach the system subscription management UI from inside the app in two taps or fewer?",
+        "Does any copy tell people to cancel by phone, email, mail, or support ticket?"
+      ]
+    },
+    {
+      "id": "payments.crypto-exchange-licensing",
+      "title": "Crypto trading or on-ramp offered where the app is not licensed",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1.5",
+        "3.2.1"
+      ],
+      "applies_when": [],
+      "summary": "Apps may facilitate cryptocurrency transactions or transmissions only on an approved exchange, and only in countries or regions where the app has the licensing and permissions to provide an exchange. Buy, sell, swap, and fiat on-ramp features, whether built in or through an SDK such as MoonPay or Transak, count. Financial trading apps must also come from the institution providing the service.",
+      "fix": "Limit availability in App Store Connect to the storefronts where you hold an exchange licence, submit from the licensed entity's account, and list the licences per region in the review notes. Remove trading and on-ramp features everywhere else.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.5",
+        "https://developer.apple.com/app-store/review/guidelines/#3.2.1"
+      ],
+      "check": {
+        "id": "crypto-exchange",
+        "confidence": "medium",
+        "catalog": "crypto-sdks",
+        "section": "exchanges"
+      },
+      "review": [
+        "Can people buy, sell, swap, or transfer cryptocurrency through the app or an embedded provider?",
+        "Is the app available only in storefronts where the developer, or the exchange it uses, holds the required licence?"
+      ]
+    },
+    {
+      "id": "payments.crypto-mining",
+      "title": "Cryptocurrency mining on the device",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "binary",
+        "runtime"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "3.1.5",
+        "2.4.2"
+      ],
+      "applies_when": [],
+      "summary": "Apps may not mine cryptocurrency unless the processing happens off the device, such as cloud-based mining. Apps, including third-party ads shown in them, may not run unrelated background processes such as mining, which drains the battery and heats the device.",
+      "fix": "Remove on-device mining code and any SDK or ad network that mines. An app that manages cloud mining may only show and control work done on remote servers.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.5",
+        "https://developer.apple.com/app-store/review/guidelines/#2.4.2"
+      ],
+      "check": {
+        "id": "crypto-mining",
+        "confidence": "medium",
+        "catalog": "crypto-sdks",
+        "section": "mining"
+      }
+    },
+    {
+      "id": "payments.crypto-nft-unlocks",
+      "title": "Cryptocurrency, wallets, or NFTs unlock app features",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1.1"
+      ],
+      "applies_when": [
+        "crypto"
+      ],
+      "summary": "Apps may not unlock content or functionality with cryptocurrency or cryptocurrency wallets. Apps may sell NFT-related services such as minting, listing, and transferring through in-app purchase, and may show people their own NFTs, but NFT ownership may not unlock features. Except on the United States storefront, apps that let people browse others' NFT collections may not include buttons, links, or calls to action to purchase outside in-app purchase.",
+      "fix": "Gate features on StoreKit entitlements, not on wallet balances or token ownership. Sell minting, listing, and transfer services through in-app purchase, and remove outside-purchase calls to action from NFT browsing on non-US storefronts.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.1"
+      ],
+      "check": {
+        "id": "nft-gating",
+        "confidence": "low",
+        "signals": [
+          "ownsNFT",
+          "nftOwnership",
+          "tokenGated",
+          "token-gated",
+          "holdsToken",
+          "balanceOf(",
+          "ownerOf(",
+          "unlockWithNFT"
+        ]
+      },
+      "review": [
+        "Does holding a token, NFT, or wallet balance unlock any content or feature?",
+        "Are minting, listing, and transfer services sold through in-app purchase?"
+      ]
+    },
+    {
+      "id": "payments.crypto-securities",
+      "title": "ICOs, crypto futures, or crypto-securities from an unapproved provider",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1.5"
+      ],
+      "applies_when": [
+        "crypto"
+      ],
+      "summary": "Apps that facilitate Initial Coin Offerings, cryptocurrency futures trading, or other crypto-securities or quasi-securities trading must come from established banks, securities firms, futures commission merchants, or other approved financial institutions, and must comply with all applicable law.",
+      "fix": "Submit from the regulated institution's organization account and name its registrations in the review notes. Otherwise remove token sales, futures, leveraged, and margin products from the app.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.5"
+      ],
+      "check": {
+        "id": "crypto-securities",
+        "confidence": "low",
+        "catalog": "crypto-sdks",
+        "section": "securities"
+      },
+      "review": [
+        "Does the app sell new tokens, or offer futures, perpetuals, leverage, or margin on crypto assets?",
+        "Is the submitting organization a bank, securities firm, futures commission merchant, or other approved financial institution?"
+      ]
+    },
+    {
+      "id": "payments.crypto-task-rewards",
+      "title": "Cryptocurrency given for completing tasks",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1.5"
+      ],
+      "applies_when": [
+        "crypto"
+      ],
+      "summary": "Cryptocurrency apps may not offer currency for completing tasks, such as downloading other apps, getting others to download, or posting to social networks. Watch-to-earn, refer-to-earn, and airdrops for social actions fall under 3.1.5(v).",
+      "fix": "Remove cryptocurrency rewards tied to downloads, referrals, social posts, or other tasks.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.5"
+      ],
+      "check": {
+        "id": "crypto-task-rewards",
+        "confidence": "low",
+        "catalog": "crypto-sdks",
+        "section": "task_rewards"
+      },
+      "review": [
+        "Does anyone receive cryptocurrency or tokens for downloading apps, referring people, posting, or other tasks?"
+      ]
+    },
+    {
+      "id": "payments.crypto-wallet-organization",
+      "title": "Cryptocurrency wallet submitted from an individual account",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1.5"
+      ],
+      "applies_when": [
+        "crypto"
+      ],
+      "summary": "Apps may facilitate virtual currency storage only when offered by a developer enrolled in the Apple Developer Program as an organization. A wallet SDK, a seed-phrase screen, or WalletConnect support in an app from an individual account is rejected under 3.1.5(i).",
+      "fix": "Enroll as an organization, or transfer the app to the organization's account, before submitting. If the app only shows prices or links to an outside wallet, say so in the review notes.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.5",
+        "https://developer.apple.com/programs/enroll/"
+      ],
+      "check": {
+        "id": "crypto-wallet",
+        "confidence": "medium",
+        "catalog": "crypto-sdks",
+        "section": "wallets"
+      },
+      "review": [
+        "Does the app store, send, or receive cryptocurrency or hold keys for people?",
+        "Is the App Store Connect account enrolled as an organization rather than an individual?"
+      ]
+    },
+    {
+      "id": "payments.custom-unlock-mechanism",
+      "title": "Features unlocked by license keys, codes, or markers instead of in-app purchase",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1.1",
+        "3.1.4"
+      ],
+      "applies_when": [],
+      "summary": "Apps may not unlock content or functionality with their own mechanisms, such as license keys, activation or promo codes, augmented reality markers, QR codes, or cryptocurrency. The exceptions are narrow: hardware-dependent features, an optional approved physical product when an in-app purchase option also exists, and the purchase methods in 3.1.3. An app may never require buying an unrelated product, or advertising and marketing activity, to unlock functionality.",
+      "fix": "Sell the unlock through StoreKit. For promotions, use App Store offer codes and present the system redemption sheet with `AppStore.presentOfferCodeRedeemSheet(from:options:)` or the SwiftUI offer code modifier. For a hardware unlock, explain in review notes which device enables the feature and keep an in-app purchase alternative where the product is optional.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.1",
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.4",
+        "https://developer.apple.com/documentation/storekit/appstore/presentoffercoderedeemsheet(in:)"
+      ],
+      "check": {
+        "id": "custom-unlock",
+        "confidence": "low",
+        "signals": [
+          "licenseKey",
+          "license key",
+          "activationCode",
+          "activation code",
+          "unlockCode",
+          "unlock code",
+          "redeemCode",
+          "promoCode",
+          "serialNumber",
+          "validateLicense"
+        ],
+        "satisfied_by": [
+          "presentOfferCodeRedeemSheet",
+          "offerCodeRedemption"
+        ]
+      },
+      "review": [
+        "Does any code, key, marker, scan, or outside purchase unlock content or features in the app?",
+        "If it is tied to hardware or a physical product, is that product required for the feature to work, and is an in-app purchase option offered where it is optional?"
+      ]
+    },
+    {
       "id": "payments.digital-goods-outside-iap",
       "title": "Digital content may be sold outside in-app purchase",
       "severity": "warning",
@@ -954,8 +1926,8 @@ enum EmbeddedRulebook {
         "3.1.3"
       ],
       "applies_when": [],
-      "summary": "The app links a general payment SDK, such as Stripe or PayPal, or opens checkout URLs. Unlocking features, content, or subscriptions inside the app must use in-app purchase unless an exception in 3.1.3 applies, such as physical goods and services consumed outside the app, reader apps, or storefront-specific entitlements.",
-      "fix": "Route digital unlocks through StoreKit. Keep the external processor only for physical goods, real-world services, or a storefront where you hold the matching entitlement, and say which exception applies in the review notes.",
+      "summary": "The app links a general payment SDK, such as Stripe, PayPal, Braintree, Adyen, Square, Razorpay, or Paddle, or opens web checkout and billing pages. Unlocking features, content, or subscriptions inside the app must use in-app purchase unless an exception in 3.1.3 applies: reader apps, multiplatform services that also sell the item in the app, enterprise sales to organizations, real-time one-to-one services, physical goods and services consumed outside the app, free companions to a paid web tool with no purchasing or calls to action, and advertising management. Links and calls to action to outside purchasing are allowed without an entitlement only on the United States storefront.",
+      "fix": "Route digital unlocks through StoreKit (`Product.purchase(options:)`, `SubscriptionStoreView`, or `StoreView`). Keep the external processor only for physical goods, real-world services, a 3.1.3 exception, or a storefront where you hold the matching entitlement, and say which applies in the review notes.",
       "references": [
         "https://developer.apple.com/app-store/review/guidelines/#3.1.1",
         "https://developer.apple.com/app-store/review/guidelines/#3.1.3"
@@ -965,17 +1937,285 @@ enum EmbeddedRulebook {
         "confidence": "low",
         "signals": [
           "StripePaymentSheet",
-          "Stripe",
-          "PayPalCheckout",
-          "Braintree",
+          "import Stripe",
+          "PaymentIntent",
           "checkout.stripe.com",
-          "paypal.com/checkoutnow"
+          "buy.stripe.com",
+          "billing.stripe.com",
+          "PayPalCheckout",
+          "paypal.com/checkoutnow",
+          "Braintree",
+          "Adyen",
+          "SquareInAppPaymentsSDK",
+          "Razorpay",
+          "Paddle",
+          "lemonsqueezy.com",
+          "gumroad.com",
+          "checkout.com",
+          "checkout session",
+          "billing portal",
+          "subscribe on the web",
+          "purchase on our website"
         ]
       },
       "review": [
         "Does anything bought outside in-app purchase unlock content or features inside the app?",
-        "If yes, which 3.1.3 exception or storefront entitlement covers it?"
+        "If yes, which 3.1.3 exception or storefront entitlement covers it?",
+        "For enterprise sales, is the app sold only to organizations for their employees or students, with consumer and family sales through in-app purchase?",
+        "For person-to-person services, is each purchase a real-time service between two individuals rather than one-to-few or one-to-many?",
+        "For a free companion app, is there no purchasing and no call to action to buy outside the app?",
+        "For an ad-management app, are ads bought only for display outside the app, with in-app boosts sold through in-app purchase?"
       ]
+    },
+    {
+      "id": "payments.external-purchase-entitlement",
+      "title": "External purchase API, entitlement, and Info.plist keys out of sync",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "entitlements",
+        "plist"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "3.1",
+        "3.1.1",
+        "3.1.3"
+      ],
+      "applies_when": [],
+      "summary": "Each StoreKit external purchase program pairs an API with an entitlement and, for most programs, an Info.plist key that lists its storefronts: `ExternalPurchaseLink` with `com.apple.developer.storekit.external-purchase-link` and `SKExternalPurchaseLink` or `SKExternalPurchaseMultiLink`; `ExternalPurchase` with `com.apple.developer.storekit.external-purchase` and `SKExternalPurchase`; `ExternalPurchaseCustomLink` with `com.apple.developer.storekit.custom-purchase-link.allowed-regions`; `ExternalLinkAccount` with `com.apple.developer.storekit.external-link.account` and `SKExternalLinkAccount`. An API without its entitlement fails at runtime. A key that lists a storefront outside the program, or a link URL that differs from the binary under review, breaks the entitlement terms. In the EU, the External Purchase Link addendum was phased out on October 1, 2026; EU apps now use the StoreKit External Purchases or Offers Entitlement with `ExternalPurchaseCustomLink`.",
+      "fix": "Request the entitlement for each program you use, add it to the `.entitlements` file, and list only that program's storefronts, as lowercase ISO 3166-1 alpha-2 codes. Link URLs must be absolute HTTPS, without query parameters, at most 1,000 ASCII characters, and match the binary. Move EU flows to `ExternalPurchaseCustomLink` and call `showNotice(for:)` before every external purchase or link-out.",
+      "references": [
+        "https://developer.apple.com/documentation/storekit/external-purchase",
+        "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.storekit.custom-purchase-link.allowed-regions",
+        "https://developer.apple.com/documentation/bundleresources/information-property-list/skexternalpurchaselink",
+        "https://developer.apple.com/documentation/bundleresources/information-property-list/skexternalpurchasemultilink",
+        "https://developer.apple.com/support/apps-using-alternative-payment-providers-in-the-eu/",
+        "https://developer.apple.com/support/reader-apps/"
+      ],
+      "check": {
+        "id": "external-purchase-config",
+        "confidence": "high",
+        "catalog": "payments-external-purchase"
+      }
+    },
+    {
+      "id": "payments.external-purchase-storefront",
+      "title": "Link to outside purchasing shown in a storefront that does not allow it",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1",
+        "3.1.1",
+        "3.1.3"
+      ],
+      "applies_when": [
+        "in-app-purchase"
+      ],
+      "summary": "Buttons, links, and other calls to action that send people to buy digital goods outside in-app purchase are allowed without an entitlement only on the United States storefront. Everywhere else they need a StoreKit external purchase entitlement for that storefront, presented through the entitlement's API and its system notice sheet. In the EU, Apple In-App Purchase must be offered at the same time and at least as prominently, and the App Store product page may not mention the alternative. A link that shows on every storefront, or a hard-coded web checkout, is rejected outside the US.",
+      "fix": "Gate each call to action on the current storefront: read `Storefront.current?.countryCode` (ISO 3166-1 alpha-3, such as `USA`) or the entitlement API's `canOpen`, `isEligible`, or `eligibleURLs`, and hide the link where neither applies. Outside the US, open links only through the entitlement's API. Keep outside-purchase wording off the product page in the EU.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.1",
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.3",
+        "https://developer.apple.com/documentation/storekit/storefront/countrycode",
+        "https://developer.apple.com/documentation/storekit/external-purchase",
+        "https://developer.apple.com/support/apps-using-alternative-payment-providers-in-the-eu/"
+      ],
+      "check": {
+        "id": "external-purchase-gating",
+        "confidence": "medium",
+        "catalog": "payments-external-purchase",
+        "signals": [
+          "ExternalPurchaseLink.open",
+          "ExternalPurchaseCustomLink",
+          "ExternalPurchase.presentNoticeSheet",
+          "ExternalLinkAccount.open",
+          "buy on our website",
+          "subscribe on the web",
+          "cheaper on our website",
+          "checkout.stripe.com",
+          "buy.stripe.com"
+        ],
+        "satisfied_by": [
+          "Storefront.current",
+          "Storefront.updates",
+          "countryCode",
+          "ExternalPurchaseLink.canOpen",
+          "ExternalPurchaseLink.eligibleURLs",
+          "ExternalPurchaseCustomLink.isEligible",
+          "ExternalPurchase.canPresent",
+          "ExternalLinkAccount.canOpen"
+        ]
+      },
+      "review": [
+        "On which storefronts does a call to action to outside purchasing appear, and does the app hold the matching entitlement for each one other than the US?",
+        "On EU storefronts, is Apple In-App Purchase offered at the same time and at least as prominently as the alternative?",
+        "Does the system notice sheet appear before every link-out or alternative payment outside the US?"
+      ]
+    },
+    {
+      "id": "payments.free-trial-terms",
+      "title": "Free trial offered without its length, end, or eligibility",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "metadata",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1.1",
+        "3.1.2"
+      ],
+      "applies_when": [
+        "in-app-purchase"
+      ],
+      "summary": "Subscription free trials must state how long the trial lasts and the price billed once it ends, and come from an introductory offer set up in App Store Connect. A \"Start free trial\" button shown to someone who already used the trial charges them at once. Non-subscription apps may offer a time-based trial only as a free non-consumable named \"XX-day Trial\", and must first state its duration, what stops working when it ends, and what full access costs.",
+      "fix": "Read `product.subscription?.introductoryOffer` for the period and `paymentMode`, and show the trial copy only when `isEligibleForIntroOffer` is true; otherwise show the regular price. Put trial length and the post-trial price next to the purchase button. For a paid-app-style trial, create a free non-consumable named \"XX-day Trial\" and disclose its terms before it starts.",
+      "references": [
+        "https://developer.apple.com/app-store/subscriptions/#clear-description",
+        "https://developer.apple.com/documentation/storekit/product/subscriptioninfo/iseligibleforintrooffer",
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.1"
+      ],
+      "check": {
+        "id": "trial-eligibility",
+        "confidence": "medium",
+        "signals": [
+          "free trial",
+          "Free Trial",
+          "introductoryOffer",
+          ".freeTrial",
+          "Day Trial",
+          "day trial"
+        ],
+        "satisfied_by": [
+          "isEligibleForIntroOffer",
+          "introductoryOfferEligibility",
+          "SubscriptionStoreView"
+        ]
+      },
+      "review": [
+        "Does the purchase flow show the trial length and the price billed when the trial ends?",
+        "Do people who already used the trial see the regular price instead of trial copy?",
+        "For a non-subscription trial, does the app state its duration, what locks when it ends, and the cost of full access before it starts?"
+      ]
+    },
+    {
+      "id": "payments.gifting",
+      "title": "Gifts or gift cards for digital content sold outside the rules",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1.1"
+      ],
+      "applies_when": [
+        "in-app-purchase"
+      ],
+      "summary": "Apps may let people gift items that are eligible for in-app purchase, but such gifts may be refunded only to the original purchaser and may not be exchanged. Digital gift cards, certificates, vouchers, and coupons redeemable for digital goods or services may be sold in the app only through in-app purchase; only physical gift cards mailed to customers may use other payment methods.",
+      "fix": "Sell digital gifts and digital gift cards through StoreKit. Route refunds only to the buyer and block exchanging a gift for other items or currency. Use an external processor only for physical gift cards you mail.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.1"
+      ],
+      "check": {
+        "id": "gifting",
+        "confidence": "low",
+        "signals": [
+          "gift card",
+          "giftCard",
+          "GiftCard",
+          "send as gift",
+          "sendGift",
+          "giftSubscription",
+          "redeemGift",
+          "voucher",
+          "gift certificate"
+        ]
+      },
+      "review": [
+        "Is any gift or gift card for digital content paid for outside in-app purchase?",
+        "Can a received gift be exchanged, or refunded to anyone other than the buyer?"
+      ]
+    },
+    {
+      "id": "payments.hardcoded-prices",
+      "title": "Paywall shows hard-coded prices instead of StoreKit's localized price",
+      "severity": "warning",
+      "evidence": [
+        "source"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "3.1.1",
+        "3.1.2"
+      ],
+      "applies_when": [
+        "in-app-purchase"
+      ],
+      "summary": "Prices typed into code or strings, such as \"$9.99\" or \"4.99 USD\", do not follow the reviewer's storefront, currency, or later price changes. The paywall then shows a price that differs from the one the purchase sheet charges, and Apple expects the full renewal price localized in available currencies.",
+      "fix": "Load products with `Product.products(for:)` and show `Product.displayPrice`, or format `Product.price` with `priceFormatStyle`. For introductory offers, read `product.subscription?.introductoryOffer` and its `displayPrice`. Never ship a fallback price.",
+      "references": [
+        "https://developer.apple.com/documentation/storekit/product/displayprice",
+        "https://developer.apple.com/app-store/subscriptions/#clear-description"
+      ],
+      "check": {
+        "id": "hardcoded-prices",
+        "confidence": "medium",
+        "patterns": [
+          "\\$\\s?\\d+[.,]\\d{2}",
+          "€\\s?\\d+[.,]\\d{2}",
+          "£\\s?\\d+[.,]\\d{2}",
+          "\\d+[.,]\\d{2}\\s?(USD|EUR|GBP)",
+          "\\d+[.,]99\\b"
+        ],
+        "satisfied_by": [
+          "displayPrice",
+          "priceFormatStyle",
+          "localizedPriceString",
+          "SKProduct.priceLocale"
+        ]
+      }
+    },
+    {
+      "id": "payments.iap-review-metadata",
+      "title": "In-app purchase not ready for review or not submitted with the app",
+      "severity": "error",
+      "evidence": [
+        "metadata"
+      ],
+      "enforced_by": "app-store-connect",
+      "automation": "automated",
+      "guidelines": [
+        "2.1"
+      ],
+      "applies_when": [
+        "in-app-purchase"
+      ],
+      "summary": "Each in-app purchase needs its App Review screenshot, which shows the item being offered, and complete metadata before it can be added for review. The first consumable, non-consumable, auto-renewable subscription, and non-renewing subscription of each type must be submitted together with a new app version. A product left in Prepare for Submission is not reviewable, so the app's paywall finds nothing and the build is rejected under 2.1(b).",
+      "fix": "In App Store Connect, upload the App Review screenshot and fill in the localized display name, description, and price for each product, plus review notes with any test steps. Add new products to the same submission as the app version, so they reach Waiting for Review with it.",
+      "references": [
+        "https://developer.apple.com/help/app-store-connect/manage-submissions-to-app-review/submit-an-in-app-purchase",
+        "https://developer.apple.com/help/app-store-connect/reference/in-app-purchases-and-subscriptions/in-app-purchase-information",
+        "https://developer.apple.com/help/app-store-connect/reference/in-app-purchases-and-subscriptions/in-app-purchase-statuses"
+      ],
+      "check": {
+        "id": "asc-iap-review-ready",
+        "confidence": "high"
+      }
     },
     {
       "id": "payments.legacy-receipt-validation",
@@ -1006,9 +2246,532 @@ enum EmbeddedRulebook {
           "appStoreReceiptURL",
           "PKCS7",
           "AppleIncRootCertificate",
-          "SKReceiptRefreshRequest"
+          "SKReceiptRefreshRequest",
+          "d2i_PKCS7",
+          "TPInAppReceipt"
+        ],
+        "satisfied_by": [
+          "Transaction.currentEntitlements",
+          "Transaction.updates",
+          "AppTransaction.shared",
+          "VerificationResult"
         ]
       }
+    },
+    {
+      "id": "payments.local-entitlement-only",
+      "title": "Purchase state kept only in local storage",
+      "severity": "warning",
+      "evidence": [
+        "source"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "3.1.1",
+        "3.1.2"
+      ],
+      "applies_when": [
+        "in-app-purchase"
+      ],
+      "summary": "An app that remembers purchases only in `UserDefaults` or a local file loses them on reinstall and never sees them on the person's other devices. Subscriptions must work on all of the person's devices where the app is available, and restorable purchases must be restorable.",
+      "fix": "Derive access from `Transaction.currentEntitlements`, or `product.subscription?.status` for subscriptions, at launch and after `Transaction.updates`. Cache locally only for offline display, never as the source of truth.",
+      "references": [
+        "https://developer.apple.com/documentation/storekit/transaction/currententitlements",
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.2"
+      ],
+      "check": {
+        "id": "local-entitlement",
+        "confidence": "low",
+        "signals": [
+          "\"isPremium\"",
+          "\"isPro\"",
+          "\"hasPurchased\"",
+          "\"premiumUnlocked\"",
+          "@AppStorage(\"isPremium\")",
+          "@AppStorage(\"isPro\")"
+        ],
+        "satisfied_by": [
+          "currentEntitlements",
+          "currentEntitlement(for:",
+          "subscription?.status",
+          "Purchases.shared.customerInfo"
+        ]
+      }
+    },
+    {
+      "id": "payments.loot-box-odds",
+      "title": "Paid randomized items without odds shown before purchase",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1.1"
+      ],
+      "applies_when": [
+        "in-app-purchase"
+      ],
+      "summary": "Loot boxes, gacha pulls, mystery boxes, card packs, and other mechanisms that sell randomized virtual items must disclose the odds of receiving each type of item before the purchase. This applies whether the box is bought directly or with in-game currency bought through in-app purchase.",
+      "fix": "Show the drop rate of every item type or rarity tier on the purchase screen, or one tap away from it, before the person pays. Keep the published odds in step with the server's actual rates.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.1"
+      ],
+      "check": {
+        "id": "loot-box-odds",
+        "confidence": "low",
+        "signals": [
+          "lootbox",
+          "loot box",
+          "LootBox",
+          "gacha",
+          "Gacha",
+          "mystery box",
+          "MysteryBox",
+          "card pack",
+          "summon",
+          "spin the wheel",
+          "dropTable",
+          "dropRate",
+          "rarityWeights"
+        ],
+        "satisfied_by": [
+          "odds",
+          "Odds",
+          "drop rate",
+          "Drop Rates",
+          "probability",
+          "Probability"
+        ]
+      },
+      "review": [
+        "Can people pay, directly or with purchased currency, for an item whose contents are random?",
+        "Are the odds for each item type shown before that purchase?"
+      ]
+    },
+    {
+      "id": "payments.multiplatform-purchases",
+      "title": "Content bought on other platforms is not also sold as in-app purchase",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "manual",
+      "guidelines": [
+        "3.1",
+        "3.1.3"
+      ],
+      "applies_when": [],
+      "summary": "Apps that work across platforms may unlock content, subscriptions, features, or consumables that people bought on another platform or the developer's website, provided those items are also available as in-app purchases in the app. An app that only signs in to web-bought access, with no way to buy it in the app, does not qualify for 3.1.3(b).",
+      "fix": "Offer every item that cross-platform purchases unlock as an in-app purchase too, at a price you choose. Note in review notes which purchases sync from other platforms.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.3"
+      ],
+      "review": [
+        "Can a person unlock content or features bought outside the App Store by signing in?",
+        "Is each of those items also available as an in-app purchase inside the app?"
+      ]
+    },
+    {
+      "id": "payments.paid-apps-agreement",
+      "title": "Paid Apps Agreement not active",
+      "severity": "error",
+      "evidence": [
+        "metadata"
+      ],
+      "enforced_by": "app-store-connect",
+      "automation": "automated",
+      "guidelines": [
+        "2.1"
+      ],
+      "applies_when": [
+        "in-app-purchase"
+      ],
+      "summary": "To sell apps or offer in-app purchases, the Account Holder must sign the Paid Apps Agreement in App Store Connect, with tax and banking information complete. Until it is active, the app's in-app purchases cannot be sold, and the reviewer cannot complete a purchase.",
+      "fix": "Have the Account Holder sign the Paid Apps Agreement under Business in App Store Connect and complete tax and banking information. Accept any new version the updates generate before submitting.",
+      "references": [
+        "https://developer.apple.com/help/app-store-connect/manage-agreements/sign-and-update-agreements"
+      ],
+      "check": {
+        "id": "asc-paid-apps-agreement",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "payments.paywall-billed-amount",
+      "title": "Paywall makes a price breakdown more prominent than the billed amount",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1.2",
+        "5.6"
+      ],
+      "applies_when": [
+        "subscriptions"
+      ],
+      "summary": "Apple requires the amount that will be billed to be the most prominent pricing element in the purchase flow. A yearly plan headlined as \"$0.96/week\" or \"just $0.13 a day\", with the real yearly charge in small or faded text, misleads people about what they pay. Breakdowns and savings badges are allowed only in a subordinate position and size.",
+      "fix": "Show the billed amount for each plan, from `Product.displayPrice`, as the largest price on the screen. Put any per-week, per-month, or per-day equivalent below it in a smaller, secondary style, and compute it with `Product.price` and `priceFormatStyle`.",
+      "references": [
+        "https://developer.apple.com/app-store/subscriptions/#clear-description",
+        "https://developer.apple.com/documentation/storekit/product/displayprice"
+      ],
+      "check": {
+        "id": "paywall-price-breakdown",
+        "confidence": "low",
+        "signals": [
+          "/ 52",
+          "/52",
+          "/ 4.33",
+          "/ 365",
+          "/365",
+          "/week",
+          "/wk",
+          "/day",
+          "weeklyPrice",
+          "pricePerWeek",
+          "pricePerDay",
+          "dailyPrice"
+        ]
+      },
+      "review": [
+        "On every plan, is the amount billed at purchase the largest, most legible price?",
+        "Are per-week or per-day equivalents and savings badges smaller and placed below the billed amount?"
+      ]
+    },
+    {
+      "id": "payments.paywall-dismiss",
+      "title": "Paywall hides its close control or keeps coming back",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1.2",
+        "5.6"
+      ],
+      "applies_when": [
+        "in-app-purchase"
+      ],
+      "summary": "A close button that appears only after a delay, is too small or faint to find, or a paywall that reopens right after it is dismissed, pressures people into buying. Apple forbids tricking customers into unwanted purchases and removes subscription apps that use bait-and-switch or scam practices.",
+      "fix": "Show a clearly visible close control from the moment the paywall appears, honour the dismissal, and wait for a new action, such as tapping a premium feature, before showing the paywall again.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.6",
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.2"
+      ],
+      "check": {
+        "id": "paywall-dismiss",
+        "confidence": "low",
+        "signals": [
+          "closeButtonDelay",
+          "showCloseAfter",
+          "closeDelay",
+          "dismissDelay",
+          "interactiveDismissDisabled()",
+          "isModalInPresentation = true"
+        ]
+      },
+      "review": [
+        "Is the paywall's close control visible and usable as soon as the paywall appears?",
+        "After someone dismisses the paywall, does it stay away until they choose a paid feature?",
+        "Is the plan selected by default clearly labelled with its billed amount?"
+      ]
+    },
+    {
+      "id": "payments.paywall-false-urgency",
+      "title": "Paywall uses fake countdowns or scarcity to push a purchase",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1.2",
+        "5.6"
+      ],
+      "applies_when": [
+        "in-app-purchase"
+      ],
+      "summary": "A countdown that restarts on every launch, an \"offer ends tonight\" banner with no real end date, or a discount measured against a price never charged pressures people with a deadline that does not exist. The Developer Code of Conduct forbids tricking people into unwanted purchases, and 3.1.2 removes bait-and-switch subscription apps.",
+      "fix": "Show a deadline only for a real offer that ends at that time for everyone: an introductory, promotional, or win-back offer configured in App Store Connect. Compare discounts only against the price you actually charge. Drop timers that reset.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.6",
+        "https://developer.apple.com/app-store/subscriptions/"
+      ],
+      "check": {
+        "id": "paywall-countdown",
+        "confidence": "low",
+        "signals": [
+          "offer ends in",
+          "expires in",
+          "limited time",
+          "only today",
+          "last chance",
+          "ends tonight",
+          "countdown",
+          "Timer.publish",
+          "TimelineView(.periodic"
+        ]
+      },
+      "review": [
+        "Does any countdown or deadline on the paywall match a real offer end date, or does it restart?",
+        "Is every \"was\" or crossed-out price one the product actually sold at?"
+      ]
+    },
+    {
+      "id": "payments.paywall-trial-toggle",
+      "title": "Paywall switch hides which plan and price the purchase starts",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1.2",
+        "5.6"
+      ],
+      "applies_when": [
+        "subscriptions"
+      ],
+      "summary": "A toggle such as \"Enable free trial\" or \"Not sure yet? Try free\" swaps the selected product, price, and billing terms behind one control. People cannot tell which plan the purchase button starts, or what is billed when the trial ends. Apple requires the trial length and the price billed after it to be clear in the purchase flow, and removes apps that trick people into subscribing.",
+      "fix": "Replace the switch with distinct, labelled plan options. On each option state the trial length, the price billed when it ends, and the billing period, and keep the purchase button's label in step with the selected plan.",
+      "references": [
+        "https://developer.apple.com/app-store/subscriptions/#clear-description",
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.2"
+      ],
+      "check": {
+        "id": "paywall-trial-toggle",
+        "confidence": "low",
+        "signals": [
+          "Toggle(\"Enable free trial",
+          "Toggle(\"Free trial",
+          "freeTrialEnabled",
+          "isTrialEnabled",
+          "trialToggle",
+          "Enable Free Trial",
+          "Not sure yet"
+        ]
+      },
+      "review": [
+        "Does any switch on the paywall change the product, price, or billing terms the purchase button starts?",
+        "With every control in every position, can people see the trial length and the amount billed after it?"
+      ]
+    },
+    {
+      "id": "payments.physical-goods-via-iap",
+      "title": "Physical goods or real-world services sold through in-app purchase",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1",
+        "3.1.3"
+      ],
+      "applies_when": [],
+      "summary": "Physical goods and services consumed outside the app, such as deliveries, rides, tickets, or physical gift cards, must be paid for with methods other than in-app purchase, such as Apple Pay or card entry. Selling them as in-app purchase products is rejected under 3.1.3(e).",
+      "fix": "Take payment for physical goods and real-world services with Apple Pay (`PKPaymentRequest` or `PayWithApplePayButton`) or a card processor, and keep in-app purchase for digital content used in the app.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.3",
+        "https://developer.apple.com/documentation/passkit/paywithapplepaybutton"
+      ],
+      "check": {
+        "id": "iap-for-physical",
+        "confidence": "low",
+        "signals": [
+          "shippingAddress",
+          "deliveryAddress",
+          "ShippingMethod",
+          "addToCart",
+          "orderTracking"
+        ]
+      },
+      "review": [
+        "Is anything sold through in-app purchase delivered or used outside the app?"
+      ]
+    },
+    {
+      "id": "payments.product-ids-mismatch",
+      "title": "Product identifiers in the app do not match App Store Connect",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "metadata"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "2.1"
+      ],
+      "applies_when": [
+        "in-app-purchase"
+      ],
+      "summary": "`Product.products(for:)` leaves out, without an error, any identifier that is invalid or that the App Store cannot find, so a typo or a product missing from App Store Connect leaves an empty paywall or a purchase button that does nothing. App Review rejects in-app purchases that are not complete, visible, and functional, and asks for an explanation in review notes for any configured product the reviewer cannot find.",
+      "fix": "Keep product identifiers in one place, compare them with the products in App Store Connect before each submission, and handle an empty result from `Product.products(for:)` with a visible error and retry. Explain in review notes any configured product the app does not show.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#2.1",
+        "https://developer.apple.com/documentation/storekit/product/products(for:)"
+      ],
+      "check": {
+        "id": "iap-product-ids",
+        "confidence": "medium",
+        "signals": [
+          "Product.products(for:",
+          "SKProductsRequest(productIdentifiers:",
+          "productIdentifiers"
+        ]
+      }
+    },
+    {
+      "id": "payments.purchased-items-expire",
+      "title": "Purchased credits, currency, or items expire",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1.1",
+        "3.2.1"
+      ],
+      "applies_when": [
+        "in-app-purchase"
+      ],
+      "summary": "Credits and in-game currencies bought through in-app purchase may not expire. Apart from approved rental content, such as films, television, music, or books whose rental period has ended, purchased items and services may not expire either.",
+      "fix": "Remove expiry from purchased credits, currency, and items. Expire only rentals of approved media, and state the rental period before purchase.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.1",
+        "https://developer.apple.com/app-store/review/guidelines/#3.2.1"
+      ],
+      "check": {
+        "id": "expiring-currency",
+        "confidence": "low",
+        "signals": [
+          "coinsExpire",
+          "creditsExpire",
+          "creditExpiry",
+          "expiringCredits",
+          "credits expire",
+          "coins expire",
+          "gems expire",
+          "points expire"
+        ]
+      },
+      "review": [
+        "Does any purchased credit, currency, or item stop working after a date or period of inactivity?",
+        "If it does, is it a rental of approved media with the period shown before purchase?"
+      ]
+    },
+    {
+      "id": "payments.reader-app-link",
+      "title": "Reader app links to account sign-up without the External Link Account entitlement",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "entitlements",
+        "plist",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1",
+        "3.1.3"
+      ],
+      "applies_when": [],
+      "summary": "Reader apps, which give access to previously bought magazines, newspapers, books, audio, music, or video, may skip in-app purchase. Outside the United States storefront, a link to the developer's website to create or manage an account needs the External Link Account Entitlement, `com.apple.developer.storekit.external-link.account`, with the `SKExternalLinkAccount` Info.plist key, opened through `ExternalLinkAccount.open()` so the system disclosure sheet appears first.",
+      "fix": "Request the External Link Account Entitlement, add the entitlement and `SKExternalLinkAccount`, check `ExternalLinkAccount.canOpen`, and open the link only with `ExternalLinkAccount.open()`. Without the entitlement, remove the link on every storefront except the US.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.3",
+        "https://developer.apple.com/support/reader-apps/",
+        "https://developer.apple.com/documentation/storekit/externallinkaccount"
+      ],
+      "check": {
+        "id": "external-purchase-config",
+        "confidence": "medium",
+        "catalog": "payments-external-purchase"
+      },
+      "review": [
+        "Is the app's main purpose access to previously purchased reading, listening, or viewing content?",
+        "Does any link to create or manage an account appear on a non-US storefront, and is it opened through `ExternalLinkAccount`?"
+      ]
+    },
+    {
+      "id": "payments.real-money-gaming",
+      "title": "Real-money gaming without licensing, geo-restriction, or a free listing",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.3",
+        "5.3.3",
+        "5.3.4"
+      ],
+      "applies_when": [],
+      "summary": "Apps offering real-money gaming, such as sports betting, poker, casino games, horse racing, or lotteries, must hold the licences and permissions for every location where they are used, be geo-restricted to those locations, and be free on the App Store. In-app purchase may not sell credit or currency used with real-money gaming of any kind. Illegal gambling aids, such as card counters, are not allowed, and lottery apps must have consideration, chance, and a prize.",
+      "fix": "Submit from the licensed operator's organization account, list the licences in review notes, limit availability in App Store Connect to licensed regions, and enforce the location in the app with a geolocation check; device locale or storefront is not a location. Make the app free and take wagers and deposits outside in-app purchase.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.3.3",
+        "https://developer.apple.com/app-store/review/guidelines/#5.3.4"
+      ],
+      "check": {
+        "id": "real-money-gaming",
+        "confidence": "low",
+        "signals": [
+          "GeoComply",
+          "geocomply",
+          "sportsbook",
+          "placeBet",
+          "wager",
+          "betslip",
+          "BetSlip",
+          "parlay",
+          "casino",
+          "slot machine",
+          "real money",
+          "cash out",
+          "card counter",
+          "lottery"
+        ]
+      },
+      "review": [
+        "Can people stake money or anything bought with money for a chance to win money or prizes?",
+        "Is the app free, licensed in every region it is offered, and geo-restricted to those regions in both App Store Connect and the app?",
+        "Does any in-app purchase product buy credit or currency usable in the wagering?"
+      ]
     },
     {
       "id": "payments.restore-missing",
@@ -1026,8 +2789,8 @@ enum EmbeddedRulebook {
       "applies_when": [
         "in-app-purchase"
       ],
-      "summary": "The app sells non-consumables or subscriptions but has no visible way to restore them. Guideline 3.1.1 expects a restore mechanism for any restorable in-app purchase.",
-      "fix": "Add a Restore Purchases action that calls `AppStore.sync()`, or use the StoreKit views, which include it. Place it where people look for it: the paywall and settings.",
+      "summary": "The app sells non-consumables or subscriptions but has no visible way to restore them. Guideline 3.1.1 expects a restore mechanism for any restorable in-app purchase, and the reviewer taps it: a button that does nothing, or that only rereads a local flag, fails.",
+      "fix": "Add a Restore Purchases action that calls `AppStore.sync()` and then rereads `Transaction.currentEntitlements`, or use the StoreKit views, which include it. Show a result either way. Place it where people look for it: the paywall and settings.",
       "references": [
         "https://developer.apple.com/documentation/storekit/appstore/sync()"
       ],
@@ -1039,14 +2802,25 @@ enum EmbeddedRulebook {
           "product.purchase(",
           "SKPaymentQueue",
           "SubscriptionStoreView",
-          "StoreView"
+          "StoreView",
+          "ProductView",
+          "Purchases.shared.purchase",
+          "requestPurchase",
+          "purchaseProduct",
+          "react-native-iap",
+          "expo-in-app-purchases",
+          "in_app_purchase",
+          "purchases_flutter"
         ],
         "restore_signals": [
           "AppStore.sync",
           "restoreCompletedTransactions",
           "SubscriptionStoreView",
           "StoreView",
-          ".storeButton(.visible, for: .restorePurchases)"
+          ".storeButton(.visible, for: .restorePurchases)",
+          "restorePurchases",
+          "syncPurchases",
+          "getAvailablePurchases"
         ]
       }
     },
@@ -1055,6 +2829,7 @@ enum EmbeddedRulebook {
       "title": "Subscription terms not clearly disclosed",
       "severity": "warning",
       "evidence": [
+        "source",
         "metadata",
         "runtime",
         "human"
@@ -1067,10 +2842,11 @@ enum EmbeddedRulebook {
       "applies_when": [
         "subscriptions"
       ],
-      "summary": "Auto-renewable subscriptions must provide ongoing value, last at least seven days, and state clearly what the person gets, the price, and the billing period before purchase. The app and its metadata must link the Terms of Use (EULA) and the privacy policy.",
-      "fix": "Show price, period, and what is included on the paywall, with the billed amount as the most prominent price. Link Terms of Use and Privacy Policy on the paywall and in the App Store description or the EULA field.",
+      "summary": "Auto-renewable subscriptions must provide ongoing value, last at least seven days, work on all of the person's devices, and state clearly before purchase what the person gets, the full renewal price, and the billing period. The sign-up screen needs the subscription name and duration, what it provides, the renewal price, and a way to sign in or restore. The app and its App Store metadata must link the Terms of Use (EULA) and the privacy policy.",
+      "fix": "Show the subscription name, period from `product.subscription?.subscriptionPeriod`, price from `displayPrice`, what is included, and that it renews automatically until cancelled. Link Terms of Use and Privacy Policy on the paywall, or use `SubscriptionStoreView` with `.subscriptionStorePolicyDestination(url:for:)` for `.termsOfService` and `.privacyPolicy`. Add a Terms of Use link to the App Store description or a custom EULA in App Store Connect.",
       "references": [
-        "https://developer.apple.com/app-store/subscriptions/"
+        "https://developer.apple.com/app-store/subscriptions/#clear-description",
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.2"
       ],
       "check": {
         "id": "subscription-links",
@@ -1078,14 +2854,186 @@ enum EmbeddedRulebook {
         "signals": [
           "SubscriptionStoreView",
           "subscription",
-          "Product.SubscriptionInfo"
+          "Product.SubscriptionInfo",
+          "subscriptionPeriod",
+          "autoRenewable"
+        ],
+        "satisfied_by": [
+          "Terms of Use",
+          "terms of use",
+          "EULA",
+          "apple.com/legal/internet-services/itunes/dev/stdeula",
+          "Privacy Policy",
+          "privacy policy",
+          "subscriptionStorePolicyDestination"
         ]
       },
       "review": [
-        "Is the billed amount the most prominent price on the paywall, with any per-week breakdown secondary?",
-        "Does the paywall show the trial length and what happens when it ends?",
-        "Are Terms of Use and Privacy Policy linked from the paywall?"
+        "Does the sign-up screen show the subscription name, duration, what it provides, and the full renewal price?",
+        "Does it say the subscription renews automatically until cancelled?",
+        "Are Terms of Use and Privacy Policy linked from the paywall, and is a Terms of Use link in the App Store description or the EULA field?",
+        "Is every subscription period at least seven days, and does the subscription unlock on all of the person's devices?",
+        "For remotely configured paywalls, such as RevenueCat, Superwall, or Adapty, does every live variant meet these terms?"
       ]
+    },
+    {
+      "id": "payments.subscription-groups",
+      "title": "Subscriptions to the same service sit in separate groups",
+      "severity": "warning",
+      "evidence": [
+        "metadata",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1.2"
+      ],
+      "applies_when": [
+        "subscriptions"
+      ],
+      "summary": "People can hold only one subscription per group at a time, and move between its levels by upgrading, downgrading, or crossgrading. Putting tiers of the same service, such as monthly and yearly Pro, in different groups lets people subscribe to both by accident, which 3.1.2(b) forbids.",
+      "fix": "Put every level of a service in one subscription group, ranked from highest to lowest value. Use separate groups only for independent services a person may want at the same time.",
+      "references": [
+        "https://developer.apple.com/app-store/subscriptions/#creating-a-subscription-group",
+        "https://developer.apple.com/app-store/review/guidelines/#3.1.2"
+      ],
+      "check": {
+        "id": "asc-subscription-groups",
+        "confidence": "medium"
+      },
+      "review": [
+        "Could a person hold two active subscriptions in this app that give the same access?",
+        "Do upgrade, downgrade, and crossgrade between plans work from the app's own plan picker?"
+      ]
+    },
+    {
+      "id": "payments.subscription-migration",
+      "title": "Switch to a subscription takes away what earlier buyers paid for",
+      "severity": "warning",
+      "evidence": [
+        "source",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "3.1",
+        "3.1.2"
+      ],
+      "applies_when": [
+        "subscriptions"
+      ],
+      "summary": "When a paid app or a one-time unlock moves to a subscription, people who already paid must keep the primary functionality they bought. Putting existing buyers behind the new paywall breaks 3.1.2(a).",
+      "fix": "Grandfather earlier buyers: compare `AppTransaction.shared`'s `originalAppVersion` or `originalPurchaseDate` with the version or date the model changed, and keep existing non-consumable entitlements from `Transaction.currentEntitlements`, before showing the paywall.",
+      "references": [
+        "https://developer.apple.com/documentation/storekit/apptransaction/originalappversion",
+        "https://developer.apple.com/documentation/storekit/supporting-business-model-changes-by-using-the-app-transaction"
+      ],
+      "check": {
+        "id": "business-model-migration",
+        "confidence": "low",
+        "signals": [
+          "SubscriptionStoreView",
+          "Product.SubscriptionInfo"
+        ],
+        "satisfied_by": [
+          "originalAppVersion",
+          "originalPurchaseDate",
+          "currentEntitlements"
+        ]
+      },
+      "review": [
+        "Did this app, or a non-consumable in it, ever sell the functionality the subscription now gates?",
+        "If yes, can someone who bought it before the change still use it without subscribing?"
+      ]
+    },
+    {
+      "id": "payments.sweepstakes-rules",
+      "title": "Sweepstakes or contest without developer sponsorship or official rules",
+      "severity": "error",
+      "evidence": [
+        "source",
+        "runtime",
+        "human"
+      ],
+      "enforced_by": "app-review",
+      "automation": "assisted",
+      "guidelines": [
+        "5.3.1",
+        "5.3.2"
+      ],
+      "applies_when": [],
+      "summary": "Sweepstakes and contests must be sponsored by the app's developer. Official rules for sweepstakes, contests, and raffles must be presented in the app and make clear that Apple is not a sponsor or involved in any manner. Giveaways run by a third party, or rules that live only on a website, fail 5.3.",
+      "fix": "Run the promotion as the developer of record, put the official rules on a screen inside the app reachable from the entry point, and state in them that Apple is not a sponsor of, or involved in, the promotion.",
+      "references": [
+        "https://developer.apple.com/app-store/review/guidelines/#5.3.1",
+        "https://developer.apple.com/app-store/review/guidelines/#5.3.2"
+      ],
+      "check": {
+        "id": "sweepstakes-rules",
+        "confidence": "medium",
+        "signals": [
+          "sweepstakes",
+          "Sweepstakes",
+          "giveaway",
+          "Giveaway",
+          "raffle",
+          "Raffle",
+          "contest",
+          "Contest",
+          "enter to win",
+          "Enter to Win"
+        ],
+        "satisfied_by": [
+          "Apple is not a sponsor",
+          "Apple is not involved",
+          "not sponsored by Apple",
+          "Official Rules",
+          "official rules"
+        ]
+      },
+      "review": [
+        "Is the developer the sponsor of every sweepstakes, contest, or raffle in the app?",
+        "Are the official rules shown inside the app, and do they say Apple is not a sponsor or involved?"
+      ]
+    },
+    {
+      "id": "payments.transaction-listener",
+      "title": "No transaction listener at launch",
+      "severity": "warning",
+      "evidence": [
+        "source"
+      ],
+      "enforced_by": "app-review",
+      "automation": "automated",
+      "guidelines": [
+        "2.1"
+      ],
+      "applies_when": [
+        "in-app-purchase"
+      ],
+      "summary": "Purchases that complete outside the app's own purchase call, such as Ask to Buy approvals, offer code redemptions, purchases made in the App Store, and purchases made on another device, arrive through `Transaction.updates`, as do unfinished transactions right after launch. Without a listener started at launch, the app may miss them, so in-app purchases do not work as the reviewer expects.",
+      "fix": "Start a task at launch that iterates `Transaction.updates`, verifies each `VerificationResult`, grants the entitlement, and calls `transaction.finish()`. With StoreKit 1, add an `SKPaymentTransactionObserver` in `application(_:didFinishLaunchingWithOptions:)`.",
+      "references": [
+        "https://developer.apple.com/documentation/storekit/transaction/updates",
+        "https://developer.apple.com/app-store/review/guidelines/#2.1"
+      ],
+      "check": {
+        "id": "transaction-listener",
+        "confidence": "medium",
+        "signals": [
+          "Product.purchase",
+          "product.purchase(",
+          "SKPaymentQueue"
+        ],
+        "satisfied_by": [
+          "Transaction.updates",
+          "SKPaymentQueue.default().add(",
+          "SubscriptionStoreView",
+          "Purchases.configure"
+        ]
+      }
     },
     {
       "id": "permissions.full-access-over-picker",
@@ -2713,6 +4661,139 @@ enum EmbeddedRulebook {
     }
   ],
   "catalogs": {
+    "crypto-sdks": {
+      "source": "https://developer.apple.com/app-store/review/guidelines/#3.1.5",
+      "verified": "2026-10-01",
+      "wallets": {
+        "swift": [
+          "import web3swift",
+          "import Web3",
+          "import WalletCore",
+          "#import <WalletCore",
+          "import WalletConnectSign",
+          "import WalletConnectSwift",
+          "import ReownAppKit",
+          "import CoinbaseWalletSDK",
+          "import SolanaSwift"
+        ],
+        "npm": [
+          "ethers",
+          "@ethersproject/",
+          "viem",
+          "wagmi",
+          "@wagmi/",
+          "web3",
+          "@reown/appkit",
+          "@walletconnect/",
+          "@privy-io/",
+          "@web3auth/",
+          "@magic-sdk/",
+          "@dynamic-labs/",
+          "@solana/web3.js",
+          "@coinbase/wallet-sdk",
+          "@rainbow-me/",
+          "thirdweb",
+          "@web3-onboard/",
+          "bitcoinjs-lib",
+          "@trustwallet/"
+        ],
+        "phrases": [
+          "seed phrase",
+          "recovery phrase",
+          "mnemonic",
+          "BIP39",
+          "wallet address"
+        ]
+      },
+      "mining": {
+        "patterns": [
+          "(?i)(crypto|coin)\\s*miner",
+          "(?i)mining\\s*pool",
+          "(?i)stratum\\+(tcp|ssl)://",
+          "(?i)\\bhash\\s*rate\\b",
+          "(?i)\\bxmrig\\b",
+          "(?i)coinhive",
+          "(?i)moneroMiner",
+          "(?i)\\bmineBlock\\b"
+        ]
+      },
+      "exchanges": {
+        "onramp_npm": [
+          "@moonpay/",
+          "moonpay-",
+          "@transak/",
+          "transak-",
+          "@ramp-network/",
+          "ramp-network-",
+          "onramper",
+          "banxa",
+          "mercuryo",
+          "sardine",
+          "sardine-ai",
+          "sendwyre",
+          "wyre"
+        ],
+        "exchange_npm": [
+          "ccxt",
+          "@binance/",
+          "binance-connector",
+          "node-binance-api",
+          "@okx/",
+          "coinbase-pro",
+          "@coinbase-samples/",
+          "@kucoin/",
+          "@bybit/"
+        ],
+        "domains": [
+          "coinbase.com",
+          "binance.com",
+          "binance.us",
+          "kraken.com",
+          "bybit.com",
+          "okx.com",
+          "kucoin.com",
+          "bitfinex.com",
+          "bitstamp.net",
+          "bitget.com",
+          "mexc.com",
+          "huobi.com",
+          "gemini.com",
+          "crypto.com",
+          "bitpay.com"
+        ],
+        "copy_pattern": "(?i)\\b(crypto[\\s_-]?currency[\\s_-]?exchange|crypto[\\s_-]?exchange|(buy|sell|trade|swap)[\\s_-]?crypto|(buy|sell)[\\s_-]?(bitcoin|btc|ethereum|eth|usdt|usdc)|fiat[\\s_-]?(on|off)[\\s_-]?ramps?|(on|off)[_-]ramps?\\b|p2p[\\s_-]?trad)",
+        "negation_skip": "(?i)\\b(not|never|no|without|isn['’]?t|aren['’]?t|doesn['’]?t|don['’]?t|won['’]?t|can['’]?t|cannot)\\b.{0,30}?(crypto|exchange|on[_-]?ramp|off[_-]?ramp|bitcoin)"
+      },
+      "securities": {
+        "phrases": [
+          "ICO",
+          "initial coin offering",
+          "token sale",
+          "presale",
+          "perpetual",
+          "perps",
+          "futures",
+          "leverage",
+          "margin trading",
+          "liquidation price",
+          "staking yield"
+        ]
+      },
+      "task_rewards": {
+        "phrases": [
+          "earn crypto",
+          "earn bitcoin",
+          "free crypto",
+          "crypto rewards",
+          "airdrop",
+          "claim tokens",
+          "refer and earn",
+          "watch to earn",
+          "move to earn",
+          "play to earn"
+        ]
+      }
+    },
     "deadlines": {
       "deadlines": [
         {
@@ -2786,6 +4867,151 @@ enum EmbeddedRulebook {
           "summary": "iOS and iPadOS apps uploaded to App Store Connect must target iOS 13 or later.",
           "source": "https://developer.apple.com/news/upcoming-requirements/?id=0992026a",
           "rule": "build.deployment-target"
+        }
+      ]
+    },
+    "payments-external-purchase": {
+      "source": "https://developer.apple.com/documentation/storekit/external-purchase",
+      "verified": "2026-10-01",
+      "entitlement_free_storefronts": [
+        "us"
+      ],
+      "eu": [
+        "at",
+        "be",
+        "bg",
+        "hr",
+        "cy",
+        "cz",
+        "dk",
+        "ee",
+        "fi",
+        "fr",
+        "de",
+        "gr",
+        "hu",
+        "ie",
+        "it",
+        "lv",
+        "lt",
+        "lu",
+        "mt",
+        "nl",
+        "pl",
+        "pt",
+        "ro",
+        "sk",
+        "si",
+        "es",
+        "se"
+      ],
+      "programs": [
+        {
+          "id": "external-purchases-or-offers",
+          "name": "StoreKit External Purchases or Offers Entitlement (custom links)",
+          "api": [
+            "ExternalPurchaseCustomLink",
+            "ExternalPurchaseCustomLink.isEligible",
+            "ExternalPurchaseCustomLink.showNotice(for:)",
+            "ExternalPurchaseCustomLink.token(for:)"
+          ],
+          "entitlement": "com.apple.developer.storekit.custom-purchase-link.allowed-regions",
+          "entitlement_type": "array",
+          "plist_key": "SKExternalPurchaseCustomLinkRegions",
+          "regions": [
+            "eu",
+            "br",
+            "jp"
+          ],
+          "summary": "Alternative payment processing in the app, or out-of-app offers with actionable links. Since October 1, 2026 the EU path for every external purchase option. Apple In-App Purchase must be offered at the same time and at least as prominently.",
+          "source": "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.storekit.custom-purchase-link.allowed-regions"
+        },
+        {
+          "id": "external-purchase-link",
+          "name": "StoreKit External Purchase Link Entitlement",
+          "api": [
+            "ExternalPurchaseLink",
+            "ExternalPurchaseLink.canOpen",
+            "ExternalPurchaseLink.eligibleURLs",
+            "ExternalPurchaseLink.open"
+          ],
+          "entitlement": "com.apple.developer.storekit.external-purchase-link",
+          "entitlement_type": "boolean",
+          "plist_key": [
+            "SKExternalPurchaseLink",
+            "SKExternalPurchaseMultiLink"
+          ],
+          "regions": [
+            "eu",
+            "is",
+            "no",
+            "ru"
+          ],
+          "url_rules": [
+            "https scheme",
+            "absolute URL",
+            "no query parameters",
+            "1,000 or fewer ASCII characters",
+            "matches the binary under review"
+          ],
+          "max_links": {
+            "music_streaming_eea": 5,
+            "other": 1
+          },
+          "summary": "One link (up to five for qualifying music streaming apps in the EEA) to a website for external purchases. The EU addendum was phased out on October 1, 2026 in favour of External Purchases or Offers.",
+          "source": "https://developer.apple.com/documentation/bundleresources/information-property-list/skexternalpurchaselink"
+        },
+        {
+          "id": "alternative-payment-provider",
+          "name": "StoreKit External Purchase Entitlement (alternative payment service provider)",
+          "api": [
+            "ExternalPurchase",
+            "ExternalPurchase.canPresent",
+            "ExternalPurchase.presentNoticeSheet"
+          ],
+          "entitlement": "com.apple.developer.storekit.external-purchase",
+          "entitlement_type": "boolean",
+          "plist_key": "SKExternalPurchase",
+          "regions": [
+            "eu",
+            "kr"
+          ],
+          "summary": "In-app payment through an alternative payment service provider.",
+          "source": "https://developer.apple.com/documentation/bundleresources/information-property-list/skexternalpurchase"
+        },
+        {
+          "id": "music-streaming-link",
+          "name": "Music Streaming Services Entitlement",
+          "api": [
+            "ExternalPurchaseCustomLink"
+          ],
+          "entitlement": "com.apple.developer.storekit.external-purchase-link-streaming",
+          "entitlement_type": "boolean",
+          "plist_key": "SKExternalPurchaseLinkStreamingRegions",
+          "regions": [
+            "eu",
+            "is",
+            "no"
+          ],
+          "summary": "Music streaming apps communicating and promoting offers, including a buy button and email capture for a purchase link.",
+          "source": "https://developer.apple.com/documentation/storekit/external-purchase"
+        },
+        {
+          "id": "external-link-account",
+          "name": "External Link Account Entitlement (reader apps)",
+          "api": [
+            "ExternalLinkAccount",
+            "ExternalLinkAccount.canOpen",
+            "ExternalLinkAccount.open"
+          ],
+          "entitlement": "com.apple.developer.storekit.external-link.account",
+          "entitlement_type": "boolean",
+          "plist_key": "SKExternalLinkAccount",
+          "regions": [
+            "all"
+          ],
+          "summary": "Approved reader apps link to a website to create or manage an account, after a system disclosure sheet.",
+          "source": "https://developer.apple.com/support/reader-apps/"
         }
       ]
     },

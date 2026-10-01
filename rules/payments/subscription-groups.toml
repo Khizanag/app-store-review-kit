@@ -1,0 +1,27 @@
+id = "payments.subscription-groups"
+title = "Subscriptions to the same service sit in separate groups"
+severity = "warning"
+evidence = ["metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.2"]
+applies_when = ["subscriptions"]
+summary = """
+People can hold only one subscription per group at a time, and move between its levels by upgrading, downgrading, or crossgrading. Putting tiers of the same service, such as monthly and yearly Pro, in different groups lets people subscribe to both by accident, which 3.1.2(b) forbids.
+"""
+fix = """
+Put every level of a service in one subscription group, ranked from highest to lowest value. Use separate groups only for independent services a person may want at the same time.
+"""
+references = [
+  "https://developer.apple.com/app-store/subscriptions/#creating-a-subscription-group",
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.2",
+]
+
+[check]
+id = "asc-subscription-groups"
+confidence = "medium"
+
+[review]
+questions = [
+  "Could a person hold two active subscriptions in this app that give the same access?",
+  "Do upgrade, downgrade, and crossgrade between plans work from the app's own plan picker?",
+]

@@ -1,0 +1,27 @@
+id = "business.app-catalog"
+title = "App is a catalog or store of other apps"
+severity = "error"
+evidence = ["source", "human"]
+enforced_by = "app-review"
+guidelines = ["3.2.1", "3.2.2"]
+summary = """
+Apps may promote the developer's own apps, provided the app is not merely a catalog of them, and may recommend third-party apps only for a specific approved need, such as health management, aviation, or accessibility, with robust editorial content. An interface that displays third-party apps, extensions, or plug-ins like the App Store, or as a general-interest collection, is not allowed.
+"""
+fix = """
+Make cross-promotion a secondary part of an app with its own function. For curated third-party lists, keep them to one approved need, add editorial content for each entry, and open listings with `SKStoreProductViewController`.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.2.1",
+  "https://developer.apple.com/app-store/review/guidelines/#3.2.2",
+]
+
+[check]
+id = "app-catalog"
+confidence = "low"
+signals = ["SKStoreProductViewController", "apps.apple.com/app/", "itms-apps://", "SKOverlay", "moreApps", "MoreAppsView"]
+
+[review]
+questions = [
+  "Is listing or promoting other apps the app's main purpose?",
+  "For third-party recommendations, do they serve one approved need with editorial content for each app?",
+]

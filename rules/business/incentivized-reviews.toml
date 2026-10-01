@@ -1,0 +1,27 @@
+id = "business.incentivized-reviews"
+title = "Rewards offered for ratings, reviews, or chart manipulation"
+severity = "error"
+evidence = ["source", "metadata", "human"]
+enforced_by = "app-review"
+guidelines = ["3", "5.6.3"]
+summary = """
+Offering coins, premium time, unlocks, or entries in exchange for a rating or review inflates rankings with incentivized feedback. Apple may expel developers who manipulate reviews or charts with paid, incentivized, filtered, or fake feedback, or who hire third parties to do it, and 5.6.3 forbids manipulating charts, search, reviews, or referrals.
+"""
+fix = """
+Remove every reward tied to rating, reviewing, or ranking the app. Ask for reviews only through the system request, with nothing given or withheld based on the response.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3",
+  "https://developer.apple.com/app-store/review/guidelines/#5.6.3",
+]
+
+[check]
+id = "incentivized-review"
+confidence = "medium"
+signals = ["rate us and get", "rate and get", "review to unlock", "rate to unlock", "rate for coins", "free coins for rating", "reward for review", "rewardForRating", "ratingReward", "reviewReward"]
+
+[review]
+questions = [
+  "Does anyone get anything, in or outside the app, for rating or reviewing it?",
+  "Does the developer pay or work with any service that buys reviews, ratings, downloads, or rankings?",
+]

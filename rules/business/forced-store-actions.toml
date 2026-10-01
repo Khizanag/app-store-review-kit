@@ -1,0 +1,26 @@
+id = "business.forced-store-actions"
+title = "Features locked behind rating, reviewing, downloading other apps, or sharing"
+severity = "error"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["3.2.2", "3.1.2", "3.1.4"]
+summary = """
+Apps must not force people to rate or review the app, download other apps, or take other store-related actions to access functionality or content. Subscribers must get what they paid for without extra tasks such as posting on social media, uploading contacts, or checking in, and functionality may not require advertising or marketing activity. In-app goals such as finishing a level or watching an ad may still be rewarded.
+"""
+fix = """
+Unlock content without any store action, social post, contact upload, or download of another app. Keep optional rewards only for in-app actions such as finishing a level or watching an ad.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#3.2.2",
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.2",
+]
+
+[check]
+id = "forced-store-action"
+confidence = "medium"
+signals = ["rate to unlock", "review to unlock", "rate to continue", "download to unlock", "install to unlock", "share to unlock", "invite to unlock", "share to continue", "unlockByRating", "unlockBySharing"]
+
+[review]
+questions = [
+  "Is any content or feature withheld until the person rates, reviews, downloads another app, shares, invites, or uploads contacts?",
+]

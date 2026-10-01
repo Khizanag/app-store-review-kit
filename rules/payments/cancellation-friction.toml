@@ -1,0 +1,29 @@
+id = "payments.cancellation-friction"
+title = "Cancelling a subscription takes a call, an email, or a support ticket"
+severity = "warning"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.2", "5.6"]
+applies_when = ["subscriptions"]
+summary = """
+App Store subscriptions are cancelled in the system subscription management UI, not by the developer. Telling people to phone, email, mail a letter, or file a ticket to cancel misleads them and delays the cancellation. Apple asks apps to make the system management UI easy to reach.
+"""
+fix = """
+Add a Manage Subscription action that calls `AppStore.showManageSubscriptions(in:)` or the SwiftUI `manageSubscriptionsSheet(isPresented:)` modifier, and say that cancelling happens there. Hide the action on macOS, where the sheet is not supported.
+"""
+references = [
+  "https://developer.apple.com/documentation/storekit/appstore/showmanagesubscriptions(in:)",
+  "https://developer.apple.com/app-store/subscriptions/",
+]
+
+[check]
+id = "cancellation-path"
+confidence = "low"
+signals = ["to cancel, email", "to cancel, call", "to cancel, contact", "cancel by phone", "cancel by email", "contact support to cancel", "email us to cancel"]
+satisfied_by = ["showManageSubscriptions", "manageSubscriptionsSheet", "apps.apple.com/account/subscriptions", "SubscriptionStoreView"]
+
+[review]
+questions = [
+  "Can a subscriber reach the system subscription management UI from inside the app in two taps or fewer?",
+  "Does any copy tell people to cancel by phone, email, mail, or support ticket?",
+]

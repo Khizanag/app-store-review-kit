@@ -1,0 +1,31 @@
+id = "payments.free-trial-terms"
+title = "Free trial offered without its length, end, or eligibility"
+severity = "warning"
+evidence = ["source", "metadata", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["3.1.1", "3.1.2"]
+applies_when = ["in-app-purchase"]
+summary = """
+Subscription free trials must state how long the trial lasts and the price billed once it ends, and come from an introductory offer set up in App Store Connect. A "Start free trial" button shown to someone who already used the trial charges them at once. Non-subscription apps may offer a time-based trial only as a free non-consumable named "XX-day Trial", and must first state its duration, what stops working when it ends, and what full access costs.
+"""
+fix = """
+Read `product.subscription?.introductoryOffer` for the period and `paymentMode`, and show the trial copy only when `isEligibleForIntroOffer` is true; otherwise show the regular price. Put trial length and the post-trial price next to the purchase button. For a paid-app-style trial, create a free non-consumable named "XX-day Trial" and disclose its terms before it starts.
+"""
+references = [
+  "https://developer.apple.com/app-store/subscriptions/#clear-description",
+  "https://developer.apple.com/documentation/storekit/product/subscriptioninfo/iseligibleforintrooffer",
+  "https://developer.apple.com/app-store/review/guidelines/#3.1.1",
+]
+
+[check]
+id = "trial-eligibility"
+confidence = "medium"
+signals = ["free trial", "Free Trial", "introductoryOffer", ".freeTrial", "Day Trial", "day trial"]
+satisfied_by = ["isEligibleForIntroOffer", "introductoryOfferEligibility", "SubscriptionStoreView"]
+
+[review]
+questions = [
+  "Does the purchase flow show the trial length and the price billed when the trial ends?",
+  "Do people who already used the trial see the regular price instead of trial copy?",
+  "For a non-subscription trial, does the app state its duration, what locks when it ends, and the cost of full access before it starts?",
+]

@@ -1,0 +1,28 @@
+id = "payments.sweepstakes-rules"
+title = "Sweepstakes or contest without developer sponsorship or official rules"
+severity = "error"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["5.3.1", "5.3.2"]
+summary = """
+Sweepstakes and contests must be sponsored by the app's developer. Official rules for sweepstakes, contests, and raffles must be presented in the app and make clear that Apple is not a sponsor or involved in any manner. Giveaways run by a third party, or rules that live only on a website, fail 5.3.
+"""
+fix = """
+Run the promotion as the developer of record, put the official rules on a screen inside the app reachable from the entry point, and state in them that Apple is not a sponsor of, or involved in, the promotion.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#5.3.1",
+  "https://developer.apple.com/app-store/review/guidelines/#5.3.2",
+]
+
+[check]
+id = "sweepstakes-rules"
+confidence = "medium"
+signals = ["sweepstakes", "Sweepstakes", "giveaway", "Giveaway", "raffle", "Raffle", "contest", "Contest", "enter to win", "Enter to Win"]
+satisfied_by = ["Apple is not a sponsor", "Apple is not involved", "not sponsored by Apple", "Official Rules", "official rules"]
+
+[review]
+questions = [
+  "Is the developer the sponsor of every sweepstakes, contest, or raffle in the app?",
+  "Are the official rules shown inside the app, and do they say Apple is not a sponsor or involved?",
+]

@@ -1,0 +1,30 @@
+id = "payments.apple-pay-recurring-disclosure"
+title = "Apple Pay recurring payment without the required disclosures"
+severity = "error"
+evidence = ["source", "runtime", "human"]
+enforced_by = "app-review"
+guidelines = ["4.9"]
+summary = """
+Apps that take recurring payments with Apple Pay must disclose, before the sale, the length of the renewal term and that it continues until cancelled, what each period provides, the actual charges billed, and how to cancel. A one-off `PKPaymentRequest` used for a subscription hides the schedule from the payment sheet.
+"""
+fix = """
+Set `recurringPaymentRequest` on the `PKPaymentRequest` to a `PKRecurringPaymentRequest` with `paymentDescription`, `regularBilling` (a `PKRecurringPaymentSummaryItem` with interval and start date), `trialBilling` for any trial, and a `managementURL` where people update or cancel. State the term, what each period provides, the charge, and how to cancel in the app before the sheet opens.
+"""
+references = [
+  "https://developer.apple.com/app-store/review/guidelines/#4.9",
+  "https://developer.apple.com/documentation/passkit/pkrecurringpaymentrequest",
+  "https://developer.apple.com/design/human-interface-guidelines/apple-pay",
+]
+
+[check]
+id = "apple-pay-recurring"
+confidence = "low"
+signals = ["PKPaymentRequest", "PKPaymentButton", "PayWithApplePayButton", "PKPaymentAuthorizationController"]
+satisfied_by = ["PKRecurringPaymentRequest", "PKRecurringPaymentSummaryItem", "recurringPaymentRequest"]
+
+[review]
+questions = [
+  "Does any Apple Pay payment in the app renew or repeat?",
+  "Before the payment sheet, does the app state the renewal term and that it continues until cancelled, what each period provides, the amount billed, and how to cancel?",
+  "For a trial, do the line items show the trial amount, the regular amount after it, and the date regular billing starts?",
+]
