@@ -9,3 +9,8 @@ __pycache__/
 dist/
 .build/
 .swiftpm/
+.claude/
+
+
+# SwiftLint Remote Config Cache
+.swiftlint/RemoteConfigCache
