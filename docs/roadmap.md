@@ -36,8 +36,10 @@ The plan to make this the most accurate and most usable App Review checker, buil
 
 ## E. Distribution
 
-- [ ] Agent skill (`SKILL.md`) and plugin manifests for Claude Code, Codex, Cursor, and Copilot; `npx skills add` install.
-- [ ] Homebrew formula and a composite GitHub Action that runs in the user's own CI.
+- [x] Agent skill (`SKILL.md`) with audit, rejection recovery, and review notes modes; `npx skills add` install.
+- [x] Claude Code plugin and marketplace, Codex plugin manifest.
+- [ ] Cursor and Copilot plugin manifests.
+- [x] Homebrew formula served from this repository, and a composite GitHub Action that runs in the user's own CI.
 - [ ] SwiftPM command plugin and Xcode build tool plugin.
 - [ ] MCP server mode.
 
