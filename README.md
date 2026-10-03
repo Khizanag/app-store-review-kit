@@ -8,7 +8,7 @@ Pick the one that fits how you work. Every option runs locally; nothing about yo
 
 | Where | Install | Then |
 | --- | --- | --- |
-| Terminal | `brew tap khizanag/asrk https://github.com/Khizanag/app-store-review-kit && brew install asrk` | `asrk check path/to/YourApp` |
+| Terminal | `brew tap khizanag/asrk https://github.com/Khizanag/app-store-review-kit && brew trust --formula khizanag/asrk/asrk && brew install asrk` | `asrk check path/to/YourApp` |
 | Claude Code | `/plugin marketplace add Khizanag/app-store-review-kit` then `/plugin install app-store-review@app-store-review-kit` | "Check this app before I submit." |
 | Any agent with skills | `npx skills add Khizanag/app-store-review-kit` | "My app was rejected under 5.1.1; what do I change?" |
 | GitHub Actions | `uses: Khizanag/app-store-review-kit@v0.1.0`, [below](#in-ci) | Findings in code scanning |

@@ -12,7 +12,7 @@ Review an Apple app the way App Review will, with evidence. The `asrk` engine ru
 Use the first that works:
 
 1. `asrk version` — already installed.
-2. `brew tap khizanag/asrk https://github.com/Khizanag/app-store-review-kit && brew install asrk`
+2. `brew tap khizanag/asrk https://github.com/Khizanag/app-store-review-kit && brew trust --formula khizanag/asrk/asrk && brew install asrk`
 3. Build it, which needs macOS with Xcode 26 or later:
 
    ```bash
