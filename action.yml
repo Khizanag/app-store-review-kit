@@ -1,0 +1,71 @@
+name: App Store Review Kit
+description: Check an Apple app against the App Review Guidelines with asrk before you submit.
+author: Giga Khizanishvili
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  path:
+    description: Folder that holds the Xcode project.
+    default: "."
+  fail-on:
+    description: Fail the step when a finding reaches this severity; error, warning, note, or never.
+    default: error
+  profile:
+    description: App type when detection may miss it; utility, subscription, social, kids, game, ai, health, or fintech.
+    default: ""
+  target:
+    description: App target to check when the project has several.
+    default: ""
+  sarif-file:
+    description: Where to write SARIF for GitHub code scanning; empty skips it.
+    default: asrk.sarif
+
+outputs:
+  sarif-file:
+    description: The SARIF file written, if any.
+    value: ${{ inputs.sarif-file }}
+
+runs:
+  using: composite
+  steps:
+    - name: Cache the asrk build
+      uses: actions/cache@v4
+      with:
+        path: ${{ github.action_path }}/.build
+        key: asrk-${{ runner.os }}-${{ runner.arch }}-${{ github.action_ref }}
+
+    - name: Build asrk
+      shell: bash
+      run: swift build -c release --product asrk --package-path "$GITHUB_ACTION_PATH"
+
+    - name: Check the app
+      shell: bash
+      env:
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_FAIL_ON: ${{ inputs.fail-on }}
+        INPUT_PROFILE: ${{ inputs.profile }}
+        INPUT_TARGET: ${{ inputs.target }}
+        INPUT_SARIF: ${{ inputs.sarif-file }}
+      run: |
+        asrk="$GITHUB_ACTION_PATH/.build/release/asrk"
+        report="${RUNNER_TEMP:-/tmp}/asrk-report.txt"
+        args=(check "$INPUT_PATH")
+        if [ -n "$INPUT_PROFILE" ]; then args+=(--profile "$INPUT_PROFILE"); fi
+        if [ -n "$INPUT_TARGET" ]; then args+=(--target "$INPUT_TARGET"); fi
+        if [ -n "$INPUT_SARIF" ]; then
+          "$asrk" "${args[@]}" --format sarif --fail-on never > "$INPUT_SARIF"
+        fi
+        set +e
+        "$asrk" "${args[@]}" --fail-on "$INPUT_FAIL_ON" > "$report"
+        status=$?
+        set -e
+        cat "$report"
+        {
+          echo "### App Store Review Kit"
+          echo '```text'
+          tail -n 1 "$report"
+          echo '```'
+        } >> "$GITHUB_STEP_SUMMARY"
+        exit "$status"
