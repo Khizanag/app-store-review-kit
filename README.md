@@ -2,11 +2,19 @@
 
 Check an iOS app against Apple's App Review Guidelines before you submit, from an open, machine-readable rulebook that says exactly what a machine can check and what still needs a person. Not affiliated with or endorsed by Apple.
 
-```bash
-git clone https://github.com/Khizanag/app-store-review-kit && cd app-store-review-kit
-swift build -c release
-.build/release/asrk check path/to/YourApp
-```
+## Install
+
+Pick the one that fits how you work. Every option runs locally; nothing about your app leaves your machine.
+
+| Where | Install | Then |
+| --- | --- | --- |
+| Terminal | `brew tap khizanag/asrk https://github.com/Khizanag/app-store-review-kit && brew install asrk` | `asrk check path/to/YourApp` |
+| Claude Code | `/plugin marketplace add Khizanag/app-store-review-kit` then `/plugin install app-store-review@app-store-review-kit` | "Check this app before I submit." |
+| Any agent with skills | `npx skills add Khizanag/app-store-review-kit` | "My app was rejected under 5.1.1; what do I change?" |
+| GitHub Actions | `uses: Khizanag/app-store-review-kit@v0.1.0`, [below](#in-ci) | Findings in code scanning |
+| From source | `git clone https://github.com/Khizanag/app-store-review-kit && swift build -c release` | `.build/release/asrk check …` |
+
+`asrk` needs macOS with Xcode 26 or later. The agent skill runs `asrk`, verifies each finding in your code, answers the review questions a machine cannot, drafts Resolution Center replies after a rejection, and writes your Notes for App Review.
 
 ## Why
 
@@ -51,18 +59,28 @@ Exit codes: `0` nothing at or above `--fail-on`, `1` findings at or above it, `2
 
 ### In CI
 
+The action builds `asrk` once per version, caches it, writes SARIF, and puts the summary on the run page. It needs a macOS runner with Xcode 26.
+
 ```yaml
-- name: App Review check
-  run: |
-    git clone --depth 1 https://github.com/Khizanag/app-store-review-kit /tmp/asrk
-    swift build -c release --package-path /tmp/asrk
-    /tmp/asrk/.build/release/asrk check . --format sarif > asrk.sarif || true
-    /tmp/asrk/.build/release/asrk check .
-- uses: github/codeql-action/upload-sarif@v3
-  if: always()
-  with:
-    sarif_file: asrk.sarif
+jobs:
+  app-review:
+    runs-on: macos-26
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Khizanag/app-store-review-kit@v0.1.0
+        with:
+          fail-on: error           # or warning, note, never
+          profile: subscription    # optional
+      - uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: asrk.sarif
 ```
+
+Other inputs: `path` for the project folder, `target` when the project has several apps, `sarif-file` to rename or skip the SARIF output.
 
 ## Layout
 
