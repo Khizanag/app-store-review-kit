@@ -1,0 +1,36 @@
+{
+  "name": "app-store-review",
+  "version": "0.1.0",
+  "description": "Check an Apple app against the App Review Guidelines before submission, recover from rejections, and draft review notes.",
+  "author": {
+    "name": "Giga Khizanishvili",
+    "url": "https://github.com/Khizanag"
+  },
+  "homepage": "https://github.com/Khizanag/app-store-review-kit",
+  "repository": "https://github.com/Khizanag/app-store-review-kit",
+  "license": "MIT",
+  "keywords": [
+    "app-store",
+    "app-review",
+    "ios",
+    "compliance"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "App Store Review",
+    "shortDescription": "Catch App Review rejections before you submit.",
+    "longDescription": "Run 200+ App Review rules locally against an Apple app project, verify each finding in the code, answer the review questions a machine cannot, recover from rejections with a drafted Resolution Center reply, and write review notes.",
+    "developerName": "Giga Khizanishvili",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/Khizanag/app-store-review-kit",
+    "defaultPrompt": [
+      "Check this app against the App Review Guidelines before I submit.",
+      "My app was rejected; here is the message. What do I change?",
+      "Write the Notes for App Review for this app."
+    ]
+  }
+}

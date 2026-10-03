@@ -23,5 +23,5 @@ if command -v swiftlint >/dev/null 2>&1; then
     swiftlint --strict --quiet
 fi
 if command -v npx >/dev/null 2>&1; then
-    npx --yes markdownlint-cli2 "*.md" "guidelines/*.md" "docs/**/*.md" >/dev/null
+    npx --yes markdownlint-cli2 "*.md" "guidelines/*.md" "docs/**/*.md" "skills/**/*.md" >/dev/null
 fi

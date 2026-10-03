@@ -1,0 +1,20 @@
+{
+  "name": "app-store-review",
+  "version": "0.1.0",
+  "description": "Check an Apple app against the App Review Guidelines before submission, recover from rejections, and draft review notes, with the open app-store-review-kit rulebook and the local asrk engine.",
+  "author": {
+    "name": "Giga Khizanishvili",
+    "url": "https://github.com/Khizanag"
+  },
+  "homepage": "https://github.com/Khizanag/app-store-review-kit",
+  "repository": "https://github.com/Khizanag/app-store-review-kit",
+  "license": "MIT",
+  "keywords": [
+    "app-store",
+    "app-review",
+    "app-store-review",
+    "ios",
+    "privacy-manifest",
+    "compliance"
+  ]
+}

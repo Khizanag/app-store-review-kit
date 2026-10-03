@@ -1,0 +1,24 @@
+{
+  "name": "app-store-review-kit",
+  "owner": {
+    "name": "Giga Khizanishvili",
+    "url": "https://github.com/Khizanag"
+  },
+  "metadata": {
+    "description": "App Review checks from an open, machine-readable rulebook"
+  },
+  "plugins": [
+    {
+      "name": "app-store-review",
+      "source": "./",
+      "description": "Check an Apple app against the App Review Guidelines, recover from rejections, and draft review notes.",
+      "category": "development",
+      "tags": [
+        "ios",
+        "app-store",
+        "app-review",
+        "compliance"
+      ]
+    }
+  ]
+}

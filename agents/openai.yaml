@@ -1,0 +1,4 @@
+interface:
+  display_name: "App Store Review"
+  short_description: "Catch App Review rejections before you submit"
+  default_prompt: "Use $app-store-review to check this app against the App Review Guidelines, verify each finding in the code, and show evidence before proposing fixes."
