@@ -30,6 +30,25 @@ struct RulebookTests {
     }
 
     @Test
+    func filtersRulesByGuidelineAndExplainsThem() throws {
+        let rulebook = try Rulebook.embedded()
+        let privacy = RuleReporter.rules(in: rulebook, guideline: "5.1")
+        #expect(privacy.contains { $0.id == "privacy.required-reason-undeclared" })
+        #expect(privacy.allSatisfy { rule in rule.guidelines.contains { $0.hasPrefix("5.1") } })
+        #expect(!RuleReporter.rules(in: rulebook, guideline: "5.1").contains { $0.guidelines == ["5.10"] })
+
+        let rule = try #require(rulebook.rule("privacy.required-reason-undeclared"))
+        let text = RuleReporter.explain(rule)
+        #expect(text.hasPrefix("privacy.required-reason-undeclared: "))
+        #expect(text.contains("Fix: "))
+        #expect(text.contains("rules/privacy/required-reason-undeclared.toml"))
+
+        let json = Data(RuleReporter.list([rule], as: .json).utf8)
+        let decoded = try #require(try JSONSerialization.jsonObject(with: json) as? [[String: Any]])
+        #expect(decoded.first?["id"] as? String == rule.id)
+    }
+
+    @Test
     func versionsCompareNumerically() {
         #expect(Version("9.3") < Version("13.0"))
         #expect(!(Version("13") < Version("13.0")))

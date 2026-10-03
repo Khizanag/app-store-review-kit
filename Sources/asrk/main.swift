@@ -6,7 +6,9 @@ let usage = """
 
     Usage:
       asrk check [folder] [options]   Review the Xcode project in a folder (default: current folder).
-      asrk rules                      List every rule in the embedded rulebook.
+      asrk rules [--guideline 5.1.1] [--format json]
+                                      List rules, optionally only those citing a guideline section.
+      asrk explain RULE               Show a rule: why it matters, the fix, and questions for a person.
       asrk version                    Print the engine and guidelines versions.
 
     Options for check:
@@ -34,12 +36,14 @@ do {
         let command = try CheckCommand(arguments: Array(arguments.dropFirst()))
         exit(try command.run().rawValue)
     case "rules":
+        Output.write(try RulesCommand(arguments: Array(arguments.dropFirst())).run())
+    case "explain":
+        guard arguments.count == 2 else { throw UsageError(message: "Usage: asrk explain RULE") }
         let rulebook = try Rulebook.embedded()
-        let lines = rulebook.rules.map { rule in
-            let kind = rule.isManual ? "manual" : "check \(rule.check?.id ?? "")"
-            return "\(rule.id)\t\(rule.severity.rawValue)\t\(kind)\t\(rule.title)"
+        guard let rule = rulebook.rule(arguments[1]) else {
+            throw UsageError(message: "No rule \(arguments[1]). Run asrk rules to list them.")
         }
-        Output.write(lines.joined(separator: "\n") + "\n")
+        Output.write(RuleReporter.explain(rule))
     case "version", "--version":
         let rulebook = try Rulebook.embedded()
         Output.write("asrk \(version), \(rulebook.rules.count) rules, guidelines \(rulebook.guidelinesRevision)\n")

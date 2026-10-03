@@ -90,6 +90,40 @@ struct CheckCommand {
     }
 }
 
+struct RulesCommand {
+    var guideline: String?
+    var format = OutputFormat.text
+
+    init(arguments: [String]) throws(UsageError) {
+        var remaining = arguments[...]
+        while let argument = remaining.popFirst() {
+            guard let value = remaining.popFirst() else {
+                throw UsageError(message: "\(argument) needs a value")
+            }
+            switch argument {
+            case "--guideline":
+                guideline = value
+            case "--format":
+                guard let parsed = OutputFormat(rawValue: value), parsed != .sarif else {
+                    throw UsageError(message: "--format must be text or json")
+                }
+                format = parsed
+            default:
+                throw UsageError(message: "Unknown option \(argument)")
+            }
+        }
+    }
+
+    func run() throws(UsageError) -> String {
+        do {
+            let rules = RuleReporter.rules(in: try Rulebook.embedded(), guideline: guideline)
+            return RuleReporter.list(rules, as: format)
+        } catch {
+            throw UsageError(message: "\(error)")
+        }
+    }
+}
+
 enum Output {
     static func write(_ text: String) {
         FileHandle.standardOutput.write(Data(text.utf8))
